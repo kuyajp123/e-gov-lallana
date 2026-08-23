@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Support\InertiaViewFinder;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind('inertia.view-finder', function ($app) {
+            return new InertiaViewFinder(
+                $app['files'],
+                $app['config']->get('inertia.pages.paths'),
+                $app['config']->get('inertia.pages.extensions')
+            );
+        });
     }
 
     /**
