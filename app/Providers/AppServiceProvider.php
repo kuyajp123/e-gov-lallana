@@ -2,10 +2,13 @@
 
 namespace App\Providers;
 
+use App\Services\Sms\Contracts\SmsService;
+use App\Services\Sms\SmsManager;
 use App\Support\InertiaViewFinder;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -22,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
                 $app['config']->get('inertia.pages.paths'),
                 $app['config']->get('inertia.pages.extensions')
             );
+        });
+
+        $this->app->singleton(SmsService::class, function () {
+            return SmsManager::createDriver();
         });
     }
 
@@ -41,7 +48,7 @@ class AppServiceProvider extends ServiceProvider
         Date::use(CarbonImmutable::class);
 
         if (app()->isProduction()) {
-            \Illuminate\Support\Facades\URL::forceScheme('https');
+            URL::forceScheme('https');
         }
 
         DB::prohibitDestructiveCommands(
