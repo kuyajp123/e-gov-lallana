@@ -23,12 +23,15 @@ if (isset($_ENV['VERCEL']) || isset($_SERVER['VERCEL']) || getenv('VERCEL')) {
 
 define('LARAVEL_START', microtime(true));
 
+$_SERVER['SCRIPT_NAME'] = '/index.php';
+$_SERVER['SCRIPT_FILENAME'] = __DIR__ . '/../public/index.php';
+
 // 2. Register Composer Autoloader
-require __DIR__.'/../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 // 3. Bootstrap Laravel
 /** @var Application $app */
-$app = require_once __DIR__.'/../bootstrap/app.php';
+$app = require_once __DIR__ . '/../bootstrap/app.php';
 
 // 4. Handle incoming HTTP request
 $app->handleRequest(Request::capture());
