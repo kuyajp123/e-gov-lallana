@@ -41,5 +41,14 @@ require __DIR__.'/../vendor/autoload.php';
 /** @var Application $app */
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
-// 4. Handle incoming HTTP request
-$app->handleRequest(Request::capture());
+// 4. Handle incoming HTTP request with exception fallback
+try {
+    $app->handleRequest(Request::capture());
+} catch (Throwable $e) {
+    error_log('LARAVEL_SERVERLESS_CRASH: '.$e->getMessage().' in '.$e->getFile().':'.$e->getLine()."\n".$e->getTraceAsString());
+    if (! headers_sent()) {
+        http_response_code(500);
+        header('Content-Type: text/plain; charset=utf-8');
+        echo "Laravel Serverless Boot Error:\n\n".$e->getMessage()."\n\nFile: ".$e->getFile().':'.$e->getLine()."\n\nTrace:\n".$e->getTraceAsString();
+    }
+}
