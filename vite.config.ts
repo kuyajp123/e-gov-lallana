@@ -24,9 +24,7 @@ export default defineConfig({
             },
         }),
         tailwindcss(),
-        wayfinder({
-            formVariants: true,
-        }),
+        ...(process.env.VERCEL ? [] : [wayfinder({ formVariants: true })]),
     ],
     server: {
         watch: {
