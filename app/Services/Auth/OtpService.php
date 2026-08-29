@@ -122,7 +122,7 @@ class OtpService
             return 0;
         }
 
-        return max(0, (int) $cooldownTimestamp - now()->timestamp);
+        return max(0, ((int) $cooldownTimestamp) - ((int) now()->timestamp));
     }
 
     /**

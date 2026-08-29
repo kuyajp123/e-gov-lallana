@@ -4,6 +4,9 @@ namespace App\Services\Sms\DTOs;
 
 final class SmsResult
 {
+    /**
+     * @param  array<string, mixed>|null  $rawResponse
+     */
     public function __construct(
         public bool $success,
         public string $provider,
@@ -13,6 +16,9 @@ final class SmsResult
         public ?array $rawResponse = null,
     ) {}
 
+    /**
+     * @param  array<string, mixed>|null  $rawResponse
+     */
     public static function success(string $provider, ?string $messageId = null, ?array $rawResponse = null): self
     {
         return new self(
@@ -23,6 +29,9 @@ final class SmsResult
         );
     }
 
+    /**
+     * @param  array<string, mixed>|null  $rawResponse
+     */
     public static function failure(string $provider, string $errorCode, string $errorMessage, ?array $rawResponse = null): self
     {
         return new self(

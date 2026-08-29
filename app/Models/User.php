@@ -23,6 +23,7 @@ use Illuminate\Support\Carbon;
  * @property string $status
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read Role|null $role
  */
 class User extends Authenticatable
 {
@@ -53,6 +54,9 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * @return BelongsTo<Role, $this>
+     */
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
