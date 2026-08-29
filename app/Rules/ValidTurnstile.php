@@ -24,7 +24,7 @@ class ValidTurnstile implements ValidationRule
             return;
         }
 
-        $secretKey = config('services.turnstile.secret_key', env('TURNSTILE_SECRET_KEY'));
+        $secretKey = config('services.turnstile.secret_key');
 
         // If in local/testing and using Cloudflare dummy test keys or no secret set
         if (app()->environment('local', 'testing') && (empty($secretKey) || $value === '1x00000000000000000000AA' || str_starts_with($value, '1x00000000000000000000AA'))) {
