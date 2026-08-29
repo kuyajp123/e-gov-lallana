@@ -78,6 +78,12 @@ npm run format
 
 ---
 
-## 4. Continuous Integration (CI)
+## 4. Local-First Test Strategy
 
-On every **Push** or **Pull Request** to `main` or `staging`, GitHub Actions automatically runs `composer ci:check` (`composer test:all`), guaranteeing that no pull request can be merged unless all linters, static analyzers, and 55 tests pass with a 100% green checkmark.
+All testing and quality checks run locally on demand using `composer test:all` (or `npm test`). This keeps your workflow fast and avoids consuming GitHub Actions cloud compute minutes.
+
+Before pushing to `main` or `staging`, run:
+```bash
+composer test:all
+```
+Once all 55 tests, linters, and type checks pass locally, you can safely commit and push.
