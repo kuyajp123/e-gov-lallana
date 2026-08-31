@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,8 +26,9 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Role|null $role
+ * @property-read ResidentProfile|null $residentProfile
  */
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
@@ -55,6 +58,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Determine whether the user can access the given Filament panel.
+     */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->isAdmin() || $this->isSubAdmin();
+    }
+
+    /**
      * @return BelongsTo<Role, $this>
      */
     public function role(): BelongsTo
@@ -62,16 +73,25 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
+    /**
+     * @return HasOne<ResidentProfile, $this>
+     */
     public function residentProfile(): HasOne
     {
         return $this->hasOne(ResidentProfile::class);
     }
 
+    /**
+     * @return HasMany<Household, $this>
+     */
     public function households(): HasMany
     {
         return $this->hasMany(Household::class, 'family_head_id');
     }
 
+    /**
+     * @return HasMany<DocumentRequest, $this>
+     */
     public function documentRequests(): HasMany
     {
         return $this->hasMany(DocumentRequest::class);
