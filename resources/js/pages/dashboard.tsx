@@ -5,6 +5,7 @@ import {
     Clock,
     FileText,
     Home,
+    PackageCheck,
     ShieldAlert,
     ShieldCheck,
     User,
@@ -29,6 +30,7 @@ import type { BreadcrumbItem } from '@/shared/types';
 
 interface DashboardProps {
     isProfileComplete: boolean;
+    isHouseholdVerified: boolean;
     household: {
         id: number;
         household_code: string;
@@ -39,6 +41,20 @@ interface DashboardProps {
         members_count: number;
         is_family_head: boolean;
     } | null;
+    documentStats: {
+        total_requests: number;
+        active_requests: number;
+        ready_for_pickup: number;
+        latest_request: {
+            id: number;
+            reference_code: string;
+            document_name: string;
+            status: string;
+            status_label: string;
+            status_color: string;
+            submitted_at?: string | null;
+        } | null;
+    };
     announcements: Array<{
         id: number;
         title: string;
@@ -58,7 +74,14 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Dashboard({
     isProfileComplete = false,
+    isHouseholdVerified = false,
     household = null,
+    documentStats = {
+        total_requests: 0,
+        active_requests: 0,
+        ready_for_pickup: 0,
+        latest_request: null,
+    },
     announcements = [],
 }: DashboardProps) {
     const { auth } = usePage().props;
@@ -131,6 +154,36 @@ export default function Dashboard({
                                 <Link href="/resident/profile/edit">
                                     Complete Profile →
                                 </Link>
+                            </Button>
+                        </div>
+                    </Alert>
+                )}
+
+                {/* Ready for Pickup Banner if any */}
+                {documentStats.ready_for_pickup > 0 && (
+                    <Alert className="rounded-2xl border-emerald-500/50 bg-emerald-500/10 text-emerald-900 dark:text-emerald-200">
+                        <PackageCheck className="size-5 text-emerald-600 dark:text-emerald-400" />
+                        <div className="flex w-full flex-col justify-between gap-3 sm:flex-row sm:items-center">
+                            <div>
+                                <AlertTitle className="font-semibold text-emerald-950 dark:text-emerald-100">
+                                    Document Ready for Pickup!
+                                </AlertTitle>
+                                <AlertDescription className="mt-1 text-xs text-emerald-800 dark:text-emerald-300">
+                                    You have {documentStats.ready_for_pickup}{' '}
+                                    document{' '}
+                                    {documentStats.ready_for_pickup === 1
+                                        ? 'request'
+                                        : 'requests'}{' '}
+                                    waiting for physical pickup at the Barangay
+                                    Hall.
+                                </AlertDescription>
+                            </div>
+                            <Button
+                                asChild
+                                size="sm"
+                                className="shrink-0 bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-emerald-500 dark:text-gray-950"
+                            >
+                                <Link href="/documents">View Requests →</Link>
                             </Button>
                         </div>
                     </Alert>
@@ -268,49 +321,73 @@ export default function Dashboard({
                     {/* Document Requests Quick CTA */}
                     <Card className="flex flex-col justify-between rounded-2xl border-border md:col-span-2 lg:col-span-1">
                         <CardHeader className="pb-3">
-                            <CardTitle className="flex items-center gap-2 text-base font-bold">
-                                <FileText className="size-4 text-primary" />
-                                Document Services
-                            </CardTitle>
+                            <div className="flex items-center justify-between">
+                                <CardTitle className="flex items-center gap-2 text-base font-bold">
+                                    <FileText className="size-4 text-primary" />
+                                    Document Services
+                                </CardTitle>
+                                {documentStats.total_requests > 0 && (
+                                    <Badge
+                                        variant="secondary"
+                                        className="text-[10px]"
+                                    >
+                                        {documentStats.total_requests} Requests
+                                    </Badge>
+                                )}
+                            </div>
                             <CardDescription className="text-xs">
                                 Barangay Clearance & Certifications
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-3 pt-0">
-                            <div className="rounded-lg bg-muted/40 p-3 text-xs text-muted-foreground">
-                                {household?.status === 'verified' ? (
-                                    <p className="font-medium text-emerald-700 dark:text-emerald-300">
-                                        ✨ Online document requesting is
-                                        unlocked for your verified household!
-                                    </p>
-                                ) : (
-                                    <p>
+                            {isHouseholdVerified ? (
+                                <div className="space-y-2">
+                                    <div className="flex justify-between border-b border-border/50 py-1 text-xs">
+                                        <span className="text-muted-foreground">
+                                            Active Requests:
+                                        </span>
+                                        <span className="font-medium">
+                                            {documentStats.active_requests}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between border-b border-border/50 py-1 text-xs">
+                                        <span className="text-muted-foreground">
+                                            Ready for Pickup:
+                                        </span>
+                                        <span
+                                            className={`font-medium ${documentStats.ready_for_pickup > 0 ? 'font-bold text-emerald-600' : ''}`}
+                                        >
+                                            {documentStats.ready_for_pickup}
+                                        </span>
+                                    </div>
+                                    <Button
+                                        asChild
+                                        size="sm"
+                                        className="mt-2 w-full"
+                                    >
+                                        <Link href="/documents">
+                                            Request & Track Documents →
+                                        </Link>
+                                    </Button>
+                                </div>
+                            ) : (
+                                <div className="space-y-3 pt-2">
+                                    <div className="rounded-lg bg-amber-500/10 p-3 text-xs text-amber-900 dark:text-amber-200">
                                         🔒 Document requesting requires an
-                                        approved and verified household.
-                                    </p>
-                                )}
-                            </div>
-                            <Button
-                                asChild
-                                variant={
-                                    household?.status === 'verified'
-                                        ? 'default'
-                                        : 'secondary'
-                                }
-                                size="sm"
-                                className="w-full"
-                                disabled={household?.status !== 'verified'}
-                            >
-                                <Link
-                                    href={
-                                        household?.status === 'verified'
-                                            ? '/documents/request'
-                                            : '/household'
-                                    }
-                                >
-                                    Request Barangay Document
-                                </Link>
-                            </Button>
+                                        approved and verified household record.
+                                    </div>
+                                    <Button
+                                        asChild
+                                        variant="outline"
+                                        size="sm"
+                                        className="w-full"
+                                    >
+                                        <Link href="/household">
+                                            Check Household Status
+                                        </Link>
+                                    </Button>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
                 </div>

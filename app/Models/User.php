@@ -37,6 +37,7 @@ class User extends Authenticatable implements FilamentUser
         'role_id',
         'name',
         'email',
+        'email_verified_at',
         'phone_number',
         'phone_verified_at',
         'password',
@@ -110,5 +111,32 @@ class User extends Authenticatable implements FilamentUser
     public function isResident(): bool
     {
         return $this->role?->slug === 'resident' || $this->role === null;
+    }
+
+    /**
+     * Get the user's primary household (either as family head or registered member).
+     */
+    public function household(): ?Household
+    {
+        return Household::where('family_head_id', $this->id)
+            ->orWhereHas('members', fn ($query) => $query->where('user_id', $this->id))
+            ->first();
+    }
+
+    /**
+     * Check if the user belongs to a verified household.
+     */
+    public function belongsToVerifiedHousehold(): bool
+    {
+        if ($this->isAdmin() || $this->isSubAdmin()) {
+            return true;
+        }
+
+        return Household::where('status', 'verified')
+            ->where(function ($query) {
+                $query->where('family_head_id', $this->id)
+                    ->orWhereHas('members', fn ($q) => $q->where('user_id', $this->id));
+            })
+            ->exists();
     }
 }

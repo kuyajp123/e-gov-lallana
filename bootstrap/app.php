@@ -19,6 +19,8 @@ $app = Application::configure(basePath: dirname(__DIR__))
         $middleware->trustProxies(at: '*');
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
+        $middleware->redirectUsersTo(fn (Request $request): string => $request->user()?->isAdmin() || $request->user()?->isSubAdmin() ? '/admin' : '/dashboard');
+
         $middleware->web(append: [
             SetLocale::class,
             HandleAppearance::class,

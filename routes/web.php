@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Dev\DevSmsController;
+use App\Http\Controllers\Document\DocumentRequestController;
 use App\Http\Controllers\Household\HouseholdController;
 use App\Http\Controllers\Household\HouseholdHeadTransferController;
 use App\Http\Controllers\Household\HouseholdMemberController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\Public\LandingPageController;
 use App\Http\Controllers\Public\LocaleController;
 use App\Http\Controllers\Resident\ProfileAvatarController;
 use App\Http\Controllers\Resident\ProfileController;
+use App\Http\Middleware\EnsureHouseholdIsVerified;
 use App\Http\Middleware\EnsureProfileIsComplete;
 use Illuminate\Support\Facades\Route;
 
@@ -48,6 +50,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::put('/members/{member}', [HouseholdMemberController::class, 'update'])->name('members.update');
             Route::delete('/members/{member}', [HouseholdMemberController::class, 'destroy'])->name('members.destroy');
             Route::post('/transfer-head', [HouseholdHeadTransferController::class, 'store'])->name('transfer-head');
+        });
+
+        // Document Request Routes
+        Route::prefix('documents')->name('documents.')->group(function () {
+            Route::get('/', [DocumentRequestController::class, 'index'])->name('index');
+            Route::get('/{documentRequest}', [DocumentRequestController::class, 'show'])->name('show')->whereNumber('documentRequest');
+
+            // Submission and mutation actions require verified household
+            Route::middleware([EnsureHouseholdIsVerified::class])->group(function () {
+                Route::get('/create/{documentType:slug}', [DocumentRequestController::class, 'create'])->name('create');
+                Route::post('/', [DocumentRequestController::class, 'store'])->name('store');
+                Route::get('/{documentRequest}/edit', [DocumentRequestController::class, 'edit'])->name('edit')->whereNumber('documentRequest');
+                Route::put('/{documentRequest}', [DocumentRequestController::class, 'update'])->name('update')->whereNumber('documentRequest');
+                Route::post('/{documentRequest}/cancel', [DocumentRequestController::class, 'cancel'])->name('cancel')->whereNumber('documentRequest');
+            });
         });
     });
 });

@@ -34,10 +34,10 @@ test('admin can access filament admin panel', function () {
     $response->assertOk();
 });
 
-test('resident user is forbidden from accessing filament admin panel', function () {
+test('resident user is blocked with 404 from accessing filament admin panel', function () {
     $response = $this->actingAs($this->resident)->get('/admin');
 
-    $response->assertForbidden();
+    $response->assertNotFound();
 });
 
 test('admin can approve household registration', function () {

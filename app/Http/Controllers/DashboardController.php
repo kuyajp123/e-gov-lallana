@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\DocumentRequestStatus;
 use App\Models\Announcement;
+use App\Models\DocumentRequest;
 use App\Models\Household;
 use App\Models\ResidentProfile;
 use App\Models\User;
@@ -32,13 +34,35 @@ class DashboardController extends Controller
             ->orWhereHas('members', fn ($query) => $query->where('user_id', $user->id))
             ->first();
 
+        $isHouseholdVerified = $user->belongsToVerifiedHousehold();
+
         $announcements = Announcement::where('is_published', true)
             ->orderByDesc('published_at')
             ->take(3)
             ->get(['id', 'title', 'slug', 'excerpt', 'category', 'published_at']);
 
+        // Document request statistics for the resident
+        $userRequestsQuery = DocumentRequest::where('user_id', $user->id);
+        $totalRequests = (clone $userRequestsQuery)->count();
+        $activeRequests = (clone $userRequestsQuery)
+            ->whereIn('current_status', [
+                DocumentRequestStatus::Pending->value,
+                DocumentRequestStatus::Processing->value,
+                DocumentRequestStatus::OnHold->value,
+            ])
+            ->count();
+        $readyForPickup = (clone $userRequestsQuery)
+            ->where('current_status', DocumentRequestStatus::ReadyForPickup->value)
+            ->count();
+
+        $latestRequest = (clone $userRequestsQuery)
+            ->with('documentType')
+            ->orderByDesc('submitted_at')
+            ->first();
+
         return Inertia::render('dashboard', [
             'isProfileComplete' => $isProfileComplete,
+            'isHouseholdVerified' => $isHouseholdVerified,
             'household' => $household ? [
                 'id' => $household->id,
                 'household_code' => $household->household_code,
@@ -49,6 +73,20 @@ class DashboardController extends Controller
                 'members_count' => $household->members->count(),
                 'is_family_head' => $household->family_head_id === $user->id,
             ] : null,
+            'documentStats' => [
+                'total_requests' => $totalRequests,
+                'active_requests' => $activeRequests,
+                'ready_for_pickup' => $readyForPickup,
+                'latest_request' => $latestRequest ? [
+                    'id' => $latestRequest->id,
+                    'reference_code' => $latestRequest->reference_code,
+                    'document_name' => $latestRequest->documentType->name,
+                    'status' => $latestRequest->current_status->value,
+                    'status_label' => $latestRequest->current_status->label(),
+                    'status_color' => $latestRequest->current_status->color(),
+                    'submitted_at' => $latestRequest->submitted_at?->toISOString(),
+                ] : null,
+            ],
             'announcements' => $announcements,
         ]);
     }
