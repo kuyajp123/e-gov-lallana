@@ -10,8 +10,8 @@
   },
   "routes": [
     {
-      "src": "/build/(.*)",
-      "dest": "/public/build/$1"
+      "src": "/(build|css|js|fonts|images|storage)/(.*)",
+      "dest": "/public/$1/$2"
     },
     {
       "src": "/(favicon.ico|favicon.svg|apple-touch-icon.png|robots.txt|lallana-icon.png|hero-bg.jpg)",
