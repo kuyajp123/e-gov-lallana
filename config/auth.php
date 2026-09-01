@@ -114,4 +114,31 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Super Administrators Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Initial Super Administrators defined in the environment as JSON objects
+    | e.g. SUPER_ADMINS='[{"name": "Admin", "email": "admin@example.com", "password": "secret"}]'
+    |
+    */
+
+    'super_admins' => (function (): array {
+        $raw = env('SUPER_ADMINS') ?? env('SUPER_ADMIN_EMAILS');
+        if (empty($raw)) {
+            return [];
+        }
+
+        $decoded = json_decode((string) $raw, true);
+        if (is_array($decoded)) {
+            return $decoded;
+        }
+
+        return array_map(
+            fn (string $email): array => ['email' => trim($email), 'name' => 'Barangay Administrator'],
+            array_filter(explode(',', (string) $raw))
+        );
+    })(),
+
 ];

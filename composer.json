@@ -12,6 +12,7 @@
         "php": "^8.3",
         "dompdf/dompdf": "^3.1",
         "f9webltd/simple-qrcode": "^5.0",
+        "filament/filament": "^5.7",
         "inertiajs/inertia-laravel": "^3.0",
         "intervention/image-laravel": "^4.1",
         "laravel/chisel": "^0.1.0",

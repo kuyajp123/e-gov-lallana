@@ -3,7 +3,7 @@
 test('login page loads in browser without javascript errors', function () {
     $page = visit('/login');
 
-    $page->assertSee('Log in')
+    $page->assertSee('Log in to your account')
         ->assertNoJavaScriptErrors();
 });
 

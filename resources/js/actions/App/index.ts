@@ -1,6 +1,8 @@
-import Http from './Http';
+import Filament from './Filament'
+import Http from './Http'
 const App = {
-    Http: Object.assign(Http, Http),
-};
+    Filament: Object.assign(Filament, Filament),
+Http: Object.assign(Http, Http),
+}
 
-export default App;
+export default App

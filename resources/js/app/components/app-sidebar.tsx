@@ -1,6 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-react';
-import { NavFooter } from '@/app/components/nav-footer';
+import { FileText, Home, LayoutGrid, UserCircle } from 'lucide-react';
 import { NavMain } from '@/app/components/nav-main';
 import { NavUser } from '@/app/components/nav-user';
 import { dashboard } from '@/routes';
@@ -22,18 +21,20 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
-];
-
-const footerNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: FolderGit2,
+        title: 'My Household',
+        href: '/household',
+        icon: Home,
     },
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
+        title: 'Document Requests',
+        href: '/documents',
+        icon: FileText,
+    },
+    {
+        title: 'Resident Profile',
+        href: '/resident/profile',
+        icon: UserCircle,
     },
 ];
 
@@ -57,7 +58,6 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>
         </Sidebar>
