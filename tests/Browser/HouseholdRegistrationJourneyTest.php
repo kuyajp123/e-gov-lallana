@@ -23,7 +23,7 @@ test('resident can navigate to household registration page in browser', function
 });
 
 test('resident can view resident profile page in browser', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->create(['name' => 'Maria Santos']);
     ResidentProfile::create([
         'user_id' => $user->id,
         'first_name' => 'Maria',
@@ -36,7 +36,9 @@ test('resident can view resident profile page in browser', function () {
 
     $page = $this->actingAs($user)->visit('/resident/profile');
 
-    $page->assertSee('Maria Santos')
-        ->assertSee('Personal Information')
+    $page->assertSee('Resident Profile & KYC')
+        ->assertSee('KYC Complete')
+        ->assertValue('#first_name', 'Maria')
+        ->assertValue('#last_name', 'Santos')
         ->assertNoJavaScriptErrors();
 });

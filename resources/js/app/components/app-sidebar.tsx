@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { FileText, Home, LayoutGrid, UserCircle } from 'lucide-react';
+import { FileText, Home, LayoutGrid } from 'lucide-react';
 import { NavMain } from '@/app/components/nav-main';
 import { NavUser } from '@/app/components/nav-user';
 import { dashboard } from '@/routes';
@@ -30,11 +30,6 @@ const mainNavItems: NavItem[] = [
         title: 'Document Requests',
         href: '/documents',
         icon: FileText,
-    },
-    {
-        title: 'Resident Profile',
-        href: '/resident/profile',
-        icon: UserCircle,
     },
 ];
 

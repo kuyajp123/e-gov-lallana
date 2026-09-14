@@ -7,6 +7,7 @@ use App\Http\Controllers\Household\HouseholdController;
 use App\Http\Controllers\Household\HouseholdHeadTransferController;
 use App\Http\Controllers\Household\HouseholdMemberController;
 use App\Http\Controllers\Household\HouseholdRegistrationController;
+use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\Public\InquiryController;
 use App\Http\Controllers\Public\LandingPageController;
 use App\Http\Controllers\Public\LocaleController;
@@ -25,10 +26,17 @@ Route::post('/locale', LocaleController::class)->name('locale.switch');
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
+    // In-App Notifications
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::patch('/{id}/read', [NotificationController::class, 'markAsRead'])->name('read');
+        Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])->name('read-all');
+    });
+
     // Resident Profile (KYC) Routes
     Route::prefix('resident/profile')->name('resident.profile.')->group(function () {
-        Route::get('/', [ProfileController::class, 'show'])->name('show');
-        Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
+        Route::get('/', fn () => redirect()->route('profile.edit'))->name('show');
+        Route::get('/edit', fn () => redirect()->route('profile.edit'))->name('edit');
         Route::post('/', [ProfileController::class, 'store'])->name('store');
         Route::put('/', [ProfileController::class, 'update'])->name('update');
         Route::post('/avatar', [ProfileAvatarController::class, 'update'])->name('avatar');

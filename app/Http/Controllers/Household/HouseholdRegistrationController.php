@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Household;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Household\RegisterHouseholdRequest;
+use App\Mail\HouseholdRegistrationOtpMail;
 use App\Models\Household;
 use App\Models\HouseholdMember;
 use App\Models\ResidentProfile;
@@ -15,9 +16,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
 class HouseholdRegistrationController extends Controller
 {
@@ -94,14 +98,38 @@ class HouseholdRegistrationController extends Controller
                 $identifier,
                 "Your Barangay Lallana household registration OTP code is: {$otp}. Valid for 5 minutes."
             );
+        } elseif ($channel === 'email') {
+            try {
+                Mail::to($identifier)->send(
+                    new HouseholdRegistrationOtpMail(
+                        residentName: $user->name,
+                        otpCode: $otp
+                    )
+                );
+            } catch (Throwable $e) {
+                Log::error('Failed to send household registration OTP email: '.$e->getMessage(), [
+                    'user_id' => $user->id,
+                    'email' => $identifier,
+                ]);
+            }
         }
 
-        return response()->json([
+        if (app()->environment('local')) {
+            Log::info("Household Registration OTP for [{$identifier}]: {$otp}");
+        }
+
+        $payload = [
             'success' => true,
             'message' => "OTP code dispatched via {$channel}.",
             'channel' => $channel,
             'cooldown' => OtpService::COOLDOWN_SECONDS,
-        ]);
+        ];
+
+        if (app()->environment('local')) {
+            $payload['dev_code'] = $otp;
+        }
+
+        return response()->json($payload);
     }
 
     public function verifyOtp(Request $request, OtpService $otpService): JsonResponse

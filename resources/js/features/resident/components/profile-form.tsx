@@ -1,6 +1,12 @@
 import { useForm } from '@inertiajs/react';
+import { AlertCircle } from 'lucide-react';
 import React, { useState } from 'react';
 import { IdUploadDropzone } from '@/features/resident/components/id-upload-dropzone';
+import {
+    Alert,
+    AlertDescription,
+    AlertTitle,
+} from '@/shared/components/ui/alert';
 import { Button } from '@/shared/components/ui/button';
 import { Checkbox } from '@/shared/components/ui/checkbox';
 import { Input } from '@/shared/components/ui/input';
@@ -13,6 +19,7 @@ import {
     SelectValue,
 } from '@/shared/components/ui/select';
 import { Spinner } from '@/shared/components/ui/spinner';
+import { cn } from '@/shared/lib/utils';
 
 export interface ResidentProfileData {
     id?: number;
@@ -49,6 +56,46 @@ interface ProfileFormProps {
     method?: 'post' | 'put';
 }
 
+type TabId = 'personal' | 'demographics' | 'special' | 'id';
+
+const TAB_FIELDS: Record<TabId, string[]> = {
+    personal: [
+        'first_name',
+        'middle_name',
+        'last_name',
+        'suffix',
+        'birthdate',
+        'gender',
+        'civil_status',
+        'citizenship',
+        'religion',
+    ],
+    demographics: [
+        'residency_status',
+        'date_of_residency',
+        'occupation',
+        'educational_attainment',
+        'employment_status',
+        'is_voter',
+        'voter_id_number',
+    ],
+    special: [
+        'senior_citizen_status',
+        'pwd_status',
+        'pwd_id_number',
+        'solo_parent_status',
+        'solo_parent_id_number',
+    ],
+    id: ['government_id'],
+};
+
+const TAB_LABELS: Record<TabId, string> = {
+    personal: '1. Personal Details',
+    demographics: '2. Demographics & Work',
+    special: '3. Special Classifications',
+    id: '4. Government ID',
+};
+
 export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
     // Split user's name if first profile creation
     const nameParts = (user?.name || '').trim().split(' ');
@@ -84,15 +131,33 @@ export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
         government_id: null as File | null,
     });
 
-    const [activeTab, setActiveTab] = useState<
-        'personal' | 'demographics' | 'special' | 'id'
-    >('personal');
+    const [activeTab, setActiveTab] = useState<TabId>('personal');
+
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const maxBirthdate = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+
+    const getTabErrorCount = (tabId: TabId) => {
+        return TAB_FIELDS[tabId].filter((field) =>
+            Boolean(errors[field as keyof typeof errors]),
+        ).length;
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post(submitUrl, {
             forceFormData: true,
             preserveScroll: true,
+            onError: (errs) => {
+                const errorKeys = Object.keys(errs);
+
+                for (const [tabId, fields] of Object.entries(TAB_FIELDS)) {
+                    if (fields.some((field) => errorKeys.includes(field))) {
+                        setActiveTab(tabId as TabId);
+                        break;
+                    }
+                }
+            },
         });
     };
 
@@ -100,39 +165,79 @@ export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
         <form onSubmit={handleSubmit} className="space-y-8">
             {/* Step / Section Navigation Tabs */}
             <div className="flex flex-wrap gap-2 border-b border-border pb-3">
-                <Button
-                    type="button"
-                    variant={activeTab === 'personal' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setActiveTab('personal')}
-                >
-                    1. Personal Details
-                </Button>
-                <Button
-                    type="button"
-                    variant={activeTab === 'demographics' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setActiveTab('demographics')}
-                >
-                    2. Demographics & Work
-                </Button>
-                <Button
-                    type="button"
-                    variant={activeTab === 'special' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setActiveTab('special')}
-                >
-                    3. Special Classifications
-                </Button>
-                <Button
-                    type="button"
-                    variant={activeTab === 'id' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setActiveTab('id')}
-                >
-                    4. Government ID
-                </Button>
+                {(Object.keys(TAB_LABELS) as TabId[]).map((tabId) => {
+                    const errorCount = getTabErrorCount(tabId);
+
+                    return (
+                        <Button
+                            key={tabId}
+                            type="button"
+                            variant={activeTab === tabId ? 'default' : 'ghost'}
+                            size="sm"
+                            onClick={() => setActiveTab(tabId)}
+                            className={cn(
+                                errorCount > 0 &&
+                                    'border border-destructive text-destructive hover:text-destructive',
+                            )}
+                        >
+                            {TAB_LABELS[tabId]}
+                            {errorCount > 0 && (
+                                <span className="ml-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">
+                                    {errorCount}
+                                </span>
+                            )}
+                        </Button>
+                    );
+                })}
             </div>
+
+            {/* Validation Errors Notice */}
+            {Object.keys(errors).length > 0 && (
+                <Alert
+                    variant="destructive"
+                    className="border-destructive/50 bg-destructive/10 text-destructive dark:border-destructive/40 dark:bg-destructive/20"
+                >
+                    <AlertCircle className="size-4" />
+                    <AlertTitle className="font-semibold">
+                        Please correct the following (
+                        {Object.keys(errors).length}) error(s):
+                    </AlertTitle>
+                    <AlertDescription className="text-xs">
+                        <ul className="mt-1.5 list-inside list-disc space-y-1">
+                            {Object.entries(errors).map(([field, msg]) => {
+                                const tabKey = (
+                                    Object.keys(TAB_FIELDS) as TabId[]
+                                ).find((tab) =>
+                                    TAB_FIELDS[tab].includes(field),
+                                );
+                                const label = tabKey
+                                    ? TAB_LABELS[tabKey]
+                                    : 'Details';
+
+                                return (
+                                    <li key={field}>
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                tabKey && setActiveTab(tabKey)
+                                            }
+                                            className="underline hover:opacity-80"
+                                        >
+                                            <span className="font-semibold">
+                                                [{label}]
+                                            </span>{' '}
+                                            <span className="capitalize">
+                                                {field.replace(/_/g, ' ')}
+                                            </span>
+                                            : {msg}
+                                        </button>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </AlertDescription>
+                </Alert>
+            )}
 
             {/* Tab 1: Personal Details */}
             {activeTab === 'personal' && (
@@ -205,6 +310,10 @@ export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
                                     setData('last_name', e.target.value)
                                 }
                                 placeholder="e.g. Santos"
+                                className={cn(
+                                    errors.last_name &&
+                                        'border-destructive focus-visible:ring-destructive',
+                                )}
                                 required
                             />
                             {errors.last_name && (
@@ -222,10 +331,15 @@ export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
                             <Input
                                 id="birthdate"
                                 type="date"
+                                max={maxBirthdate}
                                 value={data.birthdate}
                                 onChange={(e) =>
                                     setData('birthdate', e.target.value)
                                 }
+                                className={cn(
+                                    errors.birthdate &&
+                                        'border-destructive focus-visible:ring-destructive',
+                                )}
                                 required
                             />
                             {errors.birthdate && (

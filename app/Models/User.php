@@ -98,6 +98,38 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(DocumentRequest::class);
     }
 
+    /**
+     * @return HasMany<AppNotification, $this>
+     */
+    public function appNotifications(): HasMany
+    {
+        return $this->hasMany(AppNotification::class);
+    }
+
+    /**
+     * @return HasOne<NotificationPreference, $this>
+     */
+    public function notificationPreference(): HasOne
+    {
+        return $this->hasOne(NotificationPreference::class);
+    }
+
+    /**
+     * Get or create user notification preferences.
+     */
+    public function getNotificationPreference(): NotificationPreference
+    {
+        return $this->notificationPreference ?? NotificationPreference::firstOrCreate(
+            ['user_id' => $this->id],
+            [
+                'preferred_channel' => 'email',
+                'notify_document_updates' => true,
+                'notify_household_updates' => true,
+                'notify_announcements' => true,
+            ]
+        );
+    }
+
     public function isAdmin(): bool
     {
         return $this->role?->slug === 'admin';

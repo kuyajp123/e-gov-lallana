@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Households\Tables;
 
 use App\Models\Household;
+use App\Services\Notification\NotificationService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -103,6 +104,15 @@ class HouseholdsTable
                             ->body("Household {$record->household_code} has been approved successfully.")
                             ->success()
                             ->send();
+
+                        app(NotificationService::class)->send(
+                            $record->familyHead,
+                            'household_verified',
+                            'Household Registration Approved',
+                            "Your household registration ({$record->household_code}) has been approved and is now officially verified.",
+                            '/household',
+                            $record
+                        );
                     }),
                 Action::make('return')
                     ->label('Return for Correction')
@@ -136,6 +146,15 @@ class HouseholdsTable
                             ->body("Household {$record->household_code} returned with review remarks.")
                             ->info()
                             ->send();
+
+                        app(NotificationService::class)->send(
+                            $record->familyHead,
+                            'household_returned',
+                            'Household Returned for Correction',
+                            "Your household registration ({$record->household_code}) was returned for correction: {$data['review_notes']}",
+                            '/household/edit',
+                            $record
+                        );
                     }),
                 Action::make('reject')
                     ->label('Reject')
@@ -169,6 +188,15 @@ class HouseholdsTable
                             ->body("Household {$record->household_code} has been marked as rejected.")
                             ->warning()
                             ->send();
+
+                        app(NotificationService::class)->send(
+                            $record->familyHead,
+                            'household_rejected',
+                            'Household Registration Rejected',
+                            "Your household registration ({$record->household_code}) was rejected: {$data['review_notes']}",
+                            '/household',
+                            $record
+                        );
                     }),
                 Action::make('restrict')
                     ->label('Restrict')

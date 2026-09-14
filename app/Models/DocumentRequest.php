@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\CancellationReason;
 use App\Enums\DocumentRequestStatus;
 use App\Enums\PaymentStatus;
+use App\Services\Notification\NotificationService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -160,5 +161,43 @@ class DocumentRequest extends Model
             'changed_by_user_id' => $changedByUserId !== null ? (int) $changedByUserId : null,
             'remarks' => $remarks,
         ]);
+
+        $this->sendNotificationForTransition($newStatus, $remarks);
+    }
+
+    protected function sendNotificationForTransition(DocumentRequestStatus $status, ?string $remarks = null): void
+    {
+        $user = $this->user;
+        $docName = $this->documentType->name;
+        $notificationService = app(NotificationService::class);
+
+        if ($status === DocumentRequestStatus::ReadyForPickup) {
+            $notificationService->send(
+                $user,
+                'document_ready_for_pickup',
+                'Document Ready for Pickup',
+                "Your {$docName} (Ref: {$this->reference_code}) is now ready for pickup at the Barangay Hall.",
+                "/documents/{$this->id}",
+                $this
+            );
+        } elseif ($status === DocumentRequestStatus::Returned) {
+            $notificationService->send(
+                $user,
+                'document_returned',
+                'Document Returned for Correction',
+                "Your request (Ref: {$this->reference_code}) was returned for correction".($remarks ? ": {$remarks}" : '.'),
+                "/documents/{$this->id}",
+                $this
+            );
+        } elseif ($status === DocumentRequestStatus::Rejected) {
+            $notificationService->send(
+                $user,
+                'document_rejected',
+                'Document Request Rejected',
+                "Your request (Ref: {$this->reference_code}) was rejected".($remarks ? ": {$remarks}" : '.'),
+                "/documents/{$this->id}",
+                $this
+            );
+        }
     }
 }

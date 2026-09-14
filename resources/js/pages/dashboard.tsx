@@ -151,7 +151,7 @@ export default function Dashboard({
                                 variant="outline"
                                 className="shrink-0 bg-background text-foreground hover:bg-muted"
                             >
-                                <Link href="/resident/profile/edit">
+                                <Link href="/settings/profile">
                                     Complete Profile →
                                 </Link>
                             </Button>
@@ -310,7 +310,7 @@ export default function Dashboard({
                                     size="sm"
                                     className="mt-2 w-full"
                                 >
-                                    <Link href="/resident/profile">
+                                    <Link href="/settings/profile">
                                         Manage Profile →
                                     </Link>
                                 </Button>

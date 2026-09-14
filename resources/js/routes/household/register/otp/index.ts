@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::send
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:59
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:63
  * @route '/household/register/otp/send'
  */
 export const send = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ send.definition = {
 
 /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::send
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:59
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:63
  * @route '/household/register/otp/send'
  */
 send.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ send.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::send
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:59
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:63
  * @route '/household/register/otp/send'
  */
 send.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -35,7 +35,7 @@ send.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::send
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:59
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:63
  * @route '/household/register/otp/send'
  */
     const sendForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -45,7 +45,7 @@ send.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::send
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:59
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:63
  * @route '/household/register/otp/send'
  */
         sendForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -56,7 +56,7 @@ send.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     send.form = sendForm
 /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::verify
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:107
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:135
  * @route '/household/register/otp/verify'
  */
 export const verify = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -71,7 +71,7 @@ verify.definition = {
 
 /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::verify
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:107
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:135
  * @route '/household/register/otp/verify'
  */
 verify.url = (options?: RouteQueryOptions) => {
@@ -80,7 +80,7 @@ verify.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::verify
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:107
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:135
  * @route '/household/register/otp/verify'
  */
 verify.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -90,7 +90,7 @@ verify.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::verify
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:107
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:135
  * @route '/household/register/otp/verify'
  */
     const verifyForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -100,7 +100,7 @@ verify.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::verify
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:107
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:135
  * @route '/household/register/otp/verify'
  */
         verifyForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

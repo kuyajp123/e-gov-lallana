@@ -5,6 +5,7 @@ import { dashboard } from '@/routes';
 import AppLogo from '@/shared/components/app-logo';
 import AppLogoIcon from '@/shared/components/app-logo-icon';
 import { Breadcrumbs } from '@/shared/components/breadcrumbs';
+import { NotificationDropdown } from '@/shared/components/notification-dropdown';
 import {
     Avatar,
     AvatarFallback,
@@ -214,6 +215,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                 ))}
                             </div>
                         </div>
+                        <NotificationDropdown />
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button

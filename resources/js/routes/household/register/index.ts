@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 import otp from './otp'
 /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::store
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:127
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:155
  * @route '/household/register'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -17,7 +17,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::store
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:127
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:155
  * @route '/household/register'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -26,7 +26,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::store
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:127
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:155
  * @route '/household/register'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -36,7 +36,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::store
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:127
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:155
  * @route '/household/register'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -46,7 +46,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::store
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:127
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:155
  * @route '/household/register'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

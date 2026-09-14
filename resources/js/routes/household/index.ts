@@ -81,7 +81,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::register
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:24
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:28
  * @route '/household/register'
  */
 export const register = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -96,7 +96,7 @@ register.definition = {
 
 /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::register
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:24
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:28
  * @route '/household/register'
  */
 register.url = (options?: RouteQueryOptions) => {
@@ -105,7 +105,7 @@ register.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::register
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:24
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:28
  * @route '/household/register'
  */
 register.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -114,7 +114,7 @@ register.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::register
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:24
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:28
  * @route '/household/register'
  */
 register.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -124,7 +124,7 @@ register.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::register
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:24
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:28
  * @route '/household/register'
  */
     const registerForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -134,7 +134,7 @@ register.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::register
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:24
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:28
  * @route '/household/register'
  */
         registerForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -143,7 +143,7 @@ register.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Household\HouseholdRegistrationController::register
- * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:24
+ * @see app/Http/Controllers/Household/HouseholdRegistrationController.php:28
  * @route '/household/register'
  */
         registerForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

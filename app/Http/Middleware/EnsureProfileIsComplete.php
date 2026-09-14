@@ -28,7 +28,7 @@ class EnsureProfileIsComplete
         }
 
         // Allow access to profile completion routes and settings
-        if ($request->routeIs('resident.profile.*') || $request->routeIs('settings.*') || $request->routeIs('logout')) {
+        if ($request->routeIs('resident.profile.*') || $request->routeIs('settings.*') || $request->routeIs('profile.*') || $request->routeIs('logout')) {
             return $next($request);
         }
 
@@ -43,7 +43,7 @@ class EnsureProfileIsComplete
             && ! empty($profile->civil_status);
 
         if (! $isComplete) {
-            return redirect()->route('resident.profile.edit')
+            return redirect()->route('profile.edit')
                 ->with('warning', 'Please complete your resident profile to access barangay services.');
         }
 

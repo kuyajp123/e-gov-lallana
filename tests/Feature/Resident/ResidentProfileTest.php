@@ -10,20 +10,20 @@ beforeEach(function () {
     Storage::fake('public');
 });
 
-test('resident can view resident profile page', function () {
+test('resident can view resident profile page redirects to settings profile', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->get('/resident/profile');
 
-    $response->assertOk();
+    $response->assertRedirect(route('profile.edit'));
 });
 
-test('resident can view resident profile edit form', function () {
+test('resident can view resident profile edit form redirects to settings profile', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->get('/resident/profile/edit');
 
-    $response->assertOk();
+    $response->assertRedirect(route('profile.edit'));
 });
 
 test('resident can complete their resident profile with ID upload', function () {
@@ -52,7 +52,7 @@ test('resident can complete their resident profile with ID upload', function () 
         'government_id' => $idFile,
     ]);
 
-    $response->assertRedirect('/resident/profile');
+    $response->assertRedirect(route('profile.edit'));
 
     $this->assertDatabaseHas('resident_profiles', [
         'user_id' => $user->id,
@@ -60,6 +60,11 @@ test('resident can complete their resident profile with ID upload', function () 
         'last_name' => 'Santos',
         'is_voter' => true,
         'educational_attainment' => 'college',
+    ]);
+
+    $this->assertDatabaseHas('users', [
+        'id' => $user->id,
+        'name' => 'Maria Santos',
     ]);
 
     $profile = ResidentProfile::where('user_id', $user->id)->first();
@@ -86,6 +91,6 @@ test('middleware redirects incomplete resident profiles when accessing household
 
     $response = $this->actingAs($user)->get('/household');
 
-    $response->assertRedirect('/resident/profile/edit');
+    $response->assertRedirect(route('profile.edit'));
     $response->assertSessionHas('warning');
 });

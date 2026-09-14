@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Models\ResidentProfile;
+use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,9 +21,19 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        /** @var User $user */
+        $user = $request->user();
+        /** @var ResidentProfile|null $profile */
+        $profile = $user->residentProfile()->with(['avatar', 'governmentId'])->first();
+
         return Inertia::render('settings/profile', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
+            'profile' => $profile ? [
+                ...$profile->toArray(),
+                'government_id_url' => $profile->governmentId?->getUrl(30),
+                'avatar_url' => $profile->avatar?->getUrl(60),
+            ] : null,
         ]);
     }
 
