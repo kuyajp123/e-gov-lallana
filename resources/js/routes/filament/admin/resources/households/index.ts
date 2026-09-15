@@ -78,84 +78,6 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     index.form = indexForm
 /**
-* @see \App\Filament\Resources\Households\Pages\CreateHousehold::__invoke
- * @see app/Filament/Resources/Households/Pages/CreateHousehold.php:7
- * @route '/admin/households/create'
- */
-export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: create.url(options),
-    method: 'get',
-})
-
-create.definition = {
-    methods: ["get","head"],
-    url: '/admin/households/create',
-} satisfies RouteDefinition<["get","head"]>
-
-/**
-* @see \App\Filament\Resources\Households\Pages\CreateHousehold::__invoke
- * @see app/Filament/Resources/Households/Pages/CreateHousehold.php:7
- * @route '/admin/households/create'
- */
-create.url = (options?: RouteQueryOptions) => {
-    return create.definition.url + queryParams(options)
-}
-
-/**
-* @see \App\Filament\Resources\Households\Pages\CreateHousehold::__invoke
- * @see app/Filament/Resources/Households/Pages/CreateHousehold.php:7
- * @route '/admin/households/create'
- */
-create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: create.url(options),
-    method: 'get',
-})
-/**
-* @see \App\Filament\Resources\Households\Pages\CreateHousehold::__invoke
- * @see app/Filament/Resources/Households/Pages/CreateHousehold.php:7
- * @route '/admin/households/create'
- */
-create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: create.url(options),
-    method: 'head',
-})
-
-    /**
-* @see \App\Filament\Resources\Households\Pages\CreateHousehold::__invoke
- * @see app/Filament/Resources/Households/Pages/CreateHousehold.php:7
- * @route '/admin/households/create'
- */
-    const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: create.url(options),
-        method: 'get',
-    })
-
-            /**
-* @see \App\Filament\Resources\Households\Pages\CreateHousehold::__invoke
- * @see app/Filament/Resources/Households/Pages/CreateHousehold.php:7
- * @route '/admin/households/create'
- */
-        createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: create.url(options),
-            method: 'get',
-        })
-            /**
-* @see \App\Filament\Resources\Households\Pages\CreateHousehold::__invoke
- * @see app/Filament/Resources/Households/Pages/CreateHousehold.php:7
- * @route '/admin/households/create'
- */
-        createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: create.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    create.form = createForm
-/**
 * @see \App\Filament\Resources\Households\Pages\ViewHousehold::__invoke
  * @see app/Filament/Resources/Households/Pages/ViewHousehold.php:7
  * @route '/admin/households/{record}'
@@ -351,7 +273,6 @@ edit.head = (args: { record: string | number } | [record: string | number ] | st
     edit.form = editForm
 const households = {
     index: Object.assign(index, index),
-create: Object.assign(create, create),
 view: Object.assign(view, view),
 edit: Object.assign(edit, edit),
 }

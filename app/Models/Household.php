@@ -12,7 +12,7 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property string $household_code
- * @property int $family_head_id
+ * @property int|null $family_head_id
  * @property string $address
  * @property string $purok_sitio
  * @property string $status
@@ -21,7 +21,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $verified_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read User $familyHead
+ * @property-read User|null $familyHead
  * @property-read Collection<int, HouseholdMember> $members
  * @property-read Verification|null $verification
  */

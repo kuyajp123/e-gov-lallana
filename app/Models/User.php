@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\Household\HouseholdSuccessionService;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -56,6 +57,18 @@ class User extends Authenticatable implements FilamentUser
             'phone_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::deleting(function (User $user) {
+            $successionService = app(HouseholdSuccessionService::class);
+            $households = Household::where('family_head_id', $user->id)->get();
+
+            foreach ($households as $household) {
+                $successionService->handleHeadDeletion($household, deletedHeadUserId: $user->id);
+            }
+        });
     }
 
     /**
@@ -132,7 +145,27 @@ class User extends Authenticatable implements FilamentUser
 
     public function isAdmin(): bool
     {
-        return $this->role?->slug === 'admin';
+        return in_array($this->role?->slug, ['admin', 'super_admin'], true);
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        if ($this->role?->slug === 'super_admin') {
+            return true;
+        }
+
+        $superAdmins = config('auth.super_admins', []);
+        if (! empty($superAdmins)) {
+            $emails = array_map(function ($admin) {
+                return is_array($admin) ? strtolower(trim((string) ($admin['email'] ?? ''))) : strtolower(trim((string) $admin));
+            }, $superAdmins);
+
+            if (in_array(strtolower(trim((string) $this->email)), $emails, true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function isSubAdmin(): bool

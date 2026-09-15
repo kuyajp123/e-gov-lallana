@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Households;
 
-use App\Filament\Resources\Households\Pages\CreateHousehold;
 use App\Filament\Resources\Households\Pages\EditHousehold;
 use App\Filament\Resources\Households\Pages\ListHouseholds;
 use App\Filament\Resources\Households\Pages\ViewHousehold;
@@ -21,6 +20,11 @@ class HouseholdResource extends Resource
     protected static ?string $model = Household::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -48,7 +52,6 @@ class HouseholdResource extends Resource
     {
         return [
             'index' => ListHouseholds::route('/'),
-            'create' => CreateHousehold::route('/create'),
             'view' => ViewHousehold::route('/{record}'),
             'edit' => EditHousehold::route('/{record}/edit'),
         ];

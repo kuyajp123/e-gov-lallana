@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Household\HouseholdController::edit
- * @see app/Http/Controllers/Household/HouseholdController.php:78
+ * @see app/Http/Controllers/Household/HouseholdController.php:90
  * @route '/household/edit'
  */
 export const edit = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\Household\HouseholdController::edit
- * @see app/Http/Controllers/Household/HouseholdController.php:78
+ * @see app/Http/Controllers/Household/HouseholdController.php:90
  * @route '/household/edit'
  */
 edit.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ edit.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Household\HouseholdController::edit
- * @see app/Http/Controllers/Household/HouseholdController.php:78
+ * @see app/Http/Controllers/Household/HouseholdController.php:90
  * @route '/household/edit'
  */
 edit.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ edit.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Household\HouseholdController::edit
- * @see app/Http/Controllers/Household/HouseholdController.php:78
+ * @see app/Http/Controllers/Household/HouseholdController.php:90
  * @route '/household/edit'
  */
 edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Household\HouseholdController::edit
- * @see app/Http/Controllers/Household/HouseholdController.php:78
+ * @see app/Http/Controllers/Household/HouseholdController.php:90
  * @route '/household/edit'
  */
     const editForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Household\HouseholdController::edit
- * @see app/Http/Controllers/Household/HouseholdController.php:78
+ * @see app/Http/Controllers/Household/HouseholdController.php:90
  * @route '/household/edit'
  */
         editForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Household\HouseholdController::edit
- * @see app/Http/Controllers/Household/HouseholdController.php:78
+ * @see app/Http/Controllers/Household/HouseholdController.php:90
  * @route '/household/edit'
  */
         editForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +157,7 @@ edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     edit.form = editForm
 /**
 * @see \App\Http\Controllers\Household\HouseholdController::update
- * @see app/Http/Controllers/Household/HouseholdController.php:114
+ * @see app/Http/Controllers/Household/HouseholdController.php:126
  * @route '/household'
  */
 export const update = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -172,7 +172,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Household\HouseholdController::update
- * @see app/Http/Controllers/Household/HouseholdController.php:114
+ * @see app/Http/Controllers/Household/HouseholdController.php:126
  * @route '/household'
  */
 update.url = (options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ update.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Household\HouseholdController::update
- * @see app/Http/Controllers/Household/HouseholdController.php:114
+ * @see app/Http/Controllers/Household/HouseholdController.php:126
  * @route '/household'
  */
 update.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -191,7 +191,7 @@ update.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
 
     /**
 * @see \App\Http\Controllers\Household\HouseholdController::update
- * @see app/Http/Controllers/Household/HouseholdController.php:114
+ * @see app/Http/Controllers/Household/HouseholdController.php:126
  * @route '/household'
  */
     const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -206,7 +206,7 @@ update.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
 
             /**
 * @see \App\Http\Controllers\Household\HouseholdController::update
- * @see app/Http/Controllers/Household/HouseholdController.php:114
+ * @see app/Http/Controllers/Household/HouseholdController.php:126
  * @route '/household'
  */
         updateForm.put = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

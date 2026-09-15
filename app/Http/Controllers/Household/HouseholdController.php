@@ -22,14 +22,17 @@ class HouseholdController extends Controller
         /** @var Household|null $household */
         $household = Household::with([
             'familyHead.residentProfile.avatar',
-            'members' => fn ($query) => $query->orderByDesc('is_family_head')->orderBy('last_name'),
+            'members' => fn ($query) => $query->with('verification')->orderByDesc('is_family_head')->orderBy('last_name'),
             'verification.reviewer',
         ])
             ->where('family_head_id', $user->id)
             ->orWhereHas('members', fn ($query) => $query->where('user_id', $user->id))
             ->first();
 
-        $isFamilyHead = $household && $household->family_head_id === $user->id;
+        $isFamilyHead = $household && (
+            $household->family_head_id === $user->id ||
+            $household->members()->where('user_id', $user->id)->where('is_family_head', true)->exists()
+        );
 
         return Inertia::render('household/index', [
             'household' => $household ? [
@@ -41,12 +44,18 @@ class HouseholdController extends Controller
                 'notes' => $household->notes,
                 'submitted_at' => $household->submitted_at?->toISOString(),
                 'verified_at' => $household->verified_at?->toISOString(),
-                'family_head' => [
+                'family_head' => $household->familyHead ? [
                     'id' => $household->familyHead->id,
                     'name' => $household->familyHead->name,
                     'email' => $household->familyHead->email,
                     'phone_number' => $household->familyHead->phone_number,
                     'avatar_url' => $household->familyHead->residentProfile?->avatar?->getUrl(60),
+                ] : [
+                    'id' => 0,
+                    'name' => $household->members()->where('is_family_head', true)->first()->full_name ?? 'Family Head',
+                    'email' => '',
+                    'phone_number' => null,
+                    'avatar_url' => null,
                 ],
                 'verification' => $household->verification ? [
                     'status' => $household->verification->status,
@@ -64,6 +73,9 @@ class HouseholdController extends Controller
                     'suffix' => $member->suffix,
                     'relationship_to_head' => $member->relationship_to_head,
                     'is_family_head' => $member->is_family_head,
+                    'is_spouse' => $member->isSpouse(),
+                    'is_verified' => $member->isVerified(),
+                    'is_adult' => $member->isAdult(),
                     'birthdate' => $member->birthdate?->toISOString(),
                     'gender' => $member->gender,
                     'civil_status' => $member->civil_status,

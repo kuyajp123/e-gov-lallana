@@ -3,11 +3,14 @@
 namespace App\Filament\Resources\Households\Tables;
 
 use App\Models\Household;
+use App\Models\HouseholdMember;
+use App\Services\Household\HouseholdSuccessionService;
 use App\Services\Notification\NotificationService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
@@ -78,6 +81,79 @@ class HouseholdsTable
             ])
             ->recordActions([
                 ViewAction::make(),
+                Action::make('transfer_head')
+                    ->label('Transfer Head')
+                    ->icon('heroicon-o-arrows-right-left')
+                    ->color('gray')
+                    ->visible(fn (Household $record): bool => $record->members()->where('is_family_head', false)->exists())
+                    ->schema([
+                        Select::make('new_family_head_member_id')
+                            ->label('Select New Family Head')
+                            ->helperText('Succession priority: Spouse is prioritized first. If no spouse, select a verified adult member.')
+                            ->options(function (Household $record): array {
+                                $members = $record->members()->where('is_family_head', false)->with('verification')->get();
+                                $sorted = $members->sort(function (HouseholdMember $a, HouseholdMember $b) {
+                                    if ($a->isSpouse() && ! $b->isSpouse()) {
+                                        return -1;
+                                    }
+                                    if (! $a->isSpouse() && $b->isSpouse()) {
+                                        return 1;
+                                    }
+
+                                    $aVerifiedAdult = $a->isVerified() && $a->isAdult();
+                                    $bVerifiedAdult = $b->isVerified() && $b->isAdult();
+                                    if ($aVerifiedAdult && ! $bVerifiedAdult) {
+                                        return -1;
+                                    }
+                                    if (! $aVerifiedAdult && $bVerifiedAdult) {
+                                        return 1;
+                                    }
+
+                                    if ($a->isAdult() && ! $b->isAdult()) {
+                                        return -1;
+                                    }
+                                    if (! $a->isAdult() && $b->isAdult()) {
+                                        return 1;
+                                    }
+
+                                    return 0;
+                                });
+
+                                $options = [];
+                                foreach ($sorted as $m) {
+                                    $tag = '';
+                                    if ($m->isSpouse()) {
+                                        $tag = ' [Priority: Spouse]';
+                                    } elseif ($m->isVerified() && $m->isAdult()) {
+                                        $tag = ' [Priority: Verified Adult]';
+                                    } elseif ($m->isAdult()) {
+                                        $tag = ' [Adult]';
+                                    }
+                                    $options[$m->id] = "{$m->full_name} ({$m->relationship_to_head}){$tag}";
+                                }
+
+                                return $options;
+                            })
+                            ->default(function (Household $record): ?int {
+                                return app(HouseholdSuccessionService::class)->findSuccessor($record)?->id;
+                            })
+                            ->required(),
+                    ])
+                    ->action(function (Household $record, array $data): void {
+                        $targetMember = HouseholdMember::where('id', $data['new_family_head_member_id'])
+                            ->where('household_id', $record->id)
+                            ->first();
+
+                        if ($targetMember) {
+                            app(HouseholdSuccessionService::class)->transferHead($record, $targetMember);
+
+                            Notification::make()
+                                ->title('Family Head Transferred')
+                                ->body("Family Head authority transferred to {$targetMember->full_name}.")
+                                ->success()
+                                ->send();
+                        }
+                    }),
                 Action::make('approve')
                     ->label('Approve')
                     ->icon('heroicon-o-check-circle')

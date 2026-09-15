@@ -26,6 +26,9 @@ interface MemberOption {
     full_name: string;
     relationship_to_head: string;
     is_family_head: boolean;
+    is_spouse?: boolean;
+    is_verified?: boolean;
+    is_adult?: boolean;
 }
 
 interface TransferHeadDialogProps {
@@ -34,11 +37,72 @@ interface TransferHeadDialogProps {
 
 export function TransferHeadDialog({ members }: TransferHeadDialogProps) {
     const [open, setOpen] = useState(false);
-    const eligibleMembers = members.filter((m) => !m.is_family_head);
+
+    // Sort eligible members by succession priority:
+    // 1. Spouse first
+    // 2. Verified adult member second
+    // 3. Other adult members third
+    // 4. Other members
+    const eligibleMembers = React.useMemo(() => {
+        return members
+            .filter((m) => !m.is_family_head)
+            .sort((a, b) => {
+                const aSpouse =
+                    a.is_spouse ??
+                    a.relationship_to_head?.toLowerCase() === 'spouse';
+                const bSpouse =
+                    b.is_spouse ??
+                    b.relationship_to_head?.toLowerCase() === 'spouse';
+
+                if (aSpouse && !bSpouse) {
+                    return -1;
+                }
+
+                if (!aSpouse && bSpouse) {
+                    return 1;
+                }
+
+                const aVerifiedAdult = Boolean(a.is_verified && a.is_adult);
+                const bVerifiedAdult = Boolean(b.is_verified && b.is_adult);
+
+                if (aVerifiedAdult && !bVerifiedAdult) {
+                    return -1;
+                }
+
+                if (!aVerifiedAdult && bVerifiedAdult) {
+                    return 1;
+                }
+
+                if (a.is_adult && !b.is_adult) {
+                    return -1;
+                }
+
+                if (!a.is_adult && b.is_adult) {
+                    return 1;
+                }
+
+                return 0;
+            });
+    }, [members]);
+
+    const defaultMemberId = eligibleMembers[0]?.id
+        ? String(eligibleMembers[0].id)
+        : '';
 
     const { data, setData, post, processing, errors, reset } = useForm({
-        new_family_head_member_id: '',
+        new_family_head_member_id: defaultMemberId,
     });
+
+    // Auto-select top priority member when opening
+    React.useEffect(() => {
+        if (
+            open &&
+            eligibleMembers.length > 0 &&
+            !data.new_family_head_member_id
+        ) {
+            setData('new_family_head_member_id', String(eligibleMembers[0].id));
+        }
+    }, [open, eligibleMembers, data.new_family_head_member_id, setData]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -79,11 +143,13 @@ export function TransferHeadDialog({ members }: TransferHeadDialogProps) {
                 <form onSubmit={handleSubmit} className="space-y-4 pt-2">
                     <Alert className="rounded-xl border-amber-500/30 bg-amber-500/10 text-amber-900 dark:text-amber-200">
                         <ShieldAlert className="size-4 text-amber-600 dark:text-amber-400" />
-                        <AlertDescription className="text-xs">
-                            Transferring Family Head authority will grant full
-                            household member management and official
-                            administrative representation to the designated
-                            member.
+                        <AlertDescription className="space-y-1 text-xs">
+                            <p>
+                                <strong>Succession Priority:</strong> The Spouse
+                                is prioritized first. If there is no spouse,
+                                authority is transferred to a verified adult
+                                member.
+                            </p>
                         </AlertDescription>
                     </Alert>
 
@@ -102,15 +168,44 @@ export function TransferHeadDialog({ members }: TransferHeadDialogProps) {
                                 <SelectValue placeholder="Choose a household member" />
                             </SelectTrigger>
                             <SelectContent>
-                                {eligibleMembers.map((member) => (
-                                    <SelectItem
-                                        key={member.id}
-                                        value={member.id.toString()}
-                                    >
-                                        {member.full_name} (
-                                        {member.relationship_to_head})
-                                    </SelectItem>
-                                ))}
+                                {eligibleMembers.map((member) => {
+                                    const isSpouse =
+                                        member.is_spouse ??
+                                        member.relationship_to_head?.toLowerCase() ===
+                                            'spouse';
+                                    const isVerifiedAdult = Boolean(
+                                        member.is_verified && member.is_adult,
+                                    );
+
+                                    return (
+                                        <SelectItem
+                                            key={member.id}
+                                            value={member.id.toString()}
+                                        >
+                                            <div className="flex items-center gap-2">
+                                                <span>
+                                                    {member.full_name} (
+                                                    {
+                                                        member.relationship_to_head
+                                                    }
+                                                    )
+                                                </span>
+                                                {isSpouse && (
+                                                    <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800 dark:bg-amber-950 dark:text-amber-300">
+                                                        Priority: Spouse
+                                                    </span>
+                                                )}
+                                                {!isSpouse &&
+                                                    isVerifiedAdult && (
+                                                        <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                                                            Priority: Verified
+                                                            Adult
+                                                        </span>
+                                                    )}
+                                            </div>
+                                        </SelectItem>
+                                    );
+                                })}
                             </SelectContent>
                         </Select>
                         {errors.new_family_head_member_id && (

@@ -11,6 +11,11 @@ class RoleSeeder extends Seeder
     {
         $roles = [
             [
+                'name' => 'Super Administrator',
+                'slug' => 'super_admin',
+                'description' => 'Unrestricted authority including deletion of resident profiles and critical entities.',
+            ],
+            [
                 'name' => 'Barangay Administrator',
                 'slug' => 'admin',
                 'description' => 'Full administrative access to all modules, records, and approvals.',

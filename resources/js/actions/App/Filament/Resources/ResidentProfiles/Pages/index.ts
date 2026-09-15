@@ -1,10 +1,8 @@
 import ListResidentProfiles from './ListResidentProfiles'
-import CreateResidentProfile from './CreateResidentProfile'
-import EditResidentProfile from './EditResidentProfile'
+import ViewResidentProfile from './ViewResidentProfile'
 const Pages = {
     ListResidentProfiles: Object.assign(ListResidentProfiles, ListResidentProfiles),
-CreateResidentProfile: Object.assign(CreateResidentProfile, CreateResidentProfile),
-EditResidentProfile: Object.assign(EditResidentProfile, EditResidentProfile),
+ViewResidentProfile: Object.assign(ViewResidentProfile, ViewResidentProfile),
 }
 
 export default Pages

@@ -24,6 +24,10 @@ class HouseholdPolicy
 
     public function create(User $user): bool
     {
+        if ($user->isAdmin() || $user->isSubAdmin()) {
+            return false;
+        }
+
         // Any resident who doesn't head a household can create one
         return ! Household::where('family_head_id', $user->id)->exists();
     }

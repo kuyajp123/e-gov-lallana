@@ -23,13 +23,17 @@ class ResidentProfilePolicy
 
     public function create(User $user): bool
     {
+        if ($user->isAdmin() || $user->isSubAdmin()) {
+            return false;
+        }
+
         return ! ResidentProfile::where('user_id', $user->id)->exists();
     }
 
     public function update(User $user, ResidentProfile $profile): bool
     {
-        if ($user->isAdmin()) {
-            return true;
+        if ($user->isAdmin() || $user->isSubAdmin()) {
+            return false;
         }
 
         return $profile->user_id === $user->id;
@@ -37,6 +41,11 @@ class ResidentProfilePolicy
 
     public function delete(User $user, ResidentProfile $profile): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
+    }
+
+    public function deleteAny(User $user): bool
+    {
+        return $user->isSuperAdmin();
     }
 }

@@ -6,7 +6,7 @@ use App\Models\HouseholdMember;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
@@ -78,7 +78,7 @@ class HouseholdMembersTable
                     ]),
             ])
             ->recordActions([
-                EditAction::make(),
+                ViewAction::make(),
                 Action::make('approve_member')
                     ->label('Approve')
                     ->icon('heroicon-o-check-circle')

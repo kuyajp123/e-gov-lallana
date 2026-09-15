@@ -4,9 +4,9 @@ namespace App\Filament\Resources\ResidentProfiles\Pages;
 
 use App\Filament\Resources\ResidentProfiles\ResidentProfileResource;
 use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\ViewRecord;
 
-class EditResidentProfile extends EditRecord
+class ViewResidentProfile extends ViewRecord
 {
     protected static string $resource = ResidentProfileResource::class;
 

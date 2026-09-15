@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\Household\HouseholdSuccessionService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -25,7 +26,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read string $full_name
- * @property-read Household $household
+ * @property-read Household|null $household
  * @property-read User|null $user
  * @property-read Verification|null $verification
  */
@@ -51,6 +52,16 @@ class HouseholdMember extends Model
         'is_family_head' => 'boolean',
         'birthdate' => 'date',
     ];
+
+    protected static function booted(): void
+    {
+        static::deleting(function (HouseholdMember $member) {
+            if ($member->is_family_head && $member->household) {
+                app(HouseholdSuccessionService::class)
+                    ->handleHeadDeletion($member->household, deletedHeadMemberId: $member->id);
+            }
+        });
+    }
 
     /**
      * @return BelongsTo<Household, $this>
@@ -78,6 +89,26 @@ class HouseholdMember extends Model
 
     public function getFullNameAttribute(): string
     {
-        return trim("{$this->first_name} {$this->middle_name} {$this->last_name} {$this->suffix}");
+        return implode(' ', array_filter([
+            $this->first_name,
+            $this->middle_name,
+            $this->last_name,
+            $this->suffix,
+        ]));
+    }
+
+    public function isAdult(): bool
+    {
+        return $this->birthdate !== null && $this->birthdate->diffInYears(now()) >= 18;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->verification?->status === 'approved';
+    }
+
+    public function isSpouse(): bool
+    {
+        return strtolower((string) $this->relationship_to_head) === 'spouse';
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Households\Pages;
 
 use App\Filament\Resources\Households\HouseholdResource;
-use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListHouseholds extends ListRecords
@@ -12,8 +11,6 @@ class ListHouseholds extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [
-            CreateAction::make(),
-        ];
+        return [];
     }
 }

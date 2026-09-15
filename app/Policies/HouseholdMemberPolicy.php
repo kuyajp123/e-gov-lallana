@@ -24,14 +24,18 @@ class HouseholdMemberPolicy
 
     public function create(User $user): bool
     {
+        if ($user->isAdmin() || $user->isSubAdmin()) {
+            return false;
+        }
+
         // Family Head can create members
-        return $user->households()->exists() || $user->isAdmin() || $user->isSubAdmin();
+        return $user->households()->exists();
     }
 
     public function update(User $user, HouseholdMember $member): bool
     {
         if ($user->isAdmin() || $user->isSubAdmin()) {
-            return true;
+            return false;
         }
 
         return $member->household->family_head_id === $user->id;

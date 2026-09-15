@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\ResidentProfiles\Pages;
 
 use App\Filament\Resources\ResidentProfiles\ResidentProfileResource;
-use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListResidentProfiles extends ListRecords
@@ -12,8 +11,6 @@ class ListResidentProfiles extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [
-            CreateAction::make(),
-        ];
+        return [];
     }
 }
