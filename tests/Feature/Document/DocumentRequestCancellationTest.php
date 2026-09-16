@@ -4,6 +4,7 @@ use App\Enums\CancellationReason;
 use App\Enums\DocumentRequestStatus;
 use App\Models\DocumentRequest;
 use App\Models\DocumentType;
+use App\Models\FileRecord;
 use App\Models\Household;
 use App\Models\ResidentProfile;
 use App\Models\Role;
@@ -13,6 +14,14 @@ beforeEach(function () {
     $this->residentRole = Role::firstOrCreate(['slug' => 'resident'], ['name' => 'Resident']);
 
     $this->user = User::factory()->create(['role_id' => $this->residentRole->id]);
+    $file = FileRecord::create([
+        'user_id' => $this->user->id,
+        'file_name' => 'id.png',
+        'disk' => 'local',
+        'path' => 'ids/id.png',
+        'mime_type' => 'image/png',
+        'is_private' => true,
+    ]);
     ResidentProfile::create([
         'user_id' => $this->user->id,
         'first_name' => 'Juan',
@@ -20,6 +29,8 @@ beforeEach(function () {
         'birthdate' => '1990-01-01',
         'gender' => 'male',
         'civil_status' => 'married',
+        'citizenship' => 'Filipino',
+        'government_id_file_id' => $file->id,
     ]);
 
     $this->household = Household::create([

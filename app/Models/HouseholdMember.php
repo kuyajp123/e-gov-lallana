@@ -16,6 +16,9 @@ use Illuminate\Support\Carbon;
  * @property string|null $middle_name
  * @property string $last_name
  * @property string|null $suffix
+ * @property string|null $email
+ * @property string|null $invitation_status
+ * @property Carbon|null $invited_at
  * @property string $relationship_to_head
  * @property bool $is_family_head
  * @property Carbon|null $birthdate
@@ -39,6 +42,9 @@ class HouseholdMember extends Model
         'middle_name',
         'last_name',
         'suffix',
+        'email',
+        'invitation_status',
+        'invited_at',
         'relationship_to_head',
         'is_family_head',
         'birthdate',
@@ -51,6 +57,7 @@ class HouseholdMember extends Model
     protected $casts = [
         'is_family_head' => 'boolean',
         'birthdate' => 'date',
+        'invited_at' => 'datetime',
     ];
 
     protected static function booted(): void
@@ -110,5 +117,20 @@ class HouseholdMember extends Model
     public function isSpouse(): bool
     {
         return strtolower((string) $this->relationship_to_head) === 'spouse';
+    }
+
+    public function isInvitationPending(): bool
+    {
+        return $this->invitation_status === 'pending';
+    }
+
+    public function isInvitationAccepted(): bool
+    {
+        return $this->invitation_status === 'accepted';
+    }
+
+    public function isInvitationRejected(): bool
+    {
+        return $this->invitation_status === 'rejected';
     }
 }

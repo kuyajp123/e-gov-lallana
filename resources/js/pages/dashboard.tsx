@@ -86,8 +86,12 @@ export default function Dashboard({
 }: DashboardProps) {
     const { auth } = usePage().props;
     const user = auth.user;
-    const isAdminUser =
-        user.role?.slug === 'admin' || user.role?.slug === 'sub_admin';
+    const isAdminUser = Boolean(
+        user.can_access_admin ??
+        (user.role?.slug === 'admin' ||
+            user.role?.slug === 'sub_admin' ||
+            user.role?.slug === 'super_admin'),
+    );
 
     return (
         <>

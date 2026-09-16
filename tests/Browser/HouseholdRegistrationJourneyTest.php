@@ -1,10 +1,20 @@
 <?php
 
+use App\Models\FileRecord;
 use App\Models\ResidentProfile;
 use App\Models\User;
 
 test('resident can navigate to household registration page in browser', function () {
     $user = User::factory()->create();
+    $file = FileRecord::create([
+        'user_id' => $user->id,
+        'file_name' => 'id.png',
+        'disk' => 'local',
+        'path' => 'ids/id.png',
+        'mime_type' => 'image/png',
+        'is_private' => true,
+    ]);
+
     ResidentProfile::create([
         'user_id' => $user->id,
         'first_name' => 'Juan',
@@ -13,6 +23,7 @@ test('resident can navigate to household registration page in browser', function
         'gender' => 'male',
         'civil_status' => 'single',
         'citizenship' => 'Filipino',
+        'government_id_file_id' => $file->id,
     ]);
 
     $page = $this->actingAs($user)->visit('/household/register');
@@ -24,6 +35,15 @@ test('resident can navigate to household registration page in browser', function
 
 test('resident can view resident profile page in browser', function () {
     $user = User::factory()->create(['name' => 'Maria Santos']);
+    $file = FileRecord::create([
+        'user_id' => $user->id,
+        'file_name' => 'id.png',
+        'disk' => 'local',
+        'path' => 'ids/id.png',
+        'mime_type' => 'image/png',
+        'is_private' => true,
+    ]);
+
     ResidentProfile::create([
         'user_id' => $user->id,
         'first_name' => 'Maria',
@@ -32,6 +52,7 @@ test('resident can view resident profile page in browser', function () {
         'gender' => 'female',
         'civil_status' => 'married',
         'citizenship' => 'Filipino',
+        'government_id_file_id' => $file->id,
     ]);
 
     $page = $this->actingAs($user)->visit('/resident/profile');

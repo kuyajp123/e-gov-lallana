@@ -19,6 +19,14 @@ beforeEach(function () {
     $this->residentRole = Role::firstOrCreate(['slug' => 'resident'], ['name' => 'Resident']);
 
     $this->verifiedUser = User::factory()->create(['role_id' => $this->residentRole->id]);
+    $file = FileRecord::create([
+        'user_id' => $this->verifiedUser->id,
+        'file_name' => 'id.png',
+        'disk' => 'local',
+        'path' => 'ids/id.png',
+        'mime_type' => 'image/png',
+        'is_private' => true,
+    ]);
     ResidentProfile::create([
         'user_id' => $this->verifiedUser->id,
         'first_name' => 'Juan',
@@ -27,6 +35,7 @@ beforeEach(function () {
         'gender' => 'male',
         'civil_status' => 'married',
         'citizenship' => 'Filipino',
+        'government_id_file_id' => $file->id,
     ]);
 
     $this->household = Household::create([
@@ -82,6 +91,14 @@ test('verified resident can view document request form', function () {
 
 test('unverified household resident receives 403 forbidden when accessing request form', function () {
     $unverifiedUser = User::factory()->create(['role_id' => $this->residentRole->id]);
+    $unverifiedFile = FileRecord::create([
+        'user_id' => $unverifiedUser->id,
+        'file_name' => 'id2.png',
+        'disk' => 'local',
+        'path' => 'ids/id2.png',
+        'mime_type' => 'image/png',
+        'is_private' => true,
+    ]);
     ResidentProfile::create([
         'user_id' => $unverifiedUser->id,
         'first_name' => 'Pedro',
@@ -89,6 +106,8 @@ test('unverified household resident receives 403 forbidden when accessing reques
         'birthdate' => '1995-05-05',
         'gender' => 'male',
         'civil_status' => 'single',
+        'citizenship' => 'Filipino',
+        'government_id_file_id' => $unverifiedFile->id,
     ]);
 
     $response = $this->actingAs($unverifiedUser)->get("/documents/create/{$this->docType->slug}");

@@ -2,10 +2,8 @@
 
 namespace App\Filament\Resources\Households;
 
-use App\Filament\Resources\Households\Pages\EditHousehold;
 use App\Filament\Resources\Households\Pages\ListHouseholds;
 use App\Filament\Resources\Households\Pages\ViewHousehold;
-use App\Filament\Resources\Households\Schemas\HouseholdForm;
 use App\Filament\Resources\Households\Schemas\HouseholdInfolist;
 use App\Filament\Resources\Households\Tables\HouseholdsTable;
 use App\Models\Household;
@@ -14,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class HouseholdResource extends Resource
 {
@@ -26,9 +25,9 @@ class HouseholdResource extends Resource
         return false;
     }
 
-    public static function form(Schema $schema): Schema
+    public static function canEdit(Model $record): bool
     {
-        return HouseholdForm::configure($schema);
+        return false;
     }
 
     public static function infolist(Schema $schema): Schema
@@ -44,7 +43,7 @@ class HouseholdResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\HouseholdMembersRelationManager::class,
         ];
     }
 
@@ -53,7 +52,6 @@ class HouseholdResource extends Resource
         return [
             'index' => ListHouseholds::route('/'),
             'view' => ViewHousehold::route('/{record}'),
-            'edit' => EditHousehold::route('/{record}/edit'),
         ];
     }
 }

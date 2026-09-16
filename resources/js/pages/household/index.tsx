@@ -1,6 +1,8 @@
 import { Head, Link } from '@inertiajs/react';
 import { FileText, Home, MapPin, Plus, UserCheck, Users } from 'lucide-react';
 import { AddMemberDialog } from '@/features/household/components/add-member-dialog';
+import { HouseholdInvitationCard } from '@/features/household/components/household-invitation-card';
+import type { PendingHouseholdInvitation } from '@/features/household/components/household-invitation-card';
 import { LockedModuleCard } from '@/features/household/components/locked-module-card';
 import { MemberListTable } from '@/features/household/components/member-list-table';
 import type { MemberItem } from '@/features/household/components/member-list-table';
@@ -44,6 +46,7 @@ interface HouseholdData {
 
 interface HouseholdIndexProps {
     household: HouseholdData | null;
+    pending_invitation?: PendingHouseholdInvitation | null;
     isFamilyHead: boolean;
 }
 
@@ -54,6 +57,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function HouseholdIndex({
     household,
+    pending_invitation,
     isFamilyHead,
 }: HouseholdIndexProps) {
     return (
@@ -62,29 +66,38 @@ export default function HouseholdIndex({
 
             <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 p-4 md:p-8">
                 {!household ? (
-                    // Empty State: Not Registered
-                    <Card className="mx-auto max-w-2xl rounded-2xl border-border p-8 text-center">
-                        <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                            <Home className="size-7" />
-                        </div>
-                        <CardTitle className="text-xl font-bold">
-                            No Household Registered
-                        </CardTitle>
-                        <CardDescription className="mt-2 text-sm">
-                            You are not yet registered under an official
-                            Barangay Lallana household record. Establish your
-                            family household as Family Head to unlock clearance
-                            issuance, certifications, and household management.
-                        </CardDescription>
-                        <div className="mt-6 flex justify-center">
-                            <Button asChild size="lg" className="gap-2">
-                                <Link href="/household/register">
-                                    <Plus className="size-4" />
-                                    Register New Household
-                                </Link>
-                            </Button>
-                        </div>
-                    </Card>
+                    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
+                        {pending_invitation && (
+                            <HouseholdInvitationCard
+                                invitation={pending_invitation}
+                            />
+                        )}
+
+                        {/* Empty State: Not Registered */}
+                        <Card className="rounded-2xl border-border p-8 text-center">
+                            <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                                <Home className="size-7" />
+                            </div>
+                            <CardTitle className="text-xl font-bold">
+                                No Household Registered
+                            </CardTitle>
+                            <CardDescription className="mt-2 text-sm">
+                                You are not yet registered under an official
+                                Barangay Lallana household record. Establish
+                                your family household as Family Head to unlock
+                                clearance issuance, certifications, and
+                                household management.
+                            </CardDescription>
+                            <div className="mt-6 flex justify-center">
+                                <Button asChild size="lg" className="gap-2">
+                                    <Link href="/household/register">
+                                        <Plus className="size-4" />
+                                        Register New Household
+                                    </Link>
+                                </Button>
+                            </div>
+                        </Card>
+                    </div>
                 ) : (
                     // Registered Household View
                     <div className="space-y-6">

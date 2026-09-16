@@ -7,7 +7,6 @@ use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
-use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -32,6 +31,9 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->brandName('Barangay Lallana Admin')
+            ->brandLogo(fn () => view('filament.admin.logo'))
+            ->brandLogoHeight('2.5rem')
+            ->favicon(asset('lallana-icon.png'))
             ->colors([
                 'primary' => Color::Violet,
             ])
@@ -41,12 +43,6 @@ class AdminPanelProvider extends PanelProvider
             ->navigationGroups([
                 'Document Services',
                 'Administration',
-            ])
-            ->navigationItems([
-                NavigationItem::make('Resident Dashboard')
-                    ->url('/dashboard')
-                    ->icon(Heroicon::OutlinedHome)
-                    ->sort(99),
             ])
             ->userMenuItems([
                 MenuItem::make()

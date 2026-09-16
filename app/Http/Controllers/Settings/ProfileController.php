@@ -42,13 +42,36 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        /** @var User $user */
+        $user = $request->user();
+        $validated = $request->validated();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $fullName = trim(implode(' ', array_filter([
+            $validated['first_name'] ?? null,
+            $validated['middle_name'] ?? null,
+            $validated['last_name'] ?? null,
+            $validated['suffix'] ?? null,
+        ])));
+
+        $user->name = $fullName;
+        $user->email = $validated['email'];
+        $user->phone_number = $validated['phone_number'] ?? null;
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $user->save();
+
+        $user->residentProfile()->updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'first_name' => $validated['first_name'],
+                'middle_name' => $validated['middle_name'] ?? null,
+                'last_name' => $validated['last_name'],
+                'suffix' => $validated['suffix'] ?? null,
+            ]
+        );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Profile updated.')]);
 

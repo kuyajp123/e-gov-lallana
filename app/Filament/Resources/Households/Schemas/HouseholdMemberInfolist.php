@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\HouseholdMembers\Schemas;
+namespace App\Filament\Resources\Households\Schemas;
 
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -30,6 +30,25 @@ class HouseholdMemberInfolist
                                 ->boolean(),
                         ]),
                         Grid::make(3)->schema([
+                            TextEntry::make('email')
+                                ->label('Account Email')
+                                ->placeholder('No account linked'),
+                            TextEntry::make('invitation_status')
+                                ->label('Invitation Status')
+                                ->badge()
+                                ->color(fn (?string $state): string => match ($state) {
+                                    'accepted' => 'success',
+                                    'pending' => 'warning',
+                                    'rejected' => 'danger',
+                                    default => 'gray',
+                                })
+                                ->formatStateUsing(fn (?string $state): string => ucfirst($state ?? '—')),
+                            TextEntry::make('invited_at')
+                                ->label('Invited At')
+                                ->dateTime('M d, Y h:i A')
+                                ->placeholder('—'),
+                        ]),
+                        Grid::make(3)->schema([
                             TextEntry::make('birthdate')
                                 ->label('Date of Birth')
                                 ->date('F d, Y')
@@ -50,19 +69,6 @@ class HouseholdMemberInfolist
                                 ->badge()
                                 ->color('info')
                                 ->formatStateUsing(fn (?string $state): string => ucfirst(str_replace('_', ' ', $state ?? '—'))),
-                        ]),
-                    ]),
-
-                Section::make('Household Details')
-                    ->schema([
-                        Grid::make(3)->schema([
-                            TextEntry::make('household.household_code')
-                                ->label('Household Code')
-                                ->weight('bold'),
-                            TextEntry::make('household.purok_sitio')
-                                ->label('Purok / Sitio'),
-                            TextEntry::make('household.address')
-                                ->label('Address'),
                         ]),
                     ]),
 

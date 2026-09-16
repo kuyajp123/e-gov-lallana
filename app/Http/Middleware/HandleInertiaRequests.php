@@ -40,7 +40,7 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'name' => config('app.name'),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user()?->loadMissing('role'),
                 'unreadNotificationsCount' => $request->user() ? app(NotificationService::class)->getUnreadCount($request->user()) : 0,
                 'recentNotifications' => $request->user() ? app(NotificationService::class)->getRecent($request->user(), 5) : [],
             ],

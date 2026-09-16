@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\FileRecord;
 use App\Models\Household;
 use App\Models\HouseholdMember;
 use App\Models\ResidentProfile;
@@ -7,6 +8,16 @@ use App\Models\User;
 
 beforeEach(function () {
     $this->headUser = User::factory()->create();
+
+    $file = FileRecord::create([
+        'user_id' => $this->headUser->id,
+        'file_name' => 'id.png',
+        'disk' => 'local',
+        'path' => 'ids/id.png',
+        'mime_type' => 'image/png',
+        'is_private' => true,
+    ]);
+
     ResidentProfile::create([
         'user_id' => $this->headUser->id,
         'first_name' => 'Pedro',
@@ -15,6 +26,7 @@ beforeEach(function () {
         'gender' => 'male',
         'civil_status' => 'married',
         'citizenship' => 'Filipino',
+        'government_id_file_id' => $file->id,
     ]);
 
     $this->household = Household::create([
@@ -68,6 +80,15 @@ test('family head can add new member to household', function () {
 
 test('non-family-head resident cannot add household members', function () {
     $otherUser = User::factory()->create();
+    $otherFile = FileRecord::create([
+        'user_id' => $otherUser->id,
+        'file_name' => 'other_id.png',
+        'disk' => 'local',
+        'path' => 'ids/other_id.png',
+        'mime_type' => 'image/png',
+        'is_private' => true,
+    ]);
+
     ResidentProfile::create([
         'user_id' => $otherUser->id,
         'first_name' => 'Other',
@@ -76,6 +97,7 @@ test('non-family-head resident cannot add household members', function () {
         'gender' => 'female',
         'civil_status' => 'single',
         'citizenship' => 'Filipino',
+        'government_id_file_id' => $otherFile->id,
     ]);
 
     $response = $this->actingAs($otherUser)->post('/household/members', [

@@ -40,11 +40,13 @@ class EnsureProfileIsComplete
             && ! empty($profile->last_name)
             && $profile->birthdate !== null
             && ! empty($profile->gender)
-            && ! empty($profile->civil_status);
+            && ! empty($profile->civil_status)
+            && ! empty($profile->citizenship)
+            && $profile->government_id_file_id !== null;
 
         if (! $isComplete) {
             return redirect()->route('profile.edit')
-                ->with('warning', 'Please complete your resident profile to access barangay services.');
+                ->with('warning', 'Please complete your resident profile and upload a valid government ID to access barangay services.');
         }
 
         return $next($request);

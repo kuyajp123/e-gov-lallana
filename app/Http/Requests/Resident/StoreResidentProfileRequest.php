@@ -17,6 +17,8 @@ class StoreResidentProfileRequest extends FormRequest
      */
     public function rules(): array
     {
+        $hasExistingId = $this->user()?->residentProfile?->government_id_file_id !== null;
+
         return [
             'first_name' => ['required', 'string', 'max:100'],
             'middle_name' => ['nullable', 'string', 'max:100'],
@@ -39,7 +41,7 @@ class StoreResidentProfileRequest extends FormRequest
             'pwd_id_number' => ['nullable', 'string', 'max:50'],
             'solo_parent_status' => ['boolean'],
             'solo_parent_id_number' => ['nullable', 'string', 'max:50'],
-            'government_id' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp,pdf', 'max:5120'],
+            'government_id' => [$hasExistingId ? 'nullable' : 'required', 'file', 'mimes:jpg,jpeg,png,webp,pdf', 'max:5120'],
         ];
     }
 }

@@ -26,13 +26,31 @@ class HouseholdController extends Controller
             'verification.reviewer',
         ])
             ->where('family_head_id', $user->id)
-            ->orWhereHas('members', fn ($query) => $query->where('user_id', $user->id))
+            ->orWhereHas('members', fn ($query) => $query->where('user_id', $user->id)->where(function ($q) {
+                $q->whereNull('invitation_status')->orWhere('invitation_status', 'accepted');
+            }))
             ->first();
 
         $isFamilyHead = $household && (
             $household->family_head_id === $user->id ||
             $household->members()->where('user_id', $user->id)->where('is_family_head', true)->exists()
         );
+
+        $pendingInvitation = null;
+        if (! $household) {
+            $pendingInvitation = HouseholdMember::with(['household.familyHead.residentProfile.avatar'])
+                ->where(function ($query) use ($user) {
+                    $query->where('user_id', $user->id)
+                        ->orWhere('email', $user->email);
+                })
+                ->where('invitation_status', 'pending')
+                ->first();
+        }
+
+        $headMember = $household ? $household->members->firstWhere('is_family_head', true) : null;
+
+        $invitingHousehold = $pendingInvitation?->household;
+        $invitingHead = $invitingHousehold?->familyHead;
 
         return Inertia::render('household/index', [
             'household' => $household ? [
@@ -52,7 +70,7 @@ class HouseholdController extends Controller
                     'avatar_url' => $household->familyHead->residentProfile?->avatar?->getUrl(60),
                 ] : [
                     'id' => 0,
-                    'name' => $household->members()->where('is_family_head', true)->first()->full_name ?? 'Family Head',
+                    'name' => $headMember ? $headMember->full_name : 'Family Head',
                     'email' => '',
                     'phone_number' => null,
                     'avatar_url' => null,
@@ -71,6 +89,9 @@ class HouseholdController extends Controller
                     'middle_name' => $member->middle_name,
                     'last_name' => $member->last_name,
                     'suffix' => $member->suffix,
+                    'email' => $member->email,
+                    'invitation_status' => $member->invitation_status,
+                    'invited_at' => $member->invited_at?->toISOString(),
                     'relationship_to_head' => $member->relationship_to_head,
                     'is_family_head' => $member->is_family_head,
                     'is_spouse' => $member->isSpouse(),
@@ -82,6 +103,19 @@ class HouseholdController extends Controller
                     'occupation' => $member->occupation,
                     'residency_status' => $member->residency_status,
                 ])->all(),
+            ] : null,
+            'pending_invitation' => $pendingInvitation ? [
+                'id' => $pendingInvitation->id,
+                'relationship_to_head' => $pendingInvitation->relationship_to_head,
+                'invited_at' => $pendingInvitation->invited_at?->toISOString(),
+                'household' => [
+                    'id' => $invitingHousehold?->id,
+                    'household_code' => $invitingHousehold?->household_code,
+                    'address' => $invitingHousehold?->address,
+                    'purok_sitio' => $invitingHousehold?->purok_sitio,
+                    'family_head_name' => $invitingHead ? $invitingHead->name : 'Family Head',
+                    'family_head_avatar' => $invitingHead?->residentProfile?->avatar?->getUrl(60),
+                ],
             ] : null,
             'isFamilyHead' => $isFamilyHead,
         ]);

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\DocumentType;
+use App\Models\FileRecord;
 use App\Models\Household;
 use App\Models\HouseholdMember;
 use App\Models\ResidentProfile;
@@ -8,6 +9,15 @@ use App\Models\User;
 
 test('verified resident can visit document services catalog', function () {
     $user = User::factory()->create();
+    $file = FileRecord::create([
+        'user_id' => $user->id,
+        'file_name' => 'id.png',
+        'disk' => 'local',
+        'path' => 'ids/id.png',
+        'mime_type' => 'image/png',
+        'is_private' => true,
+    ]);
+
     ResidentProfile::create([
         'user_id' => $user->id,
         'first_name' => 'Juan',
@@ -16,6 +26,7 @@ test('verified resident can visit document services catalog', function () {
         'gender' => 'male',
         'civil_status' => 'single',
         'citizenship' => 'Filipino',
+        'government_id_file_id' => $file->id,
     ]);
 
     $household = Household::create([
@@ -57,6 +68,15 @@ test('verified resident can visit document services catalog', function () {
 
 test('verified resident can view document request form in browser', function () {
     $user = User::factory()->create();
+    $file = FileRecord::create([
+        'user_id' => $user->id,
+        'file_name' => 'id.png',
+        'disk' => 'local',
+        'path' => 'ids/id.png',
+        'mime_type' => 'image/png',
+        'is_private' => true,
+    ]);
+
     ResidentProfile::create([
         'user_id' => $user->id,
         'first_name' => 'Juan',
@@ -65,6 +85,7 @@ test('verified resident can view document request form in browser', function () 
         'gender' => 'male',
         'civil_status' => 'single',
         'citizenship' => 'Filipino',
+        'government_id_file_id' => $file->id,
     ]);
 
     $household = Household::create([

@@ -1,6 +1,7 @@
 <?php
 
 use App\Mail\HouseholdRegistrationOtpMail;
+use App\Models\FileRecord;
 use App\Models\Household;
 use App\Models\ResidentProfile;
 use App\Models\User;
@@ -10,6 +11,15 @@ use Illuminate\Support\Facades\Mail;
 function createHouseholdTestUser(): User
 {
     $user = User::factory()->create(['email' => 'juan@example.com', 'phone_number' => '09171234567']);
+    $file = FileRecord::create([
+        'user_id' => $user->id,
+        'file_name' => 'id.png',
+        'disk' => 'local',
+        'path' => 'ids/id.png',
+        'mime_type' => 'image/png',
+        'is_private' => true,
+    ]);
+
     ResidentProfile::create([
         'user_id' => $user->id,
         'first_name' => 'Juan',
@@ -18,6 +28,7 @@ function createHouseholdTestUser(): User
         'gender' => 'male',
         'civil_status' => 'married',
         'citizenship' => 'Filipino',
+        'government_id_file_id' => $file->id,
     ]);
 
     return $user;

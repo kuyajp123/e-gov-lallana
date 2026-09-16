@@ -94,3 +94,23 @@ test('middleware redirects incomplete resident profiles when accessing household
     $response->assertRedirect(route('profile.edit'));
     $response->assertSessionHas('warning');
 });
+
+test('middleware blocks user with complete demographic profile but missing government ID', function () {
+    $user = User::factory()->create();
+    ResidentProfile::create([
+        'user_id' => $user->id,
+        'first_name' => 'Juan',
+        'last_name' => 'Dela Cruz',
+        'birthdate' => '1990-01-01',
+        'gender' => 'male',
+        'civil_status' => 'single',
+        'citizenship' => 'Filipino',
+        'residency_status' => 'resident',
+        'government_id_file_id' => null, // Missing ID
+    ]);
+
+    $response = $this->actingAs($user)->get('/household');
+
+    $response->assertRedirect(route('profile.edit'));
+    $response->assertSessionHas('warning');
+});

@@ -1,5 +1,5 @@
 import { Link, router } from '@inertiajs/react';
-import { LogOut, Settings, UserCircle } from 'lucide-react';
+import { LayoutDashboard, LogOut, Settings } from 'lucide-react';
 import { UserInfo } from '@/app/components/user-info';
 import { logout } from '@/routes';
 import { edit } from '@/routes/profile';
@@ -23,6 +23,13 @@ export function UserMenuContent({ user }: Props) {
         router.flushAll();
     };
 
+    const isAdminUser = Boolean(
+        user.can_access_admin ??
+        (user.role?.slug === 'admin' ||
+            user.role?.slug === 'sub_admin' ||
+            user.role?.slug === 'super_admin'),
+    );
+
     return (
         <>
             <DropdownMenuItem asChild>
@@ -37,17 +44,18 @@ export function UserMenuContent({ user }: Props) {
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-                <DropdownMenuItem asChild>
-                    <Link
-                        className="flex w-full cursor-pointer items-center"
-                        href={edit()}
-                        prefetch
-                        onClick={cleanup}
-                    >
-                        <UserCircle className="mr-2 size-4" />
-                        Resident Profile
-                    </Link>
-                </DropdownMenuItem>
+                {isAdminUser && (
+                    <DropdownMenuItem asChild>
+                        <a
+                            className="flex w-full cursor-pointer items-center"
+                            href="/admin"
+                            onClick={cleanup}
+                        >
+                            <LayoutDashboard className="mr-2 size-4" />
+                            Admin Dashboard
+                        </a>
+                    </DropdownMenuItem>
+                )}
                 <DropdownMenuItem asChild>
                     <Link
                         className="flex w-full cursor-pointer items-center"

@@ -44,13 +44,33 @@ export default function Profile({
 }) {
     const { auth } = usePage<PageProps>().props;
 
+    const nameParts = (auth.user.name || '').trim().split(' ');
+    const defaultFirstName = profile?.first_name || nameParts[0] || '';
+    const defaultLastName =
+        profile?.last_name ||
+        (nameParts.length > 1 ? nameParts.slice(1).join(' ') : '');
+    const defaultMiddleName = profile?.middle_name ?? '';
+    const defaultSuffix = profile?.suffix ?? '';
+
     const isKycComplete = Boolean(
         profile?.first_name &&
         profile?.last_name &&
         profile?.birthdate &&
         profile?.gender &&
-        profile?.civil_status,
+        profile?.civil_status &&
+        profile?.citizenship &&
+        (profile?.government_id_url || profile?.government_id_file_id),
     );
+
+    const updateFormProps =
+        typeof ProfileController.update.form === 'function'
+            ? ProfileController.update.form()
+            : {
+                  action: ProfileController.update.url({
+                      query: { _method: 'PATCH' },
+                  }),
+                  method: 'post' as const,
+              };
 
     return (
         <>
@@ -68,7 +88,7 @@ export default function Profile({
                     />
 
                     <Form
-                        {...ProfileController.update.form()}
+                        {...updateFormProps}
                         options={{
                             preserveScroll: true,
                         }}
@@ -76,23 +96,86 @@ export default function Profile({
                     >
                         {({ processing, errors }) => (
                             <>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="name">Name</Label>
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="first_name">
+                                            First name
+                                        </Label>
 
-                                    <Input
-                                        id="name"
-                                        className="mt-1 block w-full"
-                                        defaultValue={auth.user.name}
-                                        name="name"
-                                        required
-                                        autoComplete="name"
-                                        placeholder="Full name"
-                                    />
+                                        <Input
+                                            id="first_name"
+                                            className="mt-1 block w-full"
+                                            defaultValue={defaultFirstName}
+                                            name="first_name"
+                                            required
+                                            autoComplete="given-name"
+                                            placeholder="First name"
+                                        />
 
-                                    <InputError
-                                        className="mt-2"
-                                        message={errors.name}
-                                    />
+                                        <InputError
+                                            className="mt-2"
+                                            message={errors.first_name}
+                                        />
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="middle_name">
+                                            Middle name
+                                        </Label>
+
+                                        <Input
+                                            id="middle_name"
+                                            className="mt-1 block w-full"
+                                            defaultValue={defaultMiddleName}
+                                            name="middle_name"
+                                            autoComplete="additional-name"
+                                            placeholder="Middle name (optional)"
+                                        />
+
+                                        <InputError
+                                            className="mt-2"
+                                            message={errors.middle_name}
+                                        />
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="last_name">
+                                            Last name
+                                        </Label>
+
+                                        <Input
+                                            id="last_name"
+                                            className="mt-1 block w-full"
+                                            defaultValue={defaultLastName}
+                                            name="last_name"
+                                            required
+                                            autoComplete="family-name"
+                                            placeholder="Last name"
+                                        />
+
+                                        <InputError
+                                            className="mt-2"
+                                            message={errors.last_name}
+                                        />
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="suffix">Suffix</Label>
+
+                                        <Input
+                                            id="suffix"
+                                            className="mt-1 block w-full"
+                                            defaultValue={defaultSuffix}
+                                            name="suffix"
+                                            autoComplete="honorific-suffix"
+                                            placeholder="Jr., Sr., III (optional)"
+                                        />
+
+                                        <InputError
+                                            className="mt-2"
+                                            message={errors.suffix}
+                                        />
+                                    </div>
                                 </div>
 
                                 <div className="grid gap-2">
@@ -215,13 +298,14 @@ export default function Profile({
                         <Alert className="border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-200">
                             <ShieldAlert className="size-4 text-amber-600 dark:text-amber-400" />
                             <AlertTitle className="font-semibold">
-                                KYC Verification Required
+                                Complete Profile & Government ID Required
                             </AlertTitle>
                             <AlertDescription className="text-xs">
                                 Please fill in your resident demographic
                                 information and upload a valid government-issued
-                                ID below. This unlocks official document
-                                requests and automated Barangay services.
+                                ID below. Both a completed profile (with
+                                Government ID) and a verified household are
+                                required to request official barangay documents.
                             </AlertDescription>
                         </Alert>
                     )}

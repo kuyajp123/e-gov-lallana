@@ -11,6 +11,9 @@ export interface MemberItem {
     middle_name?: string | null;
     last_name: string;
     suffix?: string | null;
+    email?: string | null;
+    invitation_status?: string | null;
+    invited_at?: string | null;
     relationship_to_head: string;
     is_family_head: boolean;
     birthdate?: string | null;
@@ -81,6 +84,33 @@ export function MemberListTable({
                                             {member.is_family_head && (
                                                 <Badge className="border-amber-300 bg-amber-100 py-0 text-[10px] text-amber-800 dark:bg-amber-950 dark:text-amber-300">
                                                     Head
+                                                </Badge>
+                                            )}
+                                            {member.invitation_status ===
+                                                'pending' && (
+                                                <Badge
+                                                    variant="outline"
+                                                    className="border-amber-500/30 bg-amber-500/10 py-0 text-[10px] text-amber-600 dark:text-amber-400"
+                                                >
+                                                    Invite Pending
+                                                </Badge>
+                                            )}
+                                            {member.invitation_status ===
+                                                'accepted' && (
+                                                <Badge
+                                                    variant="outline"
+                                                    className="border-emerald-500/30 bg-emerald-500/10 py-0 text-[10px] text-emerald-600 dark:text-emerald-400"
+                                                >
+                                                    Linked
+                                                </Badge>
+                                            )}
+                                            {member.invitation_status ===
+                                                'rejected' && (
+                                                <Badge
+                                                    variant="outline"
+                                                    className="border-destructive/30 bg-destructive/10 py-0 text-[10px] text-destructive"
+                                                >
+                                                    Declined
                                                 </Badge>
                                             )}
                                         </div>

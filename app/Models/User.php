@@ -28,11 +28,19 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read Role|null $role
  * @property-read ResidentProfile|null $residentProfile
+ * @property-read bool $can_access_admin
  */
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+
+    /**
+     * @var list<string>
+     */
+    protected $appends = [
+        'can_access_admin',
+    ];
 
     protected $fillable = [
         'role_id',
@@ -76,7 +84,12 @@ class User extends Authenticatable implements FilamentUser
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->isAdmin() || $this->isSubAdmin();
+        return $this->isAdmin() || $this->isSubAdmin() || $this->isSuperAdmin();
+    }
+
+    public function getCanAccessAdminAttribute(): bool
+    {
+        return $this->isAdmin() || $this->isSubAdmin() || $this->isSuperAdmin();
     }
 
     /**

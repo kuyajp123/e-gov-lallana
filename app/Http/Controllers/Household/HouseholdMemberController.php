@@ -8,6 +8,7 @@ use App\Http\Requests\Household\UpdateHouseholdMemberRequest;
 use App\Models\Household;
 use App\Models\HouseholdMember;
 use App\Models\User;
+use App\Services\Notification\NotificationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,20 +27,40 @@ class HouseholdMemberController extends Controller
         }
 
         $validated = $request->validated();
+        $email = $validated['email'] ?? null;
+        $existingUser = $email ? User::where('email', $email)->first() : null;
 
-        DB::transaction(function () use ($household, $validated) {
+        DB::transaction(function () use ($household, $validated, $email, $existingUser, $user) {
             /** @var HouseholdMember $member */
             $member = $household->members()->create([
                 ...$validated,
+                'user_id' => $existingUser?->id,
                 'is_family_head' => false,
+                'invitation_status' => $email ? 'pending' : null,
+                'invited_at' => $email ? now() : null,
             ]);
 
             $member->verification()->create([
                 'status' => 'pending',
             ]);
+
+            if ($existingUser) {
+                app(NotificationService::class)->send(
+                    $existingUser,
+                    'household_invitation',
+                    'Household Invitation',
+                    "{$user->name} has invited you to join Household {$household->household_code} as ".ucfirst((string) $validated['relationship_to_head']).'.',
+                    '/household',
+                    $household
+                );
+            }
         });
 
-        return back()->with('success', "Household member {$validated['first_name']} {$validated['last_name']} added successfully and submitted for barangay verification.");
+        $message = $email
+            ? "Household member {$validated['first_name']} {$validated['last_name']} added and an invitation has been sent to {$email}."
+            : "Household member {$validated['first_name']} {$validated['last_name']} added successfully and submitted for barangay verification.";
+
+        return back()->with('success', $message);
     }
 
     public function update(UpdateHouseholdMemberRequest $request, HouseholdMember $member): RedirectResponse

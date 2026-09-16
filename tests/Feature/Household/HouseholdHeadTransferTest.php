@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\FileRecord;
 use App\Models\Household;
 use App\Models\HouseholdMember;
 use App\Models\ResidentProfile;
@@ -10,6 +11,15 @@ beforeEach(function () {
     $this->headUser = User::factory()->create();
     $this->spouseUser = User::factory()->create();
 
+    $file = FileRecord::create([
+        'user_id' => $this->headUser->id,
+        'file_name' => 'id.png',
+        'disk' => 'local',
+        'path' => 'ids/id.png',
+        'mime_type' => 'image/png',
+        'is_private' => true,
+    ]);
+
     ResidentProfile::create([
         'user_id' => $this->headUser->id,
         'first_name' => 'Cardo',
@@ -18,6 +28,7 @@ beforeEach(function () {
         'gender' => 'male',
         'civil_status' => 'married',
         'citizenship' => 'Filipino',
+        'government_id_file_id' => $file->id,
     ]);
 
     $this->household = Household::create([

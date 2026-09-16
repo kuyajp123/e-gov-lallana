@@ -18,6 +18,7 @@ export type User = {
     phone_verified_at?: string | null;
     created_at: string;
     updated_at: string;
+    can_access_admin?: boolean;
     [key: string]: unknown;
 };
 

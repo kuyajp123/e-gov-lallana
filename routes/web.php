@@ -5,6 +5,7 @@ use App\Http\Controllers\Dev\DevSmsController;
 use App\Http\Controllers\Document\DocumentRequestController;
 use App\Http\Controllers\Household\HouseholdController;
 use App\Http\Controllers\Household\HouseholdHeadTransferController;
+use App\Http\Controllers\Household\HouseholdInvitationController;
 use App\Http\Controllers\Household\HouseholdMemberController;
 use App\Http\Controllers\Household\HouseholdRegistrationController;
 use App\Http\Controllers\Notification\NotificationController;
@@ -58,6 +59,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::put('/members/{member}', [HouseholdMemberController::class, 'update'])->name('members.update');
             Route::delete('/members/{member}', [HouseholdMemberController::class, 'destroy'])->name('members.destroy');
             Route::post('/transfer-head', [HouseholdHeadTransferController::class, 'store'])->name('transfer-head');
+
+            // Household invitation response
+            Route::post('/invitations/{member}/accept', [HouseholdInvitationController::class, 'accept'])->name('invitations.accept');
+            Route::post('/invitations/{member}/reject', [HouseholdInvitationController::class, 'reject'])->name('invitations.reject');
         });
 
         // Document Request Routes

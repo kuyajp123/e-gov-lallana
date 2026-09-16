@@ -35,7 +35,7 @@ class HouseholdPolicy
     public function update(User $user, Household $household): bool
     {
         if ($user->isAdmin() || $user->isSubAdmin()) {
-            return true;
+            return false;
         }
 
         return $household->family_head_id === $user->id && $household->status === 'returned';
