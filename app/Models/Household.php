@@ -66,4 +66,24 @@ class Household extends Model
     {
         return $this->morphOne(Verification::class, 'verifiable');
     }
+
+    public function isVerified(): bool
+    {
+        return $this->status === 'verified';
+    }
+
+    public function isRestricted(): bool
+    {
+        return $this->status === 'restricted';
+    }
+
+    public function isArchived(): bool
+    {
+        return $this->status === 'archived';
+    }
+
+    public function isPending(): bool
+    {
+        return in_array($this->status, ['unverified', 'pending'], true);
+    }
 }

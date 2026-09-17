@@ -110,7 +110,8 @@ export default function DevSmsInbox({
                                 href="/admin"
                                 className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-500 transition-colors hover:text-neutral-900 dark:hover:text-neutral-100"
                             >
-                                <ArrowLeft className="h-3.5 w-3.5" /> Back to Admin Panel
+                                <ArrowLeft className="h-3.5 w-3.5" /> Back to
+                                Admin Panel
                             </a>
                         </div>
                         <div className="flex items-center gap-2">

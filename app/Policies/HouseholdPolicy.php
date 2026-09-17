@@ -56,6 +56,21 @@ class HouseholdPolicy
         return $user->isAdmin();
     }
 
+    public function unrestrict(User $user, Household $household): bool
+    {
+        return $user->isAdmin();
+    }
+
+    public function archive(User $user, Household $household): bool
+    {
+        return $user->isAdmin();
+    }
+
+    public function restore(User $user, Household $household): bool
+    {
+        return $user->isAdmin();
+    }
+
     public function transferHead(User $user, Household $household): bool
     {
         return $household->family_head_id === $user->id;

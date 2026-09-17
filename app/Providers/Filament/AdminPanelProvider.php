@@ -2,6 +2,10 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Widgets\AdminStatsOverviewWidget;
+use App\Filament\Widgets\DemographicsChartWidget;
+use App\Filament\Widgets\DocumentRequestVolumeChartWidget;
+use App\Filament\Widgets\SpecialSectorsChartWidget;
 use App\Http\Middleware\Filament\AuthenticateAdmin;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -13,8 +17,6 @@ use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
-use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -58,8 +60,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
+                AdminStatsOverviewWidget::class,
+                DemographicsChartWidget::class,
+                SpecialSectorsChartWidget::class,
+                DocumentRequestVolumeChartWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

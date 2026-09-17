@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
 class StaffResource extends Resource
@@ -33,6 +34,13 @@ class StaffResource extends Resource
 
         return parent::getEloquentQuery()
             ->whereIn('role_id', $staffRoleIds);
+    }
+
+    public static function canViewAny(): bool
+    {
+        $user = Auth::user();
+
+        return $user instanceof User && $user->isAdmin();
     }
 
     public static function table(Table $table): Table
