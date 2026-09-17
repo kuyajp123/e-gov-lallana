@@ -27,6 +27,16 @@ class DevSmsController extends Controller
             'currentMode' => $fakeService->getMode(),
             'configuredProvider' => config('sms.default'),
             'appEnv' => app()->environment(),
+            'diagnostics' => [
+                'phpVersion' => PHP_VERSION,
+                'laravelVersion' => app()->version(),
+                'environment' => app()->environment(),
+                'debugMode' => (bool) config('app.debug'),
+                'smsProvider' => config('sms.default'),
+                'databaseDriver' => config('database.default'),
+                'queueDriver' => config('queue.default'),
+                'systemTime' => now()->format('M d, Y h:i:s A T'),
+            ],
         ]);
     }
 
@@ -49,7 +59,8 @@ class DevSmsController extends Controller
             'message' => 'required|string',
         ]);
 
-        $result = $this->smsService->send($validated['recipient'], $validated['message']);
+        $fakeService = app(FakeSmsService::class);
+        $result = $fakeService->send($validated['recipient'], $validated['message']);
 
         if ($result->success) {
             return back()->with('success', 'Test message sent successfully.');

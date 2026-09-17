@@ -3,8 +3,6 @@
 namespace App\Filament\Resources\DocumentRequests;
 
 use App\Enums\DocumentRequestStatus;
-use App\Filament\Resources\DocumentRequests\Pages\ListDocumentRequests;
-use App\Filament\Resources\DocumentRequests\Pages\ViewDocumentRequest;
 use App\Filament\Resources\DocumentRequests\Schemas\DocumentRequestInfolist;
 use App\Filament\Resources\DocumentRequests\Tables\DocumentRequestsTable;
 use App\Models\DocumentRequest;
@@ -47,11 +45,13 @@ class DocumentRequestResource extends Resource
         return DocumentRequestsTable::configure($table);
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public static function getPages(): array
     {
-        return [
-            'index' => ListDocumentRequests::route('/'),
-            'view' => ViewDocumentRequest::route('/{record}'),
-        ];
+        return [];
     }
 }

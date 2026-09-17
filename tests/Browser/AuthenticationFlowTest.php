@@ -3,7 +3,7 @@
 test('login page loads in browser without javascript errors', function () {
     $page = visit('/login');
 
-    $page->assertSee('Log in to your account')
+    $page->assertSee('Resident Portal Sign In')
         ->assertNoJavaScriptErrors();
 });
 

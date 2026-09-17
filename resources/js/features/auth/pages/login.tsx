@@ -91,7 +91,11 @@ export default function Login({ status, canResetPassword }: Props) {
 
                         <div className="text-center text-xs text-muted-foreground">
                             Don't have an official account yet?{' '}
-                            <TextLink href={register()} tabIndex={5} className="font-semibold text-violet-700 dark:text-violet-400">
+                            <TextLink
+                                href={register()}
+                                tabIndex={5}
+                                className="font-semibold text-violet-700 dark:text-violet-400"
+                            >
                                 Register as Resident
                             </TextLink>
                         </div>
@@ -110,5 +114,6 @@ export default function Login({ status, canResetPassword }: Props) {
 
 Login.layout = {
     title: 'Resident Portal Sign In',
-    description: 'Enter your registered credentials to access your barangay records',
+    description:
+        'Enter your registered credentials to access your barangay records',
 };

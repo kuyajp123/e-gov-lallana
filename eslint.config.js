@@ -108,6 +108,7 @@ export default [
     },
     {
         ignores: [
+            '.agent/**',
             '.agents/**',
             '.claude/**',
             '.codex/**',

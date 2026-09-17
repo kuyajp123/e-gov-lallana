@@ -1,25 +1,23 @@
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import {
-    FileText,
-    Users,
-    Home as HomeIcon,
-    ShieldCheck,
-    Building2,
-    MapPin,
-    Phone,
-    Mail,
-    Clock,
-    Send,
-    ChevronRight,
-    Award,
-    CheckCircle2,
-    Calendar,
-    Menu,
-    X,
     ArrowRight,
-    QrCode,
-    FileCheck,
+    Award,
+    Building2,
+    Calendar,
+    CheckCircle2,
+    ChevronRight,
+    Clock,
+    FileText,
+    Home as HomeIcon,
     Landmark,
+    MapPin,
+    Menu,
+    Phone,
+    QrCode,
+    Send,
+    ShieldCheck,
+    Users,
+    X,
 } from 'lucide-react';
 import { useState } from 'react';
 import { TurnstileWidget } from '@/shared/components/turnstile-widget';
@@ -80,7 +78,15 @@ export default function Welcome({
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     // Inquiry Contact Form
-    const { data, setData, post, processing, errors, reset, recentlySuccessful } = useForm({
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        errors,
+        reset,
+        recentlySuccessful,
+    } = useForm({
         name: '',
         email: '',
         subject: '',
@@ -115,23 +121,31 @@ export default function Welcome({
                 <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 text-[11px] sm:text-xs">
                     <div className="flex items-center gap-2">
                         <span className="inline-flex size-2 animate-pulse rounded-full bg-emerald-500" />
-                        <span className="font-semibold tracking-wide uppercase text-violet-800 dark:text-violet-300">
+                        <span className="font-semibold tracking-wide text-violet-800 uppercase dark:text-violet-300">
                             Barangay Hall Active Desk:
                         </span>
-                        <span className="font-mono font-medium">(046) 419-0000</span>
+                        <span className="font-mono font-medium">
+                            (046) 419-0000
+                        </span>
                     </div>
                     <div className="flex items-center gap-4 text-muted-foreground">
                         <span className="hidden sm:inline">
                             Trece Martires PNP:{' '}
-                            <strong className="font-mono font-semibold text-foreground">0998-598-5606</strong>
+                            <strong className="font-mono font-semibold text-foreground">
+                                0998-598-5606
+                            </strong>
                         </span>
                         <span>
                             BFP Fire:{' '}
-                            <strong className="font-mono font-semibold text-foreground">(046) 419-0352</strong>
+                            <strong className="font-mono font-semibold text-foreground">
+                                (046) 419-0352
+                            </strong>
                         </span>
                         <span className="hidden md:inline">
                             CDRRMO Emergency:{' '}
-                            <strong className="font-mono font-semibold text-foreground">(046) 419-1234</strong>
+                            <strong className="font-mono font-semibold text-foreground">
+                                (046) 419-1234
+                            </strong>
                         </span>
                     </div>
                 </div>
@@ -142,7 +156,10 @@ export default function Welcome({
                 <header className="mx-auto max-w-6xl rounded-2xl border border-border/80 bg-background/85 px-4 shadow-sm backdrop-blur-xl transition-all sm:px-6 dark:bg-card/85">
                     <div className="flex h-16 items-center justify-between gap-4">
                         {/* Logo & Municipal Identity */}
-                        <a href="#home" className="group flex items-center gap-3">
+                        <a
+                            href="#home"
+                            className="group flex items-center gap-3"
+                        >
                             <div className="relative flex size-10 items-center justify-center rounded-xl bg-violet-600/10 p-1 ring-1 ring-violet-600/20 transition-transform group-hover:scale-105 dark:bg-violet-400/10 dark:ring-violet-400/20">
                                 <img
                                     src="/lallana-icon.png"
@@ -270,7 +287,9 @@ export default function Welcome({
                         <div className="flex items-center gap-2 lg:hidden">
                             <button
                                 type="button"
-                                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                                onClick={() =>
+                                    setMobileMenuOpen(!mobileMenuOpen)
+                                }
                                 className="flex size-9 items-center justify-center rounded-xl border border-border bg-card text-foreground hover:bg-muted"
                                 aria-label="Toggle Navigation Menu"
                             >
@@ -349,7 +368,9 @@ export default function Welcome({
                                     </button>
                                     <button
                                         type="button"
-                                        onClick={() => handleLocaleSwitch('fil')}
+                                        onClick={() =>
+                                            handleLocaleSwitch('fil')
+                                        }
                                         className={`rounded-full px-3 py-1 ${locale === 'fil' ? 'bg-card text-violet-700 shadow-xs' : 'text-muted-foreground'}`}
                                     >
                                         FIL
@@ -357,12 +378,19 @@ export default function Welcome({
                                 </div>
                                 <div className="flex gap-2">
                                     <Link href="/login">
-                                        <Button variant="outline" size="sm" className="rounded-xl text-xs">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="rounded-xl text-xs"
+                                        >
                                             Sign In
                                         </Button>
                                     </Link>
                                     <Link href="/register">
-                                        <Button size="sm" className="rounded-xl bg-violet-600 text-xs text-white hover:bg-violet-700">
+                                        <Button
+                                            size="sm"
+                                            className="rounded-xl bg-violet-600 text-xs text-white hover:bg-violet-700"
+                                        >
                                             Register
                                         </Button>
                                     </Link>
@@ -374,7 +402,10 @@ export default function Welcome({
             </div>
 
             {/* Section 1: Asymmetric Hero Section */}
-            <section id="home" className="relative isolate overflow-hidden pt-8 pb-20 md:pt-14 md:pb-28">
+            <section
+                id="home"
+                className="relative isolate overflow-hidden pt-8 pb-20 md:pt-14 md:pb-28"
+            >
                 {/* Background Texture with Dignified Scrim */}
                 <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
                     <img
@@ -391,12 +422,14 @@ export default function Welcome({
                         {/* Left Hero Column: Value Proposition & CTAs */}
                         <div className="space-y-6 lg:col-span-7">
                             <div className="inline-flex items-center gap-2 rounded-full border border-violet-200/80 bg-violet-50/80 px-3.5 py-1 text-[11px] font-semibold tracking-wider text-violet-800 uppercase shadow-xs dark:border-violet-800/60 dark:bg-violet-950/60 dark:text-violet-300">
-                                <span className="size-1.5 rounded-full bg-violet-600 animate-ping" />
-                                {t.hero?.badge || 'Official E-Government Portal'}
+                                <span className="size-1.5 animate-ping rounded-full bg-violet-600" />
+                                {t.hero?.badge ||
+                                    'Official E-Government Portal'}
                             </div>
 
-                            <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl text-balance leading-[1.08]">
-                                {t.hero?.title || 'Barangay Lallana E-Government Services'}
+                            <h1 className="text-4xl leading-[1.08] font-extrabold tracking-tight text-balance text-foreground sm:text-5xl md:text-6xl">
+                                {t.hero?.title ||
+                                    'Barangay Lallana E-Government Services'}
                             </h1>
 
                             <p className="max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
@@ -406,26 +439,38 @@ export default function Welcome({
 
                             {/* Nested CTA & Button-in-Button Architecture */}
                             <div className="flex flex-col gap-3.5 pt-2 sm:flex-row sm:items-center">
-                                <Link href="/login?intent=request" className="group w-full sm:w-auto">
+                                <Link
+                                    href="/login?intent=request"
+                                    className="group w-full sm:w-auto"
+                                >
                                     <Button
                                         size="lg"
-                                        className="h-12 w-full cursor-pointer rounded-full bg-violet-600 pl-6 pr-2 text-sm font-semibold text-white shadow-md shadow-violet-600/20 transition-all hover:bg-violet-700 active:scale-[0.98]"
+                                        className="h-12 w-full cursor-pointer rounded-full bg-violet-600 pr-2 pl-6 text-sm font-semibold text-white shadow-md shadow-violet-600/20 transition-all hover:bg-violet-700 active:scale-[0.98]"
                                     >
-                                        <span>{t.hero?.cta_request || 'Request Document'}</span>
+                                        <span>
+                                            {t.hero?.cta_request ||
+                                                'Request Document'}
+                                        </span>
                                         <span className="ml-3 flex size-8 items-center justify-center rounded-full bg-white/20 transition-transform group-hover:translate-x-0.5">
                                             <ArrowRight className="size-4" />
                                         </span>
                                     </Button>
                                 </Link>
 
-                                <Link href="/register?intent=household" className="w-full sm:w-auto">
+                                <Link
+                                    href="/register?intent=household"
+                                    className="w-full sm:w-auto"
+                                >
                                     <Button
                                         variant="outline"
                                         size="lg"
                                         className="h-12 w-full cursor-pointer rounded-full border-border bg-card px-6 text-sm font-semibold hover:bg-muted active:scale-[0.98]"
                                     >
                                         <HomeIcon className="mr-2 size-4 text-violet-600 dark:text-violet-400" />
-                                        <span>{t.hero?.cta_household || 'Register Household'}</span>
+                                        <span>
+                                            {t.hero?.cta_household ||
+                                                'Register Household'}
+                                        </span>
                                     </Button>
                                 </Link>
                             </div>
@@ -438,7 +483,8 @@ export default function Welcome({
                                         QR Verified
                                     </span>
                                     <p className="text-[11px] text-muted-foreground">
-                                        Tamper-proof certificates with digital seal
+                                        Tamper-proof certificates with digital
+                                        seal
                                     </p>
                                 </div>
                                 <div className="space-y-1">
@@ -447,7 +493,8 @@ export default function Welcome({
                                         SMS Alerts
                                     </span>
                                     <p className="text-[11px] text-muted-foreground">
-                                        Real-time status updates delivered to phone
+                                        Real-time status updates delivered to
+                                        phone
                                     </p>
                                 </div>
                                 <div className="space-y-1">
@@ -483,7 +530,7 @@ export default function Welcome({
                                                 <span className="block text-xs font-extrabold text-foreground">
                                                     BARANGAY LALLANA
                                                 </span>
-                                                <span className="text-[10px] text-violet-600 dark:text-violet-400 font-medium">
+                                                <span className="text-[10px] font-medium text-violet-600 dark:text-violet-400">
                                                     Trece Martires City, Cavite
                                                 </span>
                                             </div>
@@ -505,12 +552,13 @@ export default function Welcome({
                                         </div>
                                         <div className="h-1.5 w-3/4 rounded-full bg-border" />
                                         <div className="h-1.5 w-1/2 rounded-full bg-border" />
-                                        
+
                                         <div className="flex items-center justify-between pt-2">
                                             <div className="flex items-center gap-1.5">
                                                 <CheckCircle2 className="size-3.5 text-emerald-600 dark:text-emerald-400" />
                                                 <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-400">
-                                                    Seal & Signature Authenticated
+                                                    Seal & Signature
+                                                    Authenticated
                                                 </span>
                                             </div>
                                             <QrCode className="size-6 text-foreground/70" />
@@ -521,15 +569,17 @@ export default function Welcome({
                                     <div className="grid grid-cols-2 gap-3 pt-2">
                                         <div className="rounded-xl border border-border/70 bg-card p-3">
                                             <span className="block font-mono text-xl font-bold tracking-tight text-foreground tabular-nums">
-                                                {statistics.total_residents.toLocaleString()}+
+                                                {statistics.total_residents.toLocaleString()}
+                                                +
                                             </span>
                                             <span className="text-[11px] text-muted-foreground">
                                                 Active Residents
                                             </span>
                                         </div>
                                         <div className="rounded-xl border border-border/70 bg-card p-3">
-                                            <span className="block font-mono text-xl font-bold tracking-tight text-violet-700 dark:text-violet-300 tabular-nums">
-                                                {statistics.total_households.toLocaleString()}+
+                                            <span className="block font-mono text-xl font-bold tracking-tight text-violet-700 tabular-nums dark:text-violet-300">
+                                                {statistics.total_households.toLocaleString()}
+                                                +
                                             </span>
                                             <span className="text-[11px] text-muted-foreground">
                                                 Verified Households
@@ -542,7 +592,9 @@ export default function Welcome({
                                             <ShieldCheck className="size-3.5 text-violet-700 dark:text-violet-400" />
                                             ISO-Aligned Data Privacy Act of 2012
                                         </span>
-                                        <span className="font-semibold">Compliant</span>
+                                        <span className="font-semibold">
+                                            Compliant
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -552,7 +604,10 @@ export default function Welcome({
             </section>
 
             {/* Section 2: About & Historical Background */}
-            <section id="about" className="border-y border-border/80 bg-card py-20">
+            <section
+                id="about"
+                className="border-y border-border/80 bg-card py-20"
+            >
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="mx-auto max-w-3xl text-center">
                         <span className="text-xs font-bold tracking-wider text-violet-700 uppercase dark:text-violet-400">
@@ -571,10 +626,11 @@ export default function Welcome({
                         {/* Historical Narrative */}
                         <div className="space-y-6 lg:col-span-7">
                             <div className="bezel-outer">
-                                <div className="bezel-inner p-6 space-y-4">
+                                <div className="bezel-inner space-y-4 p-6">
                                     <h3 className="flex items-center gap-2.5 text-base font-bold text-foreground">
                                         <Building2 className="size-5 text-violet-600 dark:text-violet-400" />
-                                        {t.about?.history_title || 'Historical Background & Community Profile'}
+                                        {t.about?.history_title ||
+                                            'Historical Background & Community Profile'}
                                     </h3>
                                     <p className="text-sm leading-relaxed text-muted-foreground">
                                         {t.about?.history_p1 ||
@@ -588,10 +644,11 @@ export default function Welcome({
                             </div>
 
                             <div className="bezel-outer">
-                                <div className="bezel-inner p-6 space-y-3">
+                                <div className="bezel-inner space-y-3 p-6">
                                     <h3 className="flex items-center gap-2.5 text-base font-bold text-foreground">
                                         <Landmark className="size-5 text-violet-600 dark:text-violet-400" />
-                                        {t.about?.city_title || 'Trece Martires City Context'}
+                                        {t.about?.city_title ||
+                                            'Trece Martires City Context'}
                                     </h3>
                                     <p className="text-sm leading-relaxed text-muted-foreground">
                                         {t.about?.city_p1 ||
@@ -609,11 +666,16 @@ export default function Welcome({
                                         <Award className="size-4 text-amber-300" />
                                         Pioneering Digital Governance
                                     </div>
-                                    <h3 className="text-2xl font-bold leading-snug">
-                                        Modern Public Records, Accessible to Every Family.
+                                    <h3 className="text-2xl leading-snug font-bold">
+                                        Modern Public Records, Accessible to
+                                        Every Family.
                                     </h3>
                                     <p className="text-sm leading-relaxed text-violet-200">
-                                        Barangay Lallana is committed to streamlining public records, eliminating unnecessary bureaucratic delays, and ensuring every resident receives compassionate, transparent service.
+                                        Barangay Lallana is committed to
+                                        streamlining public records, eliminating
+                                        unnecessary bureaucratic delays, and
+                                        ensuring every resident receives
+                                        compassionate, transparent service.
                                     </p>
                                 </div>
 
@@ -642,14 +704,15 @@ export default function Welcome({
             </section>
 
             {/* Section 3: Leadership & Governance */}
-            <section id="leadership" className="py-20 bg-background">
+            <section id="leadership" className="bg-background py-20">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="mx-auto max-w-3xl text-center">
                         <span className="text-xs font-bold tracking-wider text-violet-700 uppercase dark:text-violet-400">
                             Public Servants
                         </span>
                         <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-foreground md:text-4xl">
-                            {t.leadership?.title || 'Barangay Leadership & Governance'}
+                            {t.leadership?.title ||
+                                'Barangay Leadership & Governance'}
                         </h2>
                         <p className="mt-3 text-base text-muted-foreground">
                             {t.leadership?.subtitle ||
@@ -667,9 +730,9 @@ export default function Welcome({
                                         <img
                                             src="/lallana-icon.png"
                                             alt="Barangay Crest"
-                                            className="size-16 object-contain drop-shadow-md mb-2"
+                                            className="mb-2 size-16 object-contain drop-shadow-md"
                                         />
-                                        <span className="text-[10px] font-extrabold tracking-widest uppercase text-violet-200">
+                                        <span className="text-[10px] font-extrabold tracking-widest text-violet-200 uppercase">
                                             Punong Barangay
                                         </span>
                                         <span className="text-xs font-bold">
@@ -680,16 +743,20 @@ export default function Welcome({
                                     <div className="space-y-4 text-center md:text-left">
                                         <div>
                                             <span className="text-xs font-bold tracking-wider text-violet-700 uppercase dark:text-violet-400">
-                                                {t.leadership?.captain_title || 'Punong Barangay / Barangay Captain'}
+                                                {t.leadership?.captain_title ||
+                                                    'Punong Barangay / Barangay Captain'}
                                             </span>
                                             <h3 className="mt-1 text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
-                                                {t.leadership?.captain_name || 'HON. CECILIA M. DECILLO'}
+                                                {t.leadership?.captain_name ||
+                                                    'HON. CECILIA M. DECILLO'}
                                             </h3>
                                         </div>
 
-                                        <blockquote className="rounded-xl border-l-4 border-violet-600 bg-violet-50/50 p-4 text-sm leading-relaxed text-foreground italic dark:bg-violet-950/20 md:text-base">
-                                            "{t.leadership?.captain_quote ||
-                                                'Good governance needs self-discipline. Only discipline within can ensure discipline without. We are committed to serving every family in Barangay Lallana with integrity and genuine care.'}"
+                                        <blockquote className="rounded-xl border-l-4 border-violet-600 bg-violet-50/50 p-4 text-sm leading-relaxed text-foreground italic md:text-base dark:bg-violet-950/20">
+                                            "
+                                            {t.leadership?.captain_quote ||
+                                                'Good governance needs self-discipline. Only discipline within can ensure discipline without. We are committed to serving every family in Barangay Lallana with integrity and genuine care.'}
+                                            "
                                         </blockquote>
 
                                         <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1 text-xs font-semibold md:justify-start">
@@ -710,19 +777,32 @@ export default function Welcome({
 
                     {/* Council Kagawads Grid */}
                     <div className="mx-auto mt-10 max-w-5xl">
-                        <h4 className="text-center text-xs font-bold tracking-widest text-muted-foreground uppercase mb-6">
-                            {t.leadership?.officials_title || 'Barangay Council & Executive Staff'}
+                        <h4 className="mb-6 text-center text-xs font-bold tracking-widest text-muted-foreground uppercase">
+                            {t.leadership?.officials_title ||
+                                'Barangay Council & Executive Staff'}
                         </h4>
 
                         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                             {[
-                                { name: 'Committee on Peace & Order', role: 'Barangay Kagawad' },
-                                { name: 'Committee on Health & Sanitation', role: 'Barangay Kagawad' },
-                                { name: 'Committee on Public Works', role: 'Barangay Kagawad' },
-                                { name: 'Committee on Education & Youth', role: 'SK Chairperson' },
+                                {
+                                    name: 'Committee on Peace & Order',
+                                    role: 'Barangay Kagawad',
+                                },
+                                {
+                                    name: 'Committee on Health & Sanitation',
+                                    role: 'Barangay Kagawad',
+                                },
+                                {
+                                    name: 'Committee on Public Works',
+                                    role: 'Barangay Kagawad',
+                                },
+                                {
+                                    name: 'Committee on Education & Youth',
+                                    role: 'SK Chairperson',
+                                },
                             ].map((item, index) => (
                                 <div key={index} className="bezel-outer">
-                                    <div className="bezel-inner p-4 text-center space-y-1.5">
+                                    <div className="bezel-inner space-y-1.5 p-4 text-center">
                                         <div className="mx-auto flex size-10 items-center justify-center rounded-xl bg-violet-600/10 text-violet-700 dark:bg-violet-400/10 dark:text-violet-300">
                                             <Users className="size-5" />
                                         </div>
@@ -741,7 +821,10 @@ export default function Welcome({
             </section>
 
             {/* Section 4: Services & Document Catalog */}
-            <section id="services" className="border-y border-border/80 bg-card py-20">
+            <section
+                id="services"
+                className="border-y border-border/80 bg-card py-20"
+            >
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="mx-auto max-w-3xl text-center">
                         <span className="text-xs font-bold tracking-wider text-violet-700 uppercase dark:text-violet-400">
@@ -759,7 +842,10 @@ export default function Welcome({
                     <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         {services && services.length > 0 ? (
                             services.map((service) => (
-                                <div key={service.id} className="bezel-outer group">
+                                <div
+                                    key={service.id}
+                                    className="bezel-outer group"
+                                >
                                     <div className="bezel-inner flex h-full flex-col justify-between p-6 transition-all hover:border-violet-300 dark:hover:border-violet-700">
                                         <div className="space-y-3">
                                             <div className="flex items-center justify-between">
@@ -775,34 +861,56 @@ export default function Welcome({
                                                 {service.name}
                                             </h3>
 
-                                            <p className="text-xs leading-relaxed text-muted-foreground line-clamp-2">
+                                            <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
                                                 {service.description}
                                             </p>
 
-                                            {service.requirements && service.requirements.length > 0 && (
-                                                <div className="border-t border-border/70 pt-3">
-                                                    <span className="text-[10px] font-semibold text-muted-foreground uppercase">
-                                                        Requirements:
-                                                    </span>
-                                                    <ul className="mt-1 space-y-1 text-xs text-foreground">
-                                                        {service.requirements.slice(0, 2).map((req, idx) => (
-                                                            <li key={idx} className="flex items-center gap-1.5 text-[11px]">
-                                                                <CheckCircle2 className="size-3 text-emerald-600 shrink-0" />
-                                                                <span className="truncate">{req}</span>
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            )}
+                                            {service.requirements &&
+                                                service.requirements.length >
+                                                    0 && (
+                                                    <div className="border-t border-border/70 pt-3">
+                                                        <span className="text-[10px] font-semibold text-muted-foreground uppercase">
+                                                            Requirements:
+                                                        </span>
+                                                        <ul className="mt-1 space-y-1 text-xs text-foreground">
+                                                            {service.requirements
+                                                                .slice(0, 2)
+                                                                .map(
+                                                                    (
+                                                                        req,
+                                                                        idx,
+                                                                    ) => (
+                                                                        <li
+                                                                            key={
+                                                                                idx
+                                                                            }
+                                                                            className="flex items-center gap-1.5 text-[11px]"
+                                                                        >
+                                                                            <CheckCircle2 className="size-3 shrink-0 text-emerald-600" />
+                                                                            <span className="truncate">
+                                                                                {
+                                                                                    req
+                                                                                }
+                                                                            </span>
+                                                                        </li>
+                                                                    ),
+                                                                )}
+                                                        </ul>
+                                                    </div>
+                                                )}
                                         </div>
 
                                         <div className="pt-5">
-                                            <Link href="/login?intent=request" className="block">
+                                            <Link
+                                                href="/login?intent=request"
+                                                className="block"
+                                            >
                                                 <Button
                                                     size="sm"
                                                     className="w-full cursor-pointer rounded-xl bg-violet-600 text-xs font-semibold text-white shadow-xs hover:bg-violet-700 active:scale-[0.98]"
                                                 >
-                                                    {t.services?.request_now || 'Request Online'}
+                                                    {t.services?.request_now ||
+                                                        'Request Online'}
                                                     <ArrowRight className="ml-1.5 size-3.5" />
                                                 </Button>
                                             </Link>
@@ -820,7 +928,7 @@ export default function Welcome({
             </section>
 
             {/* Section 5: Official Statistics Registry */}
-            <section id="statistics" className="py-20 bg-background">
+            <section id="statistics" className="bg-background py-20">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="mx-auto max-w-3xl text-center">
                         <span className="text-xs font-bold tracking-wider text-violet-700 uppercase dark:text-violet-400">
@@ -837,37 +945,40 @@ export default function Welcome({
 
                     <div className="mx-auto mt-12 grid max-w-4xl grid-cols-1 gap-6 sm:grid-cols-3">
                         <div className="bezel-outer">
-                            <div className="bezel-inner p-6 text-center space-y-2">
+                            <div className="bezel-inner space-y-2 p-6 text-center">
                                 <Users className="mx-auto size-6 text-violet-600 dark:text-violet-400" />
                                 <span className="block font-mono text-3xl font-extrabold tracking-tight text-foreground tabular-nums">
                                     {statistics.total_residents.toLocaleString()}
                                 </span>
                                 <span className="block text-xs font-semibold text-muted-foreground">
-                                    {t.statistics?.total_residents || 'Active Residents'}
+                                    {t.statistics?.total_residents ||
+                                        'Active Residents'}
                                 </span>
                             </div>
                         </div>
 
                         <div className="bezel-outer">
-                            <div className="bezel-inner p-6 text-center space-y-2">
+                            <div className="bezel-inner space-y-2 p-6 text-center">
                                 <HomeIcon className="mx-auto size-6 text-violet-600 dark:text-violet-400" />
-                                <span className="block font-mono text-3xl font-extrabold tracking-tight text-violet-700 dark:text-violet-300 tabular-nums">
+                                <span className="block font-mono text-3xl font-extrabold tracking-tight text-violet-700 tabular-nums dark:text-violet-300">
                                     {statistics.total_households.toLocaleString()}
                                 </span>
                                 <span className="block text-xs font-semibold text-muted-foreground">
-                                    {t.statistics?.total_households || 'Registered Households'}
+                                    {t.statistics?.total_households ||
+                                        'Registered Households'}
                                 </span>
                             </div>
                         </div>
 
                         <div className="bezel-outer">
-                            <div className="bezel-inner p-6 text-center space-y-2">
+                            <div className="bezel-inner space-y-2 p-6 text-center">
                                 <ShieldCheck className="mx-auto size-6 text-violet-600 dark:text-violet-400" />
                                 <span className="block font-mono text-3xl font-extrabold tracking-tight text-foreground tabular-nums">
                                     {statistics.total_officials.toLocaleString()}
                                 </span>
                                 <span className="block text-xs font-semibold text-muted-foreground">
-                                    {t.statistics?.total_officials || 'Barangay Personnel'}
+                                    {t.statistics?.total_officials ||
+                                        'Barangay Personnel'}
                                 </span>
                             </div>
                         </div>
@@ -881,14 +992,18 @@ export default function Welcome({
             </section>
 
             {/* Section 6: Official Announcements */}
-            <section id="announcements" className="border-t border-border/80 bg-card py-20">
+            <section
+                id="announcements"
+                className="border-t border-border/80 bg-card py-20"
+            >
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="mx-auto max-w-3xl text-center">
                         <span className="text-xs font-bold tracking-wider text-violet-700 uppercase dark:text-violet-400">
                             Community Notices
                         </span>
                         <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-foreground md:text-4xl">
-                            {t.announcements?.title || 'Official Announcements & Advisories'}
+                            {t.announcements?.title ||
+                                'Official Announcements & Advisories'}
                         </h2>
                         <p className="mt-3 text-base text-muted-foreground">
                             {t.announcements?.subtitle ||
@@ -900,10 +1015,10 @@ export default function Welcome({
                         {announcements && announcements.length > 0 ? (
                             announcements.map((item) => (
                                 <div key={item.id} className="bezel-outer">
-                                    <div className="bezel-inner flex h-full flex-col justify-between p-6 space-y-4">
+                                    <div className="bezel-inner flex h-full flex-col justify-between space-y-4 p-6">
                                         <div className="space-y-2.5">
                                             <div className="flex items-center justify-between text-xs">
-                                                <span className="rounded-full bg-violet-100 px-2.5 py-0.5 text-[10px] font-bold tracking-wide uppercase text-violet-800 dark:bg-violet-950/60 dark:text-violet-300">
+                                                <span className="rounded-full bg-violet-100 px-2.5 py-0.5 text-[10px] font-bold tracking-wide text-violet-800 uppercase dark:bg-violet-950/60 dark:text-violet-300">
                                                     {item.category}
                                                 </span>
                                                 <span className="flex items-center gap-1 font-mono text-[11px] text-muted-foreground">
@@ -912,18 +1027,19 @@ export default function Welcome({
                                                 </span>
                                             </div>
 
-                                            <h3 className="text-base font-bold text-foreground line-clamp-2">
+                                            <h3 className="line-clamp-2 text-base font-bold text-foreground">
                                                 {item.title}
                                             </h3>
 
-                                            <p className="text-xs leading-relaxed text-muted-foreground line-clamp-3">
+                                            <p className="line-clamp-3 text-xs leading-relaxed text-muted-foreground">
                                                 {item.excerpt}
                                             </p>
                                         </div>
 
                                         <div className="border-t border-border/70 pt-3">
-                                            <span className="inline-flex items-center text-xs font-semibold text-violet-700 hover:underline dark:text-violet-400 cursor-pointer">
-                                                {t.announcements?.read_more || 'Read Advisory'}
+                                            <span className="inline-flex cursor-pointer items-center text-xs font-semibold text-violet-700 hover:underline dark:text-violet-400">
+                                                {t.announcements?.read_more ||
+                                                    'Read Advisory'}
                                                 <ChevronRight className="ml-1 size-3.5" />
                                             </span>
                                         </div>
@@ -932,7 +1048,8 @@ export default function Welcome({
                             ))
                         ) : (
                             <div className="col-span-full py-8 text-center text-sm text-muted-foreground">
-                                {t.announcements?.empty_state || 'No active announcements published at this time.'}
+                                {t.announcements?.empty_state ||
+                                    'No active announcements published at this time.'}
                             </div>
                         )}
                     </div>
@@ -940,7 +1057,7 @@ export default function Welcome({
             </section>
 
             {/* Section 7: Citizen Contact & Inquiry Form */}
-            <section id="contact" className="py-20 bg-background">
+            <section id="contact" className="bg-background py-20">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
                         {/* Contact Information & Office Details */}
@@ -960,31 +1077,40 @@ export default function Welcome({
 
                             <div className="space-y-4 text-sm">
                                 <div className="flex items-start gap-3.5 rounded-xl border border-border/80 bg-card p-4">
-                                    <MapPin className="size-5 shrink-0 text-violet-600 dark:text-violet-400 mt-0.5" />
+                                    <MapPin className="mt-0.5 size-5 shrink-0 text-violet-600 dark:text-violet-400" />
                                     <div>
-                                        <h4 className="font-semibold text-foreground">Barangay Hall</h4>
+                                        <h4 className="font-semibold text-foreground">
+                                            Barangay Hall
+                                        </h4>
                                         <p className="mt-0.5 text-xs text-muted-foreground">
-                                            {t.contact?.address_val || 'Barangay Lallana Hall, Trece Martires City, Cavite 4109'}
+                                            {t.contact?.address_val ||
+                                                'Barangay Lallana Hall, Trece Martires City, Cavite 4109'}
                                         </p>
                                     </div>
                                 </div>
 
                                 <div className="flex items-start gap-3.5 rounded-xl border border-border/80 bg-card p-4">
-                                    <Phone className="size-5 shrink-0 text-violet-600 dark:text-violet-400 mt-0.5" />
+                                    <Phone className="mt-0.5 size-5 shrink-0 text-violet-600 dark:text-violet-400" />
                                     <div>
-                                        <h4 className="font-semibold text-foreground">Office Telephone & Hotlines</h4>
+                                        <h4 className="font-semibold text-foreground">
+                                            Office Telephone & Hotlines
+                                        </h4>
                                         <p className="mt-0.5 font-mono text-xs text-muted-foreground">
-                                            {t.contact?.phone_val || '+63 (46) 419-0000 / 0917-000-0000'}
+                                            {t.contact?.phone_val ||
+                                                '+63 (46) 419-0000 / 0917-000-0000'}
                                         </p>
                                     </div>
                                 </div>
 
                                 <div className="flex items-start gap-3.5 rounded-xl border border-border/80 bg-card p-4">
-                                    <Clock className="size-5 shrink-0 text-violet-600 dark:text-violet-400 mt-0.5" />
+                                    <Clock className="mt-0.5 size-5 shrink-0 text-violet-600 dark:text-violet-400" />
                                     <div>
-                                        <h4 className="font-semibold text-foreground">Operating Schedule</h4>
+                                        <h4 className="font-semibold text-foreground">
+                                            Operating Schedule
+                                        </h4>
                                         <p className="mt-0.5 text-xs text-muted-foreground">
-                                            {t.contact?.operating_hours || 'Monday - Friday: 8:00 AM - 5:00 PM'}
+                                            {t.contact?.operating_hours ||
+                                                'Monday - Friday: 8:00 AM - 5:00 PM'}
                                         </p>
                                     </div>
                                 </div>
@@ -996,7 +1122,8 @@ export default function Welcome({
                             <div className="bezel-outer">
                                 <div className="bezel-inner p-6 sm:p-8">
                                     <h3 className="text-lg font-bold text-foreground">
-                                        {t.contact?.inquiry_title || 'Send Us an Inquiry'}
+                                        {t.contact?.inquiry_title ||
+                                            'Send Us an Inquiry'}
                                     </h3>
                                     <p className="mt-1 text-xs text-muted-foreground">
                                         {t.contact?.inquiry_desc ||
@@ -1013,82 +1140,134 @@ export default function Welcome({
                                         </div>
                                     )}
 
-                                    <form onSubmit={handleInquirySubmit} className="mt-6 space-y-4">
+                                    <form
+                                        onSubmit={handleInquirySubmit}
+                                        className="mt-6 space-y-4"
+                                    >
                                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                             <div className="space-y-1.5">
-                                                <Label htmlFor="name" className="text-xs font-semibold">
-                                                    {t.contact?.form_name || 'Full Name'}
+                                                <Label
+                                                    htmlFor="name"
+                                                    className="text-xs font-semibold"
+                                                >
+                                                    {t.contact?.form_name ||
+                                                        'Full Name'}
                                                 </Label>
                                                 <Input
                                                     id="name"
                                                     value={data.name}
-                                                    onChange={(e) => setData('name', e.target.value)}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'name',
+                                                            e.target.value,
+                                                        )
+                                                    }
                                                     required
                                                     className="rounded-xl"
                                                     placeholder="Juan Dela Cruz"
                                                 />
                                                 {errors.name && (
-                                                    <p className="text-[11px] text-destructive">{errors.name}</p>
+                                                    <p className="text-[11px] text-destructive">
+                                                        {errors.name}
+                                                    </p>
                                                 )}
                                             </div>
 
                                             <div className="space-y-1.5">
-                                                <Label htmlFor="email" className="text-xs font-semibold">
-                                                    {t.contact?.form_email || 'Email Address'}
+                                                <Label
+                                                    htmlFor="email"
+                                                    className="text-xs font-semibold"
+                                                >
+                                                    {t.contact?.form_email ||
+                                                        'Email Address'}
                                                 </Label>
                                                 <Input
                                                     id="email"
                                                     type="email"
                                                     value={data.email}
-                                                    onChange={(e) => setData('email', e.target.value)}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'email',
+                                                            e.target.value,
+                                                        )
+                                                    }
                                                     required
                                                     className="rounded-xl"
                                                     placeholder="juan@example.com"
                                                 />
                                                 {errors.email && (
-                                                    <p className="text-[11px] text-destructive">{errors.email}</p>
+                                                    <p className="text-[11px] text-destructive">
+                                                        {errors.email}
+                                                    </p>
                                                 )}
                                             </div>
                                         </div>
 
                                         <div className="space-y-1.5">
-                                            <Label htmlFor="subject" className="text-xs font-semibold">
-                                                {t.contact?.form_subject || 'Subject'}
+                                            <Label
+                                                htmlFor="subject"
+                                                className="text-xs font-semibold"
+                                            >
+                                                {t.contact?.form_subject ||
+                                                    'Subject'}
                                             </Label>
                                             <Input
                                                 id="subject"
                                                 value={data.subject}
-                                                onChange={(e) => setData('subject', e.target.value)}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'subject',
+                                                        e.target.value,
+                                                    )
+                                                }
                                                 required
                                                 className="rounded-xl"
                                                 placeholder="Document requirement inquiry..."
                                             />
                                             {errors.subject && (
-                                                <p className="text-[11px] text-destructive">{errors.subject}</p>
+                                                <p className="text-[11px] text-destructive">
+                                                    {errors.subject}
+                                                </p>
                                             )}
                                         </div>
 
                                         <div className="space-y-1.5">
-                                            <Label htmlFor="message" className="text-xs font-semibold">
-                                                {t.contact?.form_message || 'Message / Inquiry Details'}
+                                            <Label
+                                                htmlFor="message"
+                                                className="text-xs font-semibold"
+                                            >
+                                                {t.contact?.form_message ||
+                                                    'Message / Inquiry Details'}
                                             </Label>
                                             <Textarea
                                                 id="message"
                                                 rows={4}
                                                 value={data.message}
-                                                onChange={(e) => setData('message', e.target.value)}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'message',
+                                                        e.target.value,
+                                                    )
+                                                }
                                                 required
                                                 className="rounded-xl"
                                                 placeholder="Please state your inquiry or request details clearly..."
                                             />
                                             {errors.message && (
-                                                <p className="text-[11px] text-destructive">{errors.message}</p>
+                                                <p className="text-[11px] text-destructive">
+                                                    {errors.message}
+                                                </p>
                                             )}
                                         </div>
 
                                         <div className="pt-1">
                                             <TurnstileWidget
-                                                onSuccess={(token: string) => setData('cf-turnstile-response', token)}
+                                                onSuccess={(token: string) =>
+                                                    setData(
+                                                        'cf-turnstile-response',
+                                                        token,
+                                                    )
+                                                }
                                             />
                                         </div>
 
@@ -1099,8 +1278,10 @@ export default function Welcome({
                                         >
                                             <Send className="mr-2 size-4" />
                                             {processing
-                                                ? (t.contact?.form_sending || 'Sending...')
-                                                : (t.contact?.form_submit || 'Send Inquiry')}
+                                                ? t.contact?.form_sending ||
+                                                  'Sending...'
+                                                : t.contact?.form_submit ||
+                                                  'Send Inquiry'}
                                         </Button>
                                     </form>
                                 </div>
@@ -1132,37 +1313,54 @@ export default function Welcome({
                                 </div>
                             </div>
                             <p className="max-w-md text-xs leading-relaxed">
-                                The official e-government web portal of Barangay Lallana, empowering residents with secure, digital document processing, household management, and municipal transparency.
+                                The official e-government web portal of Barangay
+                                Lallana, empowering residents with secure,
+                                digital document processing, household
+                                management, and municipal transparency.
                             </p>
                             <div className="flex items-center gap-2 pt-2 text-[11px]">
                                 <span className="inline-block size-2 rounded-full bg-emerald-500" />
-                                <span>Philippine Standard Time (PST): Active</span>
+                                <span>
+                                    Philippine Standard Time (PST): Active
+                                </span>
                             </div>
                         </div>
 
                         {/* Col 2: Quick Links */}
                         <div className="space-y-2.5">
-                            <h5 className="text-xs font-bold uppercase tracking-wider text-foreground">
+                            <h5 className="text-xs font-bold tracking-wider text-foreground uppercase">
                                 Citizen Navigation
                             </h5>
                             <ul className="space-y-1.5 text-xs">
                                 <li>
-                                    <a href="#services" className="hover:text-violet-700 dark:hover:text-violet-300">
+                                    <a
+                                        href="#services"
+                                        className="hover:text-violet-700 dark:hover:text-violet-300"
+                                    >
                                         Document Requests
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#about" className="hover:text-violet-700 dark:hover:text-violet-300">
+                                    <a
+                                        href="#about"
+                                        className="hover:text-violet-700 dark:hover:text-violet-300"
+                                    >
                                         Community Profile
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#leadership" className="hover:text-violet-700 dark:hover:text-violet-300">
+                                    <a
+                                        href="#leadership"
+                                        className="hover:text-violet-700 dark:hover:text-violet-300"
+                                    >
                                         Barangay Officials
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#announcements" className="hover:text-violet-700 dark:hover:text-violet-300">
+                                    <a
+                                        href="#announcements"
+                                        className="hover:text-violet-700 dark:hover:text-violet-300"
+                                    >
                                         Public Advisories
                                     </a>
                                 </li>
@@ -1171,7 +1369,7 @@ export default function Welcome({
 
                         {/* Col 3: Government Transparency */}
                         <div className="space-y-2.5">
-                            <h5 className="text-xs font-bold uppercase tracking-wider text-foreground">
+                            <h5 className="text-xs font-bold tracking-wider text-foreground uppercase">
                                 Republic of the Philippines
                             </h5>
                             <ul className="space-y-1.5 text-xs">
@@ -1184,13 +1382,22 @@ export default function Welcome({
                     </div>
 
                     <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border/80 pt-6 text-[11px] sm:flex-row">
-                        <p>© {new Date().getFullYear()} Barangay Lallana, Trece Martires City, Cavite. All rights reserved.</p>
+                        <p>
+                            © {new Date().getFullYear()} Barangay Lallana, Trece
+                            Martires City, Cavite. All rights reserved.
+                        </p>
                         <div className="flex items-center gap-4">
-                            <a href="#" className="hover:text-foreground">Privacy Policy</a>
+                            <a href="#" className="hover:text-foreground">
+                                Privacy Policy
+                            </a>
                             <span>•</span>
-                            <a href="#" className="hover:text-foreground">Terms of Service</a>
+                            <a href="#" className="hover:text-foreground">
+                                Terms of Service
+                            </a>
                             <span>•</span>
-                            <a href="#" className="hover:text-foreground">Accessibility</a>
+                            <a href="#" className="hover:text-foreground">
+                                Accessibility
+                            </a>
                         </div>
                     </div>
                 </div>

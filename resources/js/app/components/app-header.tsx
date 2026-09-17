@@ -103,7 +103,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                                         'flex items-center space-x-2.5 rounded-lg px-3 py-2 font-medium transition-colors',
                                                         isCurrentUrl(item.href)
                                                             ? 'bg-violet-50 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300'
-                                                            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                                                            : 'text-muted-foreground hover:bg-muted hover:text-foreground',
                                                     )}
                                                 >
                                                     {item.icon && (

@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\ResidentProfiles;
 
-use App\Filament\Resources\ResidentProfiles\Pages\ListResidentProfiles;
-use App\Filament\Resources\ResidentProfiles\Pages\ViewResidentProfile;
 use App\Filament\Resources\ResidentProfiles\Schemas\ResidentProfileForm;
 use App\Filament\Resources\ResidentProfiles\Schemas\ResidentProfileInfolist;
 use App\Filament\Resources\ResidentProfiles\Tables\ResidentProfilesTable;
@@ -53,11 +51,13 @@ class ResidentProfileResource extends Resource
         ];
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public static function getPages(): array
     {
-        return [
-            'index' => ListResidentProfiles::route('/'),
-            'view' => ViewResidentProfile::route('/{record}'),
-        ];
+        return [];
     }
 }

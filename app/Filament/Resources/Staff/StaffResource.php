@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Staff;
 
-use App\Filament\Resources\Staff\Pages\ListStaff;
 use App\Filament\Resources\Staff\Tables\StaffTable;
 use App\Models\Role;
 use App\Models\User;
@@ -48,10 +47,13 @@ class StaffResource extends Resource
         return StaffTable::configure($table);
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public static function getPages(): array
     {
-        return [
-            'index' => ListStaff::route('/'),
-        ];
+        return [];
     }
 }

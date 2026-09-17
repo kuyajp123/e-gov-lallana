@@ -29,7 +29,7 @@ export default function AuthSimpleLayout({
 
             <div className={cn('w-full max-w-md', className)}>
                 <div className="bezel-outer">
-                    <div className="bezel-inner p-6 sm:p-8 space-y-6">
+                    <div className="bezel-inner space-y-6 p-6 sm:p-8">
                         {/* Civic Header */}
                         <div className="flex flex-col items-center gap-3 text-center">
                             <Link
@@ -39,18 +39,21 @@ export default function AuthSimpleLayout({
                                 <div className="flex size-16 items-center justify-center rounded-2xl bg-violet-600/10 p-2 ring-1 ring-violet-600/20 transition-transform group-hover:scale-105 dark:bg-violet-400/10 dark:ring-violet-400/20">
                                     <AppLogoIcon className="size-12 object-contain" />
                                 </div>
-                                <span className="sr-only">Barangay Lallana</span>
+                                <span className="sr-only">
+                                    Barangay Lallana
+                                </span>
                             </Link>
 
                             <div className="space-y-1">
                                 <span className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-                                    Republic of the Philippines • Trece Martires City
+                                    Republic of the Philippines • Trece Martires
+                                    City
                                 </span>
                                 <h1 className="text-xl font-extrabold tracking-tight text-foreground sm:text-2xl">
                                     {title}
                                 </h1>
                                 {description && (
-                                    <p className="text-xs text-muted-foreground max-w-sm">
+                                    <p className="max-w-sm text-xs text-muted-foreground">
                                         {description}
                                     </p>
                                 )}
@@ -58,9 +61,7 @@ export default function AuthSimpleLayout({
                         </div>
 
                         {/* Form Content */}
-                        <div className="pt-2">
-                            {children}
-                        </div>
+                        <div className="pt-2">{children}</div>
 
                         {/* Security Notice */}
                         <div className="flex items-center justify-center gap-1.5 border-t border-border/70 pt-4 text-[11px] text-muted-foreground">

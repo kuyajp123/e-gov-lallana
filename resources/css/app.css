@@ -155,9 +155,9 @@
 
 /* Nested double-bezel card structure for tangible physical depth */
 .bezel-outer {
-    @apply rounded-2xl p-1 bg-neutral-900/[0.03] dark:bg-white/[0.04] ring-1 ring-black/5 dark:ring-white/10;
+    @apply rounded-2xl bg-neutral-900/[0.03] p-1 ring-1 ring-black/5 dark:bg-white/[0.04] dark:ring-white/10;
 }
 
 .bezel-inner {
-    @apply rounded-[calc(1rem-4px)] bg-card border border-border/60 shadow-xs;
+    @apply rounded-[calc(1rem-4px)] border border-border/60 bg-card shadow-xs;
 }

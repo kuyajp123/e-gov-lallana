@@ -26,8 +26,7 @@ test('admin dashboard renders successfully with phase 5 widgets for admin', func
     $response = $this->actingAs($this->admin)->get('/admin');
 
     $response->assertOk();
-    $response->assertSee('AdminStatsOverviewWidget');
-    $response->assertSee('DemographicsChartWidget');
+    $response->assertInertia(fn ($page) => $page->component('admin/dashboard'));
 });
 
 test('admin stats overview widget computes accurate live metrics', function () {

@@ -1,5 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminDocumentRequestController;
+use App\Http\Controllers\Admin\AdminDocumentTypeController;
+use App\Http\Controllers\Admin\AdminHouseholdController;
+use App\Http\Controllers\Admin\AdminResidentProfileController;
+use App\Http\Controllers\Admin\AdminStaffController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Dev\DevSmsController;
 use App\Http\Controllers\Document\DocumentRequestController;
@@ -16,6 +22,7 @@ use App\Http\Controllers\Resident\ProfileAvatarController;
 use App\Http\Controllers\Resident\ProfileController;
 use App\Http\Middleware\EnsureHouseholdIsVerified;
 use App\Http\Middleware\EnsureProfileIsComplete;
+use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Support\Facades\Route;
 
 // Public Landing Page & Inquiry Routes
@@ -26,6 +33,58 @@ Route::post('/locale', LocaleController::class)->name('locale.switch');
 // Authenticated Application Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
+
+    // Administrative Portal (Inertia React)
+    Route::middleware([EnsureUserIsAdmin::class])->group(function () {
+        Route::get('/admin', AdminDashboardController::class)->name('filament.admin.pages.dashboard');
+        Route::get('/admin/overview', AdminDashboardController::class)->name('admin.dashboard');
+
+        // Document Requests Management
+        Route::prefix('admin/document-requests')->name('admin.document-requests.')->group(function () {
+            Route::get('/', [AdminDocumentRequestController::class, 'index'])->name('index');
+            Route::get('/{documentRequest}', [AdminDocumentRequestController::class, 'show'])->name('show')->whereNumber('documentRequest');
+            Route::patch('/{documentRequest}/status', [AdminDocumentRequestController::class, 'updateStatus'])->name('update-status')->whereNumber('documentRequest');
+            Route::patch('/{documentRequest}/payment', [AdminDocumentRequestController::class, 'updatePayment'])->name('update-payment')->whereNumber('documentRequest');
+            Route::patch('/{documentRequest}/notes', [AdminDocumentRequestController::class, 'updateNotes'])->name('update-notes')->whereNumber('documentRequest');
+        });
+
+        // Households Management & Verification
+        Route::prefix('admin/households')->name('admin.households.')->group(function () {
+            Route::get('/', [AdminHouseholdController::class, 'index'])->name('index');
+            Route::get('/{household}', [AdminHouseholdController::class, 'show'])->name('show')->whereNumber('household');
+            Route::post('/{household}/verify', [AdminHouseholdController::class, 'verify'])->name('verify')->whereNumber('household');
+            Route::post('/{household}/restrict', [AdminHouseholdController::class, 'restrict'])->name('restrict')->whereNumber('household');
+            Route::post('/{household}/archive', [AdminHouseholdController::class, 'archive'])->name('archive')->whereNumber('household');
+            Route::post('/{household}/transfer-head', [AdminHouseholdController::class, 'transferHead'])->name('transfer-head')->whereNumber('household');
+        });
+
+        // Resident Profiles Civil Registry
+        Route::prefix('admin/resident-profiles')->name('admin.resident-profiles.')->group(function () {
+            Route::get('/', [AdminResidentProfileController::class, 'index'])->name('index');
+            Route::get('/{residentProfile}', [AdminResidentProfileController::class, 'show'])->name('show')->whereNumber('residentProfile');
+        });
+
+        // Document Services Configuration
+        Route::prefix('admin/document-types')->name('admin.document-types.')->group(function () {
+            Route::get('/', [AdminDocumentTypeController::class, 'index'])->name('index');
+            Route::get('/create', [AdminDocumentTypeController::class, 'create'])->name('create');
+            Route::post('/', [AdminDocumentTypeController::class, 'store'])->name('store');
+            Route::get('/{documentType}/edit', [AdminDocumentTypeController::class, 'edit'])->name('edit')->whereNumber('documentType');
+            Route::put('/{documentType}', [AdminDocumentTypeController::class, 'update'])->name('update')->whereNumber('documentType');
+            Route::post('/{documentType}/toggle', [AdminDocumentTypeController::class, 'toggleActive'])->name('toggle')->whereNumber('documentType');
+            Route::delete('/{documentType}', [AdminDocumentTypeController::class, 'destroy'])->name('destroy')->whereNumber('documentType');
+        });
+
+        // Staff & Privileges Management
+        Route::prefix('admin/staff')->name('admin.staff.')->group(function () {
+            Route::get('/', [AdminStaffController::class, 'index'])->name('index');
+            Route::post('/', [AdminStaffController::class, 'store'])->name('store');
+            Route::post('/designate', [AdminStaffController::class, 'designate'])->name('designate');
+            Route::put('/{user}', [AdminStaffController::class, 'update'])->name('update')->whereNumber('user');
+            Route::post('/{user}/toggle-status', [AdminStaffController::class, 'toggleStatus'])->name('toggle-status')->whereNumber('user');
+            Route::post('/{user}/revoke', [AdminStaffController::class, 'revoke'])->name('revoke')->whereNumber('user');
+        });
+    });
 
     // In-App Notifications
     Route::prefix('notifications')->name('notifications.')->group(function () {

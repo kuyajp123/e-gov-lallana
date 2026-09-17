@@ -1,5 +1,16 @@
-import { Link } from '@inertiajs/react';
-import { FileText, Home, LayoutGrid } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import {
+    Building2,
+    ClipboardList,
+    FileCheck,
+    FileText,
+    Home,
+    LayoutGrid,
+    ShieldCheck,
+    Terminal,
+    UserCog,
+    Users,
+} from 'lucide-react';
 import { NavMain } from '@/app/components/nav-main';
 import { NavUser } from '@/app/components/nav-user';
 import { dashboard } from '@/routes';
@@ -33,14 +44,89 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
+const adminNavItems: NavItem[] = [
+    {
+        title: 'Admin Console',
+        href: '/admin',
+        icon: ShieldCheck,
+    },
+    {
+        title: 'Document Queue',
+        href: '/admin/document-requests',
+        icon: FileCheck,
+    },
+    {
+        title: 'Households',
+        href: '/admin/households',
+        icon: Building2,
+    },
+    {
+        title: 'Resident Registry',
+        href: '/admin/resident-profiles',
+        icon: Users,
+    },
+];
+
 export function AppSidebar() {
+    const { auth, isDevEnvironment } = usePage<{
+        auth: {
+            user?: {
+                can_access_admin?: boolean;
+                role?: { slug: string };
+            };
+        };
+        isDevEnvironment?: boolean;
+    }>().props;
+
+    const isAdminUser = Boolean(
+        auth.user?.can_access_admin ??
+        (auth.user?.role?.slug === 'admin' ||
+            auth.user?.role?.slug === 'sub_admin' ||
+            auth.user?.role?.slug === 'super_admin'),
+    );
+
+    const isFullAdmin = Boolean(
+        auth.user?.role?.slug === 'admin' ||
+        auth.user?.role?.slug === 'super_admin',
+    );
+
+    const adminNav: NavItem[] = [
+        ...adminNavItems,
+        {
+            title: 'Document Types',
+            href: '/admin/document-types',
+            icon: ClipboardList,
+        },
+        ...(isFullAdmin
+            ? [
+                  {
+                      title: 'Staff Management',
+                      href: '/admin/staff',
+                      icon: UserCog,
+                  },
+              ]
+            : []),
+        ...((isDevEnvironment ?? true)
+            ? [
+                  {
+                      title: 'Developer Diagnostics',
+                      href: '/dev/sms',
+                      icon: Terminal,
+                  },
+              ]
+            : []),
+    ];
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
+                            <Link
+                                href={isAdminUser ? '/admin' : dashboard()}
+                                prefetch
+                            >
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
@@ -49,7 +135,10 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                {isAdminUser && (
+                    <NavMain label="Administration" items={adminNav} />
+                )}
+                <NavMain label="Resident Portal" items={mainNavItems} />
             </SidebarContent>
 
             <SidebarFooter>

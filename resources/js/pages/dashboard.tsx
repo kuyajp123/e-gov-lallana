@@ -4,17 +4,13 @@ import {
     Bell,
     CheckCircle2,
     Clock,
-    FileCheck,
     FileText,
     Home,
     PackageCheck,
-    QrCode,
     ShieldAlert,
     ShieldCheck,
-    Sparkles,
     User,
     UserCheck,
-    Users,
 } from 'lucide-react';
 import { dashboard } from '@/routes';
 import {
@@ -125,7 +121,8 @@ export default function Dashboard({
                                     </Badge>
                                 </div>
                                 <p className="text-xs text-muted-foreground sm:text-sm">
-                                    Barangay Lallana E-Government Portal • Trece Martires City, Cavite
+                                    Barangay Lallana E-Government Portal • Trece
+                                    Martires City, Cavite
                                 </p>
                             </div>
                         </div>
@@ -159,7 +156,10 @@ export default function Dashboard({
 
                 {/* Profile Completion Alert Banner if Incomplete */}
                 {!isProfileComplete && (
-                    <Alert variant="destructive" className="rounded-2xl border-destructive/30 bg-destructive/5 p-5">
+                    <Alert
+                        variant="destructive"
+                        className="rounded-2xl border-destructive/30 bg-destructive/5 p-5"
+                    >
                         <ShieldAlert className="size-5 text-destructive" />
                         <div className="flex w-full flex-col justify-between gap-3 sm:flex-row sm:items-center">
                             <div>
@@ -167,7 +167,10 @@ export default function Dashboard({
                                     Resident KYC Profile Incomplete
                                 </AlertTitle>
                                 <AlertDescription className="mt-1 text-xs text-muted-foreground">
-                                    Please complete your demographic profile and upload a valid government ID to unlock official document requesting and household registration.
+                                    Please complete your demographic profile and
+                                    upload a valid government ID to unlock
+                                    official document requesting and household
+                                    registration.
                                 </AlertDescription>
                             </div>
                             <Button
@@ -197,8 +200,13 @@ export default function Dashboard({
                                         Official Document Ready for Pickup!
                                     </h4>
                                     <p className="mt-0.5 text-xs text-emerald-800 dark:text-emerald-300">
-                                        You have {documentStats.ready_for_pickup}{' '}
-                                        {documentStats.ready_for_pickup === 1 ? 'document' : 'documents'} ready for claiming at the Barangay Lallana Hall (Claiming Window 1).
+                                        You have{' '}
+                                        {documentStats.ready_for_pickup}{' '}
+                                        {documentStats.ready_for_pickup === 1
+                                            ? 'document'
+                                            : 'documents'}{' '}
+                                        ready for claiming at the Barangay
+                                        Lallana Hall (Claiming Window 1).
                                     </p>
                                 </div>
                             </div>
@@ -221,7 +229,7 @@ export default function Dashboard({
                     <div className="space-y-6 lg:col-span-8">
                         {/* Latest Request Tracker Card */}
                         <div className="bezel-outer">
-                            <div className="bezel-inner p-6 space-y-5">
+                            <div className="bezel-inner space-y-5 p-6">
                                 <div className="flex items-center justify-between border-b border-border/70 pb-4">
                                     <div className="flex items-center gap-2.5">
                                         <div className="flex size-9 items-center justify-center rounded-xl bg-violet-600/10 text-violet-700 dark:bg-violet-400/10 dark:text-violet-300">
@@ -232,13 +240,19 @@ export default function Dashboard({
                                                 Active Document Request Tracker
                                             </h3>
                                             <span className="text-[11px] text-muted-foreground">
-                                                Real-time processing queue & status progression
+                                                Real-time processing queue &
+                                                status progression
                                             </span>
                                         </div>
                                     </div>
                                     <Link href="/documents">
-                                        <Button variant="ghost" size="sm" className="h-8 rounded-lg text-xs font-medium text-violet-700 hover:bg-violet-50 dark:text-violet-300 dark:hover:bg-violet-950/50">
-                                            All Requests ({documentStats.total_requests})
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-8 rounded-lg text-xs font-medium text-violet-700 hover:bg-violet-50 dark:text-violet-300 dark:hover:bg-violet-950/50"
+                                        >
+                                            All Requests (
+                                            {documentStats.total_requests})
                                             <ArrowRight className="ml-1 size-3.5" />
                                         </Button>
                                     </Link>
@@ -249,32 +263,79 @@ export default function Dashboard({
                                         <div className="flex flex-wrap items-center justify-between gap-2">
                                             <div>
                                                 <span className="font-mono text-xs font-bold text-violet-700 dark:text-violet-300">
-                                                    {documentStats.latest_request.reference_code}
+                                                    {
+                                                        documentStats
+                                                            .latest_request
+                                                            .reference_code
+                                                    }
                                                 </span>
                                                 <h4 className="text-base font-extrabold text-foreground">
-                                                    {documentStats.latest_request.document_name}
+                                                    {
+                                                        documentStats
+                                                            .latest_request
+                                                            .document_name
+                                                    }
                                                 </h4>
                                             </div>
                                             <Badge
                                                 variant="outline"
-                                                className="border-violet-300 bg-violet-50 text-xs font-semibold capitalize text-violet-800 dark:border-violet-700 dark:bg-violet-950/60 dark:text-violet-300"
+                                                className="border-violet-300 bg-violet-50 text-xs font-semibold text-violet-800 capitalize dark:border-violet-700 dark:bg-violet-950/60 dark:text-violet-300"
                                             >
-                                                {documentStats.latest_request.status_label || documentStats.latest_request.status}
+                                                {documentStats.latest_request
+                                                    .status_label ||
+                                                    documentStats.latest_request
+                                                        .status}
                                             </Badge>
                                         </div>
 
                                         {/* Status Progression Stepper */}
                                         <div className="pt-2">
                                             <div className="grid grid-cols-4 gap-2 text-center text-[10px] font-semibold">
-                                                {['Submitted', 'Under Review', 'Processing', 'Ready'].map((step, idx) => {
-                                                    const stepStatus = documentStats.latest_request?.status;
+                                                {[
+                                                    'Submitted',
+                                                    'Under Review',
+                                                    'Processing',
+                                                    'Ready',
+                                                ].map((step, idx) => {
+                                                    const stepStatus =
+                                                        documentStats
+                                                            .latest_request
+                                                            ?.status;
                                                     const isCompleted =
                                                         idx === 0 ||
-                                                        (idx === 1 && ['under_review', 'processing', 'ready_for_pickup', 'completed'].includes(stepStatus || '')) ||
-                                                        (idx === 2 && ['processing', 'ready_for_pickup', 'completed'].includes(stepStatus || '')) ||
-                                                        (idx === 3 && ['ready_for_pickup', 'completed'].includes(stepStatus || ''));
+                                                        (idx === 1 &&
+                                                            [
+                                                                'under_review',
+                                                                'processing',
+                                                                'ready_for_pickup',
+                                                                'completed',
+                                                            ].includes(
+                                                                stepStatus ||
+                                                                    '',
+                                                            )) ||
+                                                        (idx === 2 &&
+                                                            [
+                                                                'processing',
+                                                                'ready_for_pickup',
+                                                                'completed',
+                                                            ].includes(
+                                                                stepStatus ||
+                                                                    '',
+                                                            )) ||
+                                                        (idx === 3 &&
+                                                            [
+                                                                'ready_for_pickup',
+                                                                'completed',
+                                                            ].includes(
+                                                                stepStatus ||
+                                                                    '',
+                                                            ));
+
                                                     return (
-                                                        <div key={step} className="space-y-1.5">
+                                                        <div
+                                                            key={step}
+                                                            className="space-y-1.5"
+                                                        >
                                                             <div
                                                                 className={`h-1.5 rounded-full transition-all ${
                                                                     isCompleted
@@ -301,8 +362,11 @@ export default function Dashboard({
                                             <span className="flex items-center gap-1.5">
                                                 <Clock className="size-3.5" />
                                                 Submitted:{' '}
-                                                <strong className="font-mono text-foreground font-semibold">
-                                                    {documentStats.latest_request.submitted_at || 'Recently'}
+                                                <strong className="font-mono font-semibold text-foreground">
+                                                    {documentStats
+                                                        .latest_request
+                                                        .submitted_at ||
+                                                        'Recently'}
                                                 </strong>
                                             </span>
                                             <Link
@@ -314,7 +378,7 @@ export default function Dashboard({
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="rounded-xl border border-dashed border-border/90 p-8 text-center space-y-3">
+                                    <div className="space-y-3 rounded-xl border border-dashed border-border/90 p-8 text-center">
                                         <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
                                             <FileText className="size-6" />
                                         </div>
@@ -323,18 +387,26 @@ export default function Dashboard({
                                                 No Pending Document Requests
                                             </h4>
                                             <p className="mt-0.5 text-xs text-muted-foreground">
-                                                Need a Barangay Clearance, Certificate of Indigency, or Residency? Submit an online request in seconds.
+                                                Need a Barangay Clearance,
+                                                Certificate of Indigency, or
+                                                Residency? Submit an online
+                                                request in seconds.
                                             </p>
                                         </div>
                                         {isHouseholdVerified ? (
-                                            <Button asChild size="sm" className="mt-2 rounded-xl bg-violet-600 text-xs font-semibold text-white shadow-xs hover:bg-violet-700">
+                                            <Button
+                                                asChild
+                                                size="sm"
+                                                className="mt-2 rounded-xl bg-violet-600 text-xs font-semibold text-white shadow-xs hover:bg-violet-700"
+                                            >
                                                 <Link href="/documents/create">
                                                     Request a Document Now
                                                 </Link>
                                             </Button>
                                         ) : (
                                             <p className="text-[11px] font-medium text-amber-700 dark:text-amber-400">
-                                                🔒 Requires a verified household registration.
+                                                🔒 Requires a verified household
+                                                registration.
                                             </p>
                                         )}
                                     </div>
@@ -396,7 +468,8 @@ export default function Dashboard({
                                                 Certificate of Residency
                                             </h4>
                                             <p className="text-[11px] text-muted-foreground">
-                                                Official proof of local residence
+                                                Official proof of local
+                                                residence
                                             </p>
                                         </div>
                                         <div className="flex items-center justify-between pt-3 text-xs font-semibold text-violet-700 dark:text-violet-400">
@@ -413,7 +486,7 @@ export default function Dashboard({
                     <div className="space-y-6 lg:col-span-4">
                         {/* Household Record Card */}
                         <div className="bezel-outer">
-                            <div className="bezel-inner p-6 space-y-4">
+                            <div className="bezel-inner space-y-4 p-6">
                                 <div className="flex items-center justify-between border-b border-border/70 pb-3">
                                     <div className="flex items-center gap-2">
                                         <Home className="size-4 text-violet-600 dark:text-violet-400" />
@@ -431,7 +504,7 @@ export default function Dashboard({
                                             className={`text-[10px] font-bold uppercase ${
                                                 household.status === 'verified'
                                                     ? 'bg-emerald-600 text-white'
-                                                    : 'text-amber-700 border-amber-300'
+                                                    : 'border-amber-300 text-amber-700'
                                             }`}
                                         >
                                             {household.status}
@@ -441,7 +514,7 @@ export default function Dashboard({
 
                                 {household ? (
                                     <div className="space-y-3">
-                                        <div className="rounded-xl bg-muted/40 p-3 space-y-1">
+                                        <div className="space-y-1 rounded-xl bg-muted/40 p-3">
                                             <span className="text-[10px] font-bold text-muted-foreground uppercase">
                                                 Official Household Code
                                             </span>
@@ -449,7 +522,8 @@ export default function Dashboard({
                                                 {household.household_code}
                                             </span>
                                             <span className="block text-xs text-muted-foreground">
-                                                {household.purok_sitio} • {household.address}
+                                                {household.purok_sitio} •{' '}
+                                                {household.address}
                                             </span>
                                         </div>
 
@@ -467,12 +541,19 @@ export default function Dashboard({
                                                     Your Role
                                                 </span>
                                                 <span className="block text-xs font-bold text-foreground">
-                                                    {household.is_family_head ? 'Family Head' : 'Member'}
+                                                    {household.is_family_head
+                                                        ? 'Family Head'
+                                                        : 'Member'}
                                                 </span>
                                             </div>
                                         </div>
 
-                                        <Button asChild variant="outline" size="sm" className="w-full rounded-xl text-xs font-semibold hover:bg-muted">
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            size="sm"
+                                            className="w-full rounded-xl text-xs font-semibold hover:bg-muted"
+                                        >
                                             <Link href="/household">
                                                 Manage Household & Members →
                                             </Link>
@@ -481,9 +562,15 @@ export default function Dashboard({
                                 ) : (
                                     <div className="space-y-3 pt-1">
                                         <p className="text-xs leading-relaxed text-muted-foreground">
-                                            Establish your registered family household unit to enable certificate requesting and community benefits.
+                                            Establish your registered family
+                                            household unit to enable certificate
+                                            requesting and community benefits.
                                         </p>
-                                        <Button asChild size="sm" className="w-full rounded-xl bg-violet-600 text-xs font-semibold text-white shadow-xs hover:bg-violet-700">
+                                        <Button
+                                            asChild
+                                            size="sm"
+                                            className="w-full rounded-xl bg-violet-600 text-xs font-semibold text-white shadow-xs hover:bg-violet-700"
+                                        >
                                             <Link href="/household/register">
                                                 Register Family Household
                                             </Link>
@@ -495,7 +582,7 @@ export default function Dashboard({
 
                         {/* Resident KYC Demographics Card */}
                         <div className="bezel-outer">
-                            <div className="bezel-inner p-6 space-y-3.5">
+                            <div className="bezel-inner space-y-3.5 p-6">
                                 <div className="flex items-center justify-between border-b border-border/70 pb-3">
                                     <div className="flex items-center gap-2">
                                         <User className="size-4 text-violet-600 dark:text-violet-400" />
@@ -504,32 +591,49 @@ export default function Dashboard({
                                         </h3>
                                     </div>
                                     <Badge
-                                        variant={isProfileComplete ? 'default' : 'destructive'}
+                                        variant={
+                                            isProfileComplete
+                                                ? 'default'
+                                                : 'destructive'
+                                        }
                                         className="text-[10px] font-bold uppercase"
                                     >
-                                        {isProfileComplete ? 'Verified' : 'Pending ID'}
+                                        {isProfileComplete
+                                            ? 'Verified'
+                                            : 'Pending ID'}
                                     </Badge>
                                 </div>
 
                                 <div className="space-y-2 text-xs">
                                     <div className="flex items-center justify-between border-b border-border/50 py-1.5 text-muted-foreground">
                                         <span>Full Legal Name:</span>
-                                        <span className="font-semibold text-foreground">{user.name}</span>
+                                        <span className="font-semibold text-foreground">
+                                            {user.name}
+                                        </span>
                                     </div>
                                     <div className="flex items-center justify-between border-b border-border/50 py-1.5 text-muted-foreground">
                                         <span>Official Email:</span>
-                                        <span className="font-mono text-foreground">{user.email}</span>
+                                        <span className="font-mono text-foreground">
+                                            {user.email}
+                                        </span>
                                     </div>
                                     <div className="flex items-center justify-between py-1 text-muted-foreground">
                                         <span>Citizen Verification:</span>
                                         <span className="flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400">
                                             <CheckCircle2 className="size-3.5" />
-                                            {isProfileComplete ? 'Complete' : 'Action Required'}
+                                            {isProfileComplete
+                                                ? 'Complete'
+                                                : 'Action Required'}
                                         </span>
                                     </div>
                                 </div>
 
-                                <Button asChild variant="outline" size="sm" className="w-full rounded-xl text-xs font-semibold hover:bg-muted">
+                                <Button
+                                    asChild
+                                    variant="outline"
+                                    size="sm"
+                                    className="w-full rounded-xl text-xs font-semibold hover:bg-muted"
+                                >
                                     <Link href="/settings/profile">
                                         View Identity Details →
                                     </Link>
@@ -541,7 +645,7 @@ export default function Dashboard({
 
                 {/* Section: Official Barangay Advisories & Bulletins */}
                 <div className="bezel-outer">
-                    <div className="bezel-inner p-6 space-y-4">
+                    <div className="bezel-inner space-y-4 p-6">
                         <div className="flex items-center justify-between border-b border-border/70 pb-3">
                             <div className="flex items-center gap-2">
                                 <Bell className="size-4 text-violet-600 dark:text-violet-400" />
@@ -553,7 +657,8 @@ export default function Dashboard({
                                 href="/#announcements"
                                 className="flex items-center gap-1 text-xs font-semibold text-violet-700 hover:underline dark:text-violet-400"
                             >
-                                Public Bulletin Board <ArrowRight className="size-3" />
+                                Public Bulletin Board{' '}
+                                <ArrowRight className="size-3" />
                             </a>
                         </div>
 
@@ -562,7 +667,7 @@ export default function Dashboard({
                                 {announcements.map((announcement) => (
                                     <div
                                         key={announcement.id}
-                                        className="flex flex-col justify-between rounded-xl border border-border/70 bg-muted/20 p-4 transition-all hover:bg-muted/40 hover:border-violet-200 dark:hover:border-violet-800"
+                                        className="flex flex-col justify-between rounded-xl border border-border/70 bg-muted/20 p-4 transition-all hover:border-violet-200 hover:bg-muted/40 dark:hover:border-violet-800"
                                     >
                                         <div className="space-y-1.5">
                                             <div className="flex items-center justify-between">
@@ -595,7 +700,8 @@ export default function Dashboard({
                             </div>
                         ) : (
                             <p className="py-4 text-center text-xs text-muted-foreground">
-                                No active municipal advisories posted at this time.
+                                No active municipal advisories posted at this
+                                time.
                             </p>
                         )}
                     </div>

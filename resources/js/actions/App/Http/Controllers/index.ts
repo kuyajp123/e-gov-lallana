@@ -1,3 +1,4 @@
+import Admin from './Admin'
 import Public from './Public'
 import DashboardController from './DashboardController'
 import Notification from './Notification'
@@ -7,7 +8,8 @@ import Document from './Document'
 import Dev from './Dev'
 import Settings from './Settings'
 const Controllers = {
-    Public: Object.assign(Public, Public),
+    Admin: Object.assign(Admin, Admin),
+Public: Object.assign(Public, Public),
 DashboardController: Object.assign(DashboardController, DashboardController),
 Notification: Object.assign(Notification, Notification),
 Resident: Object.assign(Resident, Resident),

@@ -37,7 +37,8 @@
     --primary-foreground: oklch(0.12 0.015 285);
 }
 
-body, .fi-body {
+body,
+.fi-body {
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     -webkit-font-smoothing: antialiased;
 }
@@ -78,12 +79,16 @@ body, .fi-body {
 .fi-wi-stats-overview-stat {
     border-radius: 1rem !important;
     border: 1px solid var(--border, rgb(228 228 231 / 0.8));
-    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+    box-shadow:
+        0 1px 3px 0 rgb(0 0 0 / 0.04),
+        0 1px 2px -1px rgb(0 0 0 / 0.04);
     transition: all 250ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .fi-wi-stats-overview-stat:hover {
-    box-shadow: 0 6px 12px -2px rgb(124 58 237 / 0.08), 0 3px 6px -2px rgb(124 58 237 / 0.05);
+    box-shadow:
+        0 6px 12px -2px rgb(124 58 237 / 0.08),
+        0 3px 6px -2px rgb(124 58 237 / 0.05);
     border-color: rgb(139 92 246 / 0.4);
     transform: translateY(-1px);
 }
