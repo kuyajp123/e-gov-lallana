@@ -1,6 +1,8 @@
+import Dashboard from './Dashboard'
 import DeveloperModules from './DeveloperModules'
 const Pages = {
-    DeveloperModules: Object.assign(DeveloperModules, DeveloperModules),
+    Dashboard: Object.assign(Dashboard, Dashboard),
+DeveloperModules: Object.assign(DeveloperModules, DeveloperModules),
 }
 
 export default Pages

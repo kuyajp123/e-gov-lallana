@@ -1,5 +1,83 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../wayfinder'
 /**
+* @see \App\Filament\Pages\Dashboard::__invoke
+ * @see app/Filament/Pages/Dashboard.php:7
+ * @route '/admin'
+ */
+export const dashboard = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: dashboard.url(options),
+    method: 'get',
+})
+
+dashboard.definition = {
+    methods: ["get","head"],
+    url: '/admin',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Filament\Pages\Dashboard::__invoke
+ * @see app/Filament/Pages/Dashboard.php:7
+ * @route '/admin'
+ */
+dashboard.url = (options?: RouteQueryOptions) => {
+    return dashboard.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Filament\Pages\Dashboard::__invoke
+ * @see app/Filament/Pages/Dashboard.php:7
+ * @route '/admin'
+ */
+dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: dashboard.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Filament\Pages\Dashboard::__invoke
+ * @see app/Filament/Pages/Dashboard.php:7
+ * @route '/admin'
+ */
+dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: dashboard.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Filament\Pages\Dashboard::__invoke
+ * @see app/Filament/Pages/Dashboard.php:7
+ * @route '/admin'
+ */
+    const dashboardForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: dashboard.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Filament\Pages\Dashboard::__invoke
+ * @see app/Filament/Pages/Dashboard.php:7
+ * @route '/admin'
+ */
+        dashboardForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: dashboard.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Filament\Pages\Dashboard::__invoke
+ * @see app/Filament/Pages/Dashboard.php:7
+ * @route '/admin'
+ */
+        dashboardForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: dashboard.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    dashboard.form = dashboardForm
+/**
 * @see \App\Filament\Pages\DeveloperModules::__invoke
  * @see app/Filament/Pages/DeveloperModules.php:7
  * @route '/admin/developer-modules'
@@ -77,87 +155,9 @@ developerModules.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
         })
     
     developerModules.form = developerModulesForm
-/**
-* @see \Filament\Pages\Dashboard::__invoke
- * @see vendor/filament/filament/src/Pages/Dashboard.php:7
- * @route '/admin'
- */
-export const dashboard = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: dashboard.url(options),
-    method: 'get',
-})
-
-dashboard.definition = {
-    methods: ["get","head"],
-    url: '/admin',
-} satisfies RouteDefinition<["get","head"]>
-
-/**
-* @see \Filament\Pages\Dashboard::__invoke
- * @see vendor/filament/filament/src/Pages/Dashboard.php:7
- * @route '/admin'
- */
-dashboard.url = (options?: RouteQueryOptions) => {
-    return dashboard.definition.url + queryParams(options)
-}
-
-/**
-* @see \Filament\Pages\Dashboard::__invoke
- * @see vendor/filament/filament/src/Pages/Dashboard.php:7
- * @route '/admin'
- */
-dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: dashboard.url(options),
-    method: 'get',
-})
-/**
-* @see \Filament\Pages\Dashboard::__invoke
- * @see vendor/filament/filament/src/Pages/Dashboard.php:7
- * @route '/admin'
- */
-dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: dashboard.url(options),
-    method: 'head',
-})
-
-    /**
-* @see \Filament\Pages\Dashboard::__invoke
- * @see vendor/filament/filament/src/Pages/Dashboard.php:7
- * @route '/admin'
- */
-    const dashboardForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: dashboard.url(options),
-        method: 'get',
-    })
-
-            /**
-* @see \Filament\Pages\Dashboard::__invoke
- * @see vendor/filament/filament/src/Pages/Dashboard.php:7
- * @route '/admin'
- */
-        dashboardForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: dashboard.url(options),
-            method: 'get',
-        })
-            /**
-* @see \Filament\Pages\Dashboard::__invoke
- * @see vendor/filament/filament/src/Pages/Dashboard.php:7
- * @route '/admin'
- */
-        dashboardForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: dashboard.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    dashboard.form = dashboardForm
 const pages = {
-    developerModules: Object.assign(developerModules, developerModules),
-dashboard: Object.assign(dashboard, dashboard),
+    dashboard: Object.assign(dashboard, dashboard),
+developerModules: Object.assign(developerModules, developerModules),
 }
 
 export default pages
