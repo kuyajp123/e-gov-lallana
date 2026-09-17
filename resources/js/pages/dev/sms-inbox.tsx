@@ -8,6 +8,7 @@ import {
     Clock,
     XCircle,
     AlertTriangle,
+    ArrowLeft,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/shared/components/ui/button';
@@ -28,12 +29,14 @@ interface DevSmsInboxProps {
     messages: SmsMessage[];
     currentMode: string;
     configuredProvider: string;
+    appEnv?: string;
 }
 
 export default function DevSmsInbox({
     messages,
     currentMode,
     configuredProvider,
+    appEnv,
 }: DevSmsInboxProps) {
     const [recipient, setRecipient] = useState('09171234567');
     const [message, setMessage] = useState(
@@ -102,9 +105,17 @@ export default function DevSmsInbox({
                 {/* Header */}
                 <div className="flex flex-col justify-between gap-4 border-b border-neutral-200 pb-6 md:flex-row md:items-center dark:border-neutral-800">
                     <div>
+                        <div className="mb-2">
+                            <a
+                                href="/admin"
+                                className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-500 transition-colors hover:text-neutral-900 dark:hover:text-neutral-100"
+                            >
+                                <ArrowLeft className="h-3.5 w-3.5" /> Back to Admin Panel
+                            </a>
+                        </div>
                         <div className="flex items-center gap-2">
                             <span className="rounded bg-violet-100 px-2.5 py-0.5 font-mono text-xs font-semibold text-violet-800 dark:bg-violet-950 dark:text-violet-300">
-                                LOCAL DEV ONLY
+                                {(appEnv ?? 'dev').toUpperCase()} / STAGING ONLY
                             </span>
                             <span className="text-xs text-neutral-500">
                                 Provider:{' '}

@@ -1,6 +1,8 @@
+import Pages from './Pages'
 import Resources from './Resources'
 const Filament = {
-    Resources: Object.assign(Resources, Resources),
+    Pages: Object.assign(Pages, Pages),
+Resources: Object.assign(Resources, Resources),
 }
 
 export default Filament

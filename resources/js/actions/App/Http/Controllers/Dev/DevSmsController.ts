@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Dev\DevSmsController::index
- * @see app/Http/Controllers/Dev/DevSmsController.php:19
+ * @see app/Http/Controllers/Dev/DevSmsController.php:21
  * @route '/dev/sms'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Dev\DevSmsController::index
- * @see app/Http/Controllers/Dev/DevSmsController.php:19
+ * @see app/Http/Controllers/Dev/DevSmsController.php:21
  * @route '/dev/sms'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Dev\DevSmsController::index
- * @see app/Http/Controllers/Dev/DevSmsController.php:19
+ * @see app/Http/Controllers/Dev/DevSmsController.php:21
  * @route '/dev/sms'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Dev\DevSmsController::index
- * @see app/Http/Controllers/Dev/DevSmsController.php:19
+ * @see app/Http/Controllers/Dev/DevSmsController.php:21
  * @route '/dev/sms'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Dev\DevSmsController::index
- * @see app/Http/Controllers/Dev/DevSmsController.php:19
+ * @see app/Http/Controllers/Dev/DevSmsController.php:21
  * @route '/dev/sms'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Dev\DevSmsController::index
- * @see app/Http/Controllers/Dev/DevSmsController.php:19
+ * @see app/Http/Controllers/Dev/DevSmsController.php:21
  * @route '/dev/sms'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Dev\DevSmsController::index
- * @see app/Http/Controllers/Dev/DevSmsController.php:19
+ * @see app/Http/Controllers/Dev/DevSmsController.php:21
  * @route '/dev/sms'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Dev\DevSmsController::setMode
- * @see app/Http/Controllers/Dev/DevSmsController.php:32
+ * @see app/Http/Controllers/Dev/DevSmsController.php:33
  * @route '/dev/sms/mode'
  */
 export const setMode = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ setMode.definition = {
 
 /**
 * @see \App\Http\Controllers\Dev\DevSmsController::setMode
- * @see app/Http/Controllers/Dev/DevSmsController.php:32
+ * @see app/Http/Controllers/Dev/DevSmsController.php:33
  * @route '/dev/sms/mode'
  */
 setMode.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ setMode.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Dev\DevSmsController::setMode
- * @see app/Http/Controllers/Dev/DevSmsController.php:32
+ * @see app/Http/Controllers/Dev/DevSmsController.php:33
  * @route '/dev/sms/mode'
  */
 setMode.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ setMode.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Dev\DevSmsController::setMode
- * @see app/Http/Controllers/Dev/DevSmsController.php:32
+ * @see app/Http/Controllers/Dev/DevSmsController.php:33
  * @route '/dev/sms/mode'
  */
     const setModeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +123,7 @@ setMode.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Dev\DevSmsController::setMode
- * @see app/Http/Controllers/Dev/DevSmsController.php:32
+ * @see app/Http/Controllers/Dev/DevSmsController.php:33
  * @route '/dev/sms/mode'
  */
         setModeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -134,7 +134,7 @@ setMode.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     setMode.form = setModeForm
 /**
 * @see \App\Http\Controllers\Dev\DevSmsController::sendTest
- * @see app/Http/Controllers/Dev/DevSmsController.php:46
+ * @see app/Http/Controllers/Dev/DevSmsController.php:45
  * @route '/dev/sms/send'
  */
 export const sendTest = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -149,7 +149,7 @@ sendTest.definition = {
 
 /**
 * @see \App\Http\Controllers\Dev\DevSmsController::sendTest
- * @see app/Http/Controllers/Dev/DevSmsController.php:46
+ * @see app/Http/Controllers/Dev/DevSmsController.php:45
  * @route '/dev/sms/send'
  */
 sendTest.url = (options?: RouteQueryOptions) => {
@@ -158,7 +158,7 @@ sendTest.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Dev\DevSmsController::sendTest
- * @see app/Http/Controllers/Dev/DevSmsController.php:46
+ * @see app/Http/Controllers/Dev/DevSmsController.php:45
  * @route '/dev/sms/send'
  */
 sendTest.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -168,7 +168,7 @@ sendTest.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Dev\DevSmsController::sendTest
- * @see app/Http/Controllers/Dev/DevSmsController.php:46
+ * @see app/Http/Controllers/Dev/DevSmsController.php:45
  * @route '/dev/sms/send'
  */
     const sendTestForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -178,7 +178,7 @@ sendTest.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Dev\DevSmsController::sendTest
- * @see app/Http/Controllers/Dev/DevSmsController.php:46
+ * @see app/Http/Controllers/Dev/DevSmsController.php:45
  * @route '/dev/sms/send'
  */
         sendTestForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -189,7 +189,7 @@ sendTest.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     sendTest.form = sendTestForm
 /**
 * @see \App\Http\Controllers\Dev\DevSmsController::clear
- * @see app/Http/Controllers/Dev/DevSmsController.php:64
+ * @see app/Http/Controllers/Dev/DevSmsController.php:61
  * @route '/dev/sms/clear'
  */
 export const clear = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -204,7 +204,7 @@ clear.definition = {
 
 /**
 * @see \App\Http\Controllers\Dev\DevSmsController::clear
- * @see app/Http/Controllers/Dev/DevSmsController.php:64
+ * @see app/Http/Controllers/Dev/DevSmsController.php:61
  * @route '/dev/sms/clear'
  */
 clear.url = (options?: RouteQueryOptions) => {
@@ -213,7 +213,7 @@ clear.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Dev\DevSmsController::clear
- * @see app/Http/Controllers/Dev/DevSmsController.php:64
+ * @see app/Http/Controllers/Dev/DevSmsController.php:61
  * @route '/dev/sms/clear'
  */
 clear.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -223,7 +223,7 @@ clear.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
 
     /**
 * @see \App\Http\Controllers\Dev\DevSmsController::clear
- * @see app/Http/Controllers/Dev/DevSmsController.php:64
+ * @see app/Http/Controllers/Dev/DevSmsController.php:61
  * @route '/dev/sms/clear'
  */
     const clearForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -238,7 +238,7 @@ clear.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
 
             /**
 * @see \App\Http\Controllers\Dev\DevSmsController::clear
- * @see app/Http/Controllers/Dev/DevSmsController.php:64
+ * @see app/Http/Controllers/Dev/DevSmsController.php:61
  * @route '/dev/sms/clear'
  */
         clearForm.delete = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

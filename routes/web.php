@@ -82,8 +82,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-// Developer SMS Simulator & Inbox (Local development only)
-if (app()->isLocal()) {
+// Developer SMS Simulator & Inbox (Local and Staging development only)
+if (app()->environment(['local', 'staging', 'testing'])) {
     Route::prefix('dev/sms')->group(function () {
         Route::get('/', [DevSmsController::class, 'index'])->name('dev.sms.index');
         Route::post('/mode', [DevSmsController::class, 'setMode'])->name('dev.sms.mode');

@@ -40,10 +40,11 @@ class AdminPanelProvider extends PanelProvider
             ->spa()
             ->maxContentWidth(Width::Full)
             ->sidebarCollapsibleOnDesktop()
-            ->navigationGroups([
+            ->navigationGroups(array_filter([
                 'Document Services',
                 'Administration',
-            ])
+                app()->environment(['local', 'staging', 'testing']) ? 'Developer Modules' : null,
+            ]))
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Resident Dashboard')
