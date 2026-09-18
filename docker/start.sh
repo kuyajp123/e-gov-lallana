@@ -22,6 +22,12 @@ if [ "${AUTO_MIGRATE:-true}" = "true" ]; then
     php artisan migrate --force || echo "Migration warning: check database connection."
 fi
 
+# Start Laravel queue worker in background for asynchronous tasks (emails, notifications)
+if [ "${RUN_QUEUE_WORKER:-true}" = "true" ]; then
+    echo "Starting background queue worker..."
+    php artisan queue:work --sleep=3 --tries=3 --max-time=3600 &
+fi
+
 # Start PHP-FPM in daemon mode
 echo "Starting PHP-FPM..."
 php-fpm -D
