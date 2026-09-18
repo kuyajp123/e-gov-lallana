@@ -7,12 +7,17 @@ echo "Configuring Nginx to listen on 0.0.0.0:${PORT}..."
 sed -i "s/PORT_PLACEHOLDER/${PORT}/g" /etc/nginx/sites-available/default
 sed -i "s/PORT_PLACEHOLDER/${PORT}/g" /etc/nginx/conf.d/default.conf 2>/dev/null || true
 
-# Tune PHP-FPM concurrency pool (prevent 5-child bottleneck)
+# Forward Nginx logs to container stdout/stderr for Render live logging
+ln -sf /dev/stdout /var/log/nginx/access.log 2>/dev/null || true
+ln -sf /dev/stderr /var/log/nginx/error.log 2>/dev/null || true
+
+# Tune PHP-FPM concurrency pool for Render Free Tier (512MB RAM)
 echo "Configuring PHP-FPM concurrency..."
-sed -i 's/pm.max_children = 5/pm.max_children = 20/g' /usr/local/etc/php-fpm.d/www.conf 2>/dev/null || true
-sed -i 's/pm.start_servers = 2/pm.start_servers = 4/g' /usr/local/etc/php-fpm.d/www.conf 2>/dev/null || true
-sed -i 's/pm.min_spare_servers = 1/pm.min_spare_servers = 2/g' /usr/local/etc/php-fpm.d/www.conf 2>/dev/null || true
-sed -i 's/pm.max_spare_servers = 3/pm.max_spare_servers = 8/g' /usr/local/etc/php-fpm.d/www.conf 2>/dev/null || true
+sed -i 's/pm.max_children = 5/pm.max_children = 8/g' /usr/local/etc/php-fpm.d/www.conf 2>/dev/null || true
+sed -i 's/pm.start_servers = 2/pm.start_servers = 2/g' /usr/local/etc/php-fpm.d/www.conf 2>/dev/null || true
+sed -i 's/pm.min_spare_servers = 1/pm.min_spare_servers = 1/g' /usr/local/etc/php-fpm.d/www.conf 2>/dev/null || true
+sed -i 's/pm.max_spare_servers = 3/pm.max_spare_servers = 4/g' /usr/local/etc/php-fpm.d/www.conf 2>/dev/null || true
+echo "pm.max_requests = 500" >> /usr/local/etc/php-fpm.d/www.conf 2>/dev/null || true
 
 # Storage symlink
 php artisan storage:link || true
