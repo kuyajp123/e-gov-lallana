@@ -23,7 +23,25 @@ use App\Http\Controllers\Resident\ProfileController;
 use App\Http\Middleware\EnsureHouseholdIsVerified;
 use App\Http\Middleware\EnsureProfileIsComplete;
 use App\Http\Middleware\EnsureUserIsAdmin;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
+
+// Diagnostic routes for HTTP/2 & proxy isolation
+Route::get('/debug/sleep', function () {
+    usleep(1500000); // 1.5s delay to test timeout hypothesis
+
+    return response('Sleep test OK (1.5s)');
+})->withoutMiddleware([StartSession::class, ValidateCsrfToken::class]);
+
+Route::get('/debug/cookie-test', function () {
+    return response('Cookie test OK')
+        ->cookie('test_alpha', 'value_123', 60);
+})->withoutMiddleware([StartSession::class, ValidateCsrfToken::class]);
+
+Route::get('/debug/session-test', function () {
+    return response('Session test OK');
+});
 
 // Public Landing Page & Inquiry Routes
 Route::get('/', LandingPageController::class)->name('home');
