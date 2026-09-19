@@ -8,6 +8,7 @@ import {
     SheetDescription,
     SheetTitle,
 } from '@/shared/components/ui/sheet';
+import { cn } from '@/shared/lib/utils';
 
 export interface AdminResidentProfileItem {
     id: number;
@@ -30,7 +31,67 @@ export interface AdminResidentProfileItem {
     senior_citizen_status: boolean;
     pwd_status: boolean;
     solo_parent_status: boolean;
+    is_admin?: boolean;
+    is_sub_admin?: boolean;
+    is_super_admin?: boolean;
+    role_name?: string | null;
     created_at_formatted: string;
+}
+
+export function AdminRoleBadge({
+    isAdmin,
+    isSubAdmin,
+    isSuperAdmin,
+    className,
+}: {
+    isAdmin?: boolean;
+    isSubAdmin?: boolean;
+    isSuperAdmin?: boolean;
+    className?: string;
+}) {
+    if (isSuperAdmin) {
+        return (
+            <Badge
+                variant="secondary"
+                className={cn(
+                    'border-purple-500/30 bg-purple-500/10 text-purple-600 dark:text-purple-400 font-semibold',
+                    className,
+                )}
+            >
+                Super Admin
+            </Badge>
+        );
+    }
+
+    if (isAdmin) {
+        return (
+            <Badge
+                variant="secondary"
+                className={cn(
+                    'border-primary/30 bg-primary/10 text-primary font-semibold',
+                    className,
+                )}
+            >
+                Admin
+            </Badge>
+        );
+    }
+
+    if (isSubAdmin) {
+        return (
+            <Badge
+                variant="secondary"
+                className={cn(
+                    'border-sky-500/30 bg-sky-500/10 text-sky-600 dark:text-sky-400 font-semibold',
+                    className,
+                )}
+            >
+                Sub-admin
+            </Badge>
+        );
+    }
+
+    return null;
 }
 
 interface ResidentProfileDrawerProps {
@@ -92,11 +153,17 @@ export function ResidentProfileDrawer({
                             )}
                         </div>
                     </div>
-                    <SheetTitle className="mt-3 flex items-center gap-2.5 text-xl font-bold tracking-tight text-foreground">
+                    <SheetTitle className="mt-3 flex flex-wrap items-center gap-2.5 text-xl font-bold tracking-tight text-foreground">
                         <div className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
                             {resident.first_name.charAt(0)}
                         </div>
-                        {resident.full_name}
+                        <span>{resident.full_name}</span>
+                        <AdminRoleBadge
+                            isAdmin={resident.is_admin}
+                            isSubAdmin={resident.is_sub_admin}
+                            isSuperAdmin={resident.is_super_admin}
+                            className="px-2 py-0.5 text-xs font-semibold"
+                        />
                     </SheetTitle>
                     <SheetDescription className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
                         <Mail className="size-3.5" />

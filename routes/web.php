@@ -80,6 +80,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::prefix('admin/resident-profiles')->name('admin.resident-profiles.')->group(function () {
             Route::get('/', [AdminResidentProfileController::class, 'index'])->name('index');
             Route::get('/{residentProfile}', [AdminResidentProfileController::class, 'show'])->name('show')->whereNumber('residentProfile');
+            Route::delete('/{residentProfile}', [AdminResidentProfileController::class, 'destroy'])->name('destroy')->whereNumber('residentProfile');
         });
 
         // Document Services Configuration

@@ -3,10 +3,16 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\DocumentRequest;
 use App\Models\HouseholdMember;
 use App\Models\ResidentProfile;
+use App\Models\User;
+use App\Services\Resident\ResidentDeletionService;
+use DomainException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -24,7 +30,7 @@ class AdminResidentProfileController extends Controller
         $residencyStatus = $request->string('residency_status')->trim()->toString();
 
         $query = ResidentProfile::query()
-            ->with(['user', 'avatar'])
+            ->with(['user.role', 'avatar'])
             ->latest('id');
 
         if ($search !== '') {
@@ -70,14 +76,16 @@ class AdminResidentProfileController extends Controller
 
         $residents = $paginated->through(function (ResidentProfile $profile) {
             $age = $profile->birthdate ? Carbon::parse($profile->birthdate)->age : null;
+            /** @var User|null $user */
+            $user = $profile->user;
 
             return [
                 'id' => $profile->id,
                 'full_name' => $profile->full_name,
                 'first_name' => $profile->first_name,
                 'last_name' => $profile->last_name,
-                'email' => $profile->user->email,
-                'phone_number' => $profile->user->phone_number,
+                'email' => $user?->email,
+                'phone_number' => $user?->phone_number,
                 'avatar_url' => $profile->avatar?->getUrl(),
                 'birthdate' => $profile->birthdate?->format('Y-m-d'),
                 'birthdate_formatted' => $profile->birthdate?->format('M d, Y'),
@@ -92,6 +100,10 @@ class AdminResidentProfileController extends Controller
                 'senior_citizen_status' => (bool) ($profile->senior_citizen_status || ($age !== null && $age >= 60)),
                 'pwd_status' => (bool) $profile->pwd_status,
                 'solo_parent_status' => (bool) $profile->solo_parent_status,
+                'is_admin' => (bool) $user?->isAdmin(),
+                'is_sub_admin' => (bool) $user?->isSubAdmin(),
+                'is_super_admin' => (bool) $user?->isSuperAdmin(),
+                'role_name' => $user?->role?->name,
                 'created_at_formatted' => $profile->created_at?->format('M d, Y') ?? '—',
             ];
         });
@@ -135,6 +147,14 @@ class AdminResidentProfileController extends Controller
             ->where('user_id', $residentProfile->user_id)
             ->first();
 
+        /** @var User|null $currentUser */
+        $currentUser = Auth::user();
+        /** @var User|null $residentUser */
+        $residentUser = $residentProfile->user;
+
+        $isStaff = (bool) ($residentUser?->isAdmin() || $residentUser?->isSubAdmin());
+        $canDelete = (bool) ($currentUser?->isAdmin() && ! $isStaff);
+
         $details = [
             'id' => $residentProfile->id,
             'full_name' => $residentProfile->full_name,
@@ -176,11 +196,11 @@ class AdminResidentProfileController extends Controller
                 'mime_type' => $residentProfile->governmentId->mime_type,
             ] : null,
             'user' => [
-                'id' => $residentProfile->user->id,
-                'name' => $residentProfile->user->name,
-                'email' => $residentProfile->user->email,
-                'phone_number' => $residentProfile->user->phone_number,
-                'created_at_formatted' => $residentProfile->user->created_at?->format('M d, Y h:i A'),
+                'id' => $residentUser?->id,
+                'name' => $residentUser?->name,
+                'email' => $residentUser?->email,
+                'phone_number' => $residentUser?->phone_number,
+                'created_at_formatted' => $residentUser?->created_at?->format('M d, Y h:i A'),
             ],
             'household' => $householdMembership ? [
                 'id' => $householdMembership->household->id,
@@ -189,7 +209,13 @@ class AdminResidentProfileController extends Controller
                 'purok_sitio' => $householdMembership->household->purok_sitio,
                 'relationship_to_head' => ucfirst($householdMembership->relationship_to_head),
                 'is_family_head' => (bool) $householdMembership->is_family_head,
+                'members_count' => $householdMembership->household->members()->count(),
             ] : null,
+            'active_requests_count' => DocumentRequest::where('user_id', $residentProfile->user_id)
+                ->whereIn('current_status', ['pending', 'under_review', 'processing', 'ready_for_pickup'])
+                ->count(),
+            'is_staff' => $isStaff,
+            'can_delete' => $canDelete,
         ];
 
         return Inertia::render('admin/resident-profiles/show', [
@@ -199,5 +225,30 @@ class AdminResidentProfileController extends Controller
                 'account' => 'Account &amp; Contact Information',
             ],
         ]);
+    }
+
+    /**
+     * Permanently delete a resident profile and purge associated data.
+     */
+    public function destroy(ResidentProfile $residentProfile, ResidentDeletionService $deletionService): RedirectResponse
+    {
+        /** @var User|null $currentUser */
+        $currentUser = Auth::user();
+
+        if (! $currentUser || ! $currentUser->isAdmin()) {
+            abort(403, 'Unauthorized. Only Barangay Administrators can delete residents.');
+        }
+
+        $fullName = $residentProfile->full_name;
+
+        try {
+            $deletionService->delete($residentProfile);
+        } catch (DomainException $e) {
+            return back()->withErrors(['deletion' => $e->getMessage()]);
+        }
+
+        return redirect()
+            ->route('admin.resident-profiles.index')
+            ->with('success', "Resident profile for {$fullName} has been permanently deleted.");
     }
 }
