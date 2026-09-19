@@ -19,7 +19,7 @@ class FileUploadService
         bool $isPrivate = true
     ): FileRecord {
         $storageDisk = $disk ?? (string) config('filesystems.default', 'local');
-        $path = $folder !== '' ? $file->store($folder, $storageDisk) : $file->store($storageDisk);
+        $path = $file->store($folder, $storageDisk);
 
         return FileRecord::create([
             'user_id' => $userId,

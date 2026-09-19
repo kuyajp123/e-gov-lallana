@@ -4,8 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 /**
  * @property int $id
@@ -54,6 +57,7 @@ class FileRecord extends Model
      */
     public function getUrl(int $expirationMinutes = 30): string
     {
+        /** @var FilesystemAdapter $storageDisk */
         $storageDisk = Storage::disk($this->disk);
 
         if (! $this->is_private) {
@@ -65,6 +69,26 @@ class FileRecord extends Model
             return $storageDisk->temporaryUrl(
                 $this->path,
                 now()->addMinutes($expirationMinutes)
+            );
+        }
+
+        if (Route::has('storage.'.$this->disk)) {
+            return URL::temporarySignedRoute(
+                'storage.'.$this->disk,
+                now()->addMinutes($expirationMinutes),
+                ['path' => $this->path]
+            );
+        }
+
+        if (Route::has('storage.local')) {
+            $relativePath = str_starts_with($this->path, $this->disk.'/')
+                ? $this->path
+                : ($this->disk !== 'local' ? $this->disk.'/'.ltrim($this->path, '/') : $this->path);
+
+            return URL::temporarySignedRoute(
+                'storage.local',
+                now()->addMinutes($expirationMinutes),
+                ['path' => $relativePath]
             );
         }
 

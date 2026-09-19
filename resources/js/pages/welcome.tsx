@@ -406,15 +406,19 @@ export default function Welcome({
                 id="home"
                 className="relative isolate overflow-hidden pt-8 pb-20 md:pt-14 md:pb-28"
             >
-                {/* Background Texture with Dignified Scrim */}
+                {/* Municipal Architecture Background */}
                 <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
                     <img
                         src="/hero-bg.jpg"
-                        alt="Barangay Lallana Community Landscape"
-                        className="h-full w-full object-cover object-center opacity-30 dark:opacity-15"
+                        alt="Barangay Lallana Government Center"
+                        className="h-full w-full object-cover object-[center_30%] opacity-85 transition-opacity duration-700 dark:opacity-50"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background" />
-                    <div className="absolute inset-0 bg-radial from-violet-600/5 via-transparent to-transparent dark:from-violet-500/10" />
+                    {/* Horizontal directional scrim: clean opaque backing on left behind text, fading to transparent on right to reveal building */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-background/95 via-background/70 to-transparent lg:bg-gradient-to-r lg:from-background/95 lg:via-background/75 lg:via-40% lg:to-transparent dark:from-background/95 dark:via-background/80 dark:to-transparent" />
+                    {/* Top subtle feathering under navbar */}
+                    <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-background/80 to-transparent" />
+                    {/* Bottom feathering transition to the next section */}
+                    <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-background via-background/60 to-transparent" />
                 </div>
 
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
