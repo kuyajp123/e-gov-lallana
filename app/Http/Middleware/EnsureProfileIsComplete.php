@@ -28,7 +28,7 @@ class EnsureProfileIsComplete
         }
 
         // Allow access to profile completion routes and settings
-        if ($request->routeIs('resident.profile.*') || $request->routeIs('settings.*') || $request->routeIs('logout')) {
+        if ($request->routeIs('resident.profile.*') || $request->routeIs('settings.*') || $request->routeIs('profile.*') || $request->routeIs('logout')) {
             return $next($request);
         }
 
@@ -40,11 +40,13 @@ class EnsureProfileIsComplete
             && ! empty($profile->last_name)
             && $profile->birthdate !== null
             && ! empty($profile->gender)
-            && ! empty($profile->civil_status);
+            && ! empty($profile->civil_status)
+            && ! empty($profile->citizenship)
+            && $profile->government_id_file_id !== null;
 
         if (! $isComplete) {
-            return redirect()->route('resident.profile.edit')
-                ->with('warning', 'Please complete your resident profile to access barangay services.');
+            return redirect()->route('profile.edit')
+                ->with('warning', 'Please complete your resident profile and upload a valid government ID to access barangay services.');
         }
 
         return $next($request);

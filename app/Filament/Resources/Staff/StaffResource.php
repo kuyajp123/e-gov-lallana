@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Staff;
 
-use App\Filament\Resources\Staff\Pages\ListStaff;
 use App\Filament\Resources\Staff\Tables\StaffTable;
 use App\Models\Role;
 use App\Models\User;
@@ -11,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
 class StaffResource extends Resource
@@ -35,15 +35,25 @@ class StaffResource extends Resource
             ->whereIn('role_id', $staffRoleIds);
     }
 
+    public static function canViewAny(): bool
+    {
+        $user = Auth::user();
+
+        return $user instanceof User && $user->isAdmin();
+    }
+
     public static function table(Table $table): Table
     {
         return StaffTable::configure($table);
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public static function getPages(): array
     {
-        return [
-            'index' => ListStaff::route('/'),
-        ];
+        return [];
     }
 }

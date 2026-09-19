@@ -18,7 +18,10 @@ test('profile information can be updated', function () {
     $response = $this
         ->actingAs($user)
         ->patch(route('profile.update'), [
-            'name' => 'Test User',
+            'first_name' => 'Juan',
+            'middle_name' => 'Santos',
+            'last_name' => 'Dela Cruz',
+            'suffix' => 'Jr.',
             'email' => 'test@example.com',
         ]);
 
@@ -28,9 +31,12 @@ test('profile information can be updated', function () {
 
     $user->refresh();
 
-    expect($user->name)->toBe('Test User');
+    expect($user->name)->toBe('Juan Santos Dela Cruz Jr.');
     expect($user->email)->toBe('test@example.com');
     expect($user->email_verified_at)->toBeNull();
+    expect($user->residentProfile)->not->toBeNull();
+    expect($user->residentProfile->first_name)->toBe('Juan');
+    expect($user->residentProfile->last_name)->toBe('Dela Cruz');
 });
 
 test('email verification status is unchanged when the email address is unchanged', function () {
@@ -39,7 +45,8 @@ test('email verification status is unchanged when the email address is unchanged
     $response = $this
         ->actingAs($user)
         ->patch(route('profile.update'), [
-            'name' => 'Test User',
+            'first_name' => 'Test',
+            'last_name' => 'User',
             'email' => $user->email,
         ]);
 
@@ -82,4 +89,23 @@ test('correct password must be provided to delete account', function () {
         ->assertRedirect(route('profile.edit'));
 
     expect($user->fresh())->not->toBeNull();
+});
+
+test('phone number can be updated', function () {
+    $user = User::factory()->create(['phone_number' => null]);
+
+    $response = $this
+        ->actingAs($user)
+        ->patch(route('profile.update'), [
+            'first_name' => 'Phone',
+            'last_name' => 'Tester',
+            'email' => $user->email,
+            'phone_number' => '09171234567',
+        ]);
+
+    $response
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('profile.edit'));
+
+    expect($user->refresh()->phone_number)->toBe('09171234567');
 });

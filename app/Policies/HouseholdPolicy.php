@@ -24,6 +24,10 @@ class HouseholdPolicy
 
     public function create(User $user): bool
     {
+        if ($user->isAdmin() || $user->isSubAdmin()) {
+            return false;
+        }
+
         // Any resident who doesn't head a household can create one
         return ! Household::where('family_head_id', $user->id)->exists();
     }
@@ -31,7 +35,7 @@ class HouseholdPolicy
     public function update(User $user, Household $household): bool
     {
         if ($user->isAdmin() || $user->isSubAdmin()) {
-            return true;
+            return false;
         }
 
         return $household->family_head_id === $user->id && $household->status === 'returned';
@@ -48,6 +52,21 @@ class HouseholdPolicy
     }
 
     public function restrict(User $user, Household $household): bool
+    {
+        return $user->isAdmin();
+    }
+
+    public function unrestrict(User $user, Household $household): bool
+    {
+        return $user->isAdmin();
+    }
+
+    public function archive(User $user, Household $household): bool
+    {
+        return $user->isAdmin();
+    }
+
+    public function restore(User $user, Household $household): bool
     {
         return $user->isAdmin();
     }

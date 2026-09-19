@@ -9,7 +9,11 @@ import { defineConfig } from 'vite';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.tsx'],
+            input: [
+                'resources/css/app.css',
+                'resources/js/app.tsx',
+                'resources/css/filament/admin/theme.css',
+            ],
             refresh: true,
             fonts: [
                 bunny('Instrument Sans', {
@@ -24,7 +28,7 @@ export default defineConfig({
             },
         }),
         tailwindcss(),
-        ...(process.env.VERCEL ? [] : [wayfinder({ formVariants: true })]),
+        wayfinder({ formVariants: true }),
     ],
     server: {
         watch: {

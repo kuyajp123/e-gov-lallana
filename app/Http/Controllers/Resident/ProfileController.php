@@ -68,7 +68,13 @@ class ProfileController extends Controller
             $validated
         );
 
-        return redirect()->route('resident.profile.show')->with('success', 'Resident profile saved successfully.');
+        if (! empty($validated['first_name']) && ! empty($validated['last_name'])) {
+            $user->update([
+                'name' => trim("{$validated['first_name']} {$validated['last_name']}"),
+            ]);
+        }
+
+        return redirect()->route('profile.edit')->with('success', 'Resident profile saved successfully.');
     }
 
     public function update(UpdateResidentProfileRequest $request, FileUploadService $fileUploadService): RedirectResponse

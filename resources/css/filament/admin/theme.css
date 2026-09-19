@@ -1,0 +1,188 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+/* Instrument Sans and typography features */
+:root {
+    --font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    --radius: 0.75rem;
+
+    /* Light Theme Palette matching resident portal */
+    --background: oklch(0.99 0.002 280);
+    --foreground: oklch(0.16 0.015 285);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.16 0.015 285);
+    --border: oklch(0.915 0.008 285);
+    --muted: oklch(0.965 0.006 285);
+    --muted-foreground: oklch(0.52 0.02 285);
+    --accent: oklch(0.96 0.015 293);
+    --accent-foreground: oklch(0.35 0.15 293);
+    --primary: oklch(0.48 0.21 293);
+    --primary-foreground: oklch(0.99 0 0);
+}
+
+.dark {
+    /* Dark Theme Palette matching resident portal */
+    --background: oklch(0.12 0.015 285);
+    --foreground: oklch(0.98 0.005 285);
+    --card: oklch(0.15 0.018 285);
+    --card-foreground: oklch(0.98 0.005 285);
+    --border: oklch(0.24 0.018 285);
+    --muted: oklch(0.2 0.018 285);
+    --muted-foreground: oklch(0.7 0.015 285);
+    --accent: oklch(0.23 0.035 293);
+    --accent-foreground: oklch(0.96 0.01 290);
+    --primary: oklch(0.68 0.21 293);
+    --primary-foreground: oklch(0.12 0.015 285);
+}
+
+body,
+.fi-body {
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Tabular figures for numerical statistics, codes, and timestamps */
+.tabular-nums,
+.fi-wi-stats-overview-stat-value,
+.fi-ta-cell {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Double-bezel card structure for tangible physical depth */
+.bezel-outer {
+    border-radius: 1rem;
+    padding: 0.25rem;
+    background-color: rgb(23 23 23 / 0.03);
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.05);
+}
+
+:is(.dark .bezel-outer) {
+    background-color: rgb(255 255 255 / 0.04);
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.1);
+}
+
+.bezel-inner {
+    border-radius: calc(1rem - 4px);
+    background-color: var(--card, #ffffff);
+    border: 1px solid var(--border, rgb(228 228 231 / 0.6));
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+:is(.dark .bezel-inner) {
+    background-color: var(--card, #18181b);
+    border-color: var(--border, rgb(39 39 42 / 0.6));
+}
+
+/* Elevated styling for Filament Stats Overview Widgets */
+.fi-wi-stats-overview-stat {
+    border-radius: 1rem !important;
+    border: 1px solid var(--border, rgb(228 228 231 / 0.8));
+    box-shadow:
+        0 1px 3px 0 rgb(0 0 0 / 0.04),
+        0 1px 2px -1px rgb(0 0 0 / 0.04);
+    transition: all 250ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.fi-wi-stats-overview-stat:hover {
+    box-shadow:
+        0 6px 12px -2px rgb(124 58 237 / 0.08),
+        0 3px 6px -2px rgb(124 58 237 / 0.05);
+    border-color: rgb(139 92 246 / 0.4);
+    transform: translateY(-1px);
+}
+
+:is(.dark .fi-wi-stats-overview-stat) {
+    border-color: var(--border, rgb(39 39 42 / 0.8));
+    background-color: var(--card, oklch(0.15 0.018 285));
+}
+
+:is(.dark .fi-wi-stats-overview-stat:hover) {
+    border-color: rgb(167 139 250 / 0.4);
+    box-shadow: 0 6px 12px -2px rgb(167 139 250 / 0.1);
+}
+
+/* Sections & Chart Containers */
+.fi-section:not(.fi-aside) {
+    border-radius: 1rem !important;
+    border: 1px solid var(--border, rgb(228 228 231 / 0.8));
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.04);
+}
+
+:is(.dark .fi-section:not(.fi-aside)) {
+    border-color: var(--border, rgb(39 39 42 / 0.8));
+    background-color: var(--card, oklch(0.15 0.018 285));
+}
+
+/* Table Containers */
+.fi-ta-ctn {
+    border-radius: 1rem !important;
+    border: 1px solid var(--border, rgb(228 228 231 / 0.8));
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.04);
+    overflow: hidden;
+}
+
+:is(.dark .fi-ta-ctn) {
+    border-color: var(--border, rgb(39 39 42 / 0.8));
+}
+
+/* Sidebar navigation styling matching resident app */
+.fi-sidebar {
+    border-right: 1px solid var(--border, rgb(228 228 231 / 0.8));
+}
+
+:is(.dark .fi-sidebar) {
+    border-right-color: var(--border, rgb(39 39 42 / 0.8));
+}
+
+.fi-sidebar-item-btn {
+    border-radius: 0.75rem !important;
+    transition: all 150ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.fi-sidebar-item-btn:hover {
+    background-color: rgb(139 92 246 / 0.08) !important;
+    color: rgb(124 58 237) !important;
+}
+
+:is(.dark .fi-sidebar-item-btn:hover) {
+    background-color: rgb(167 139 250 / 0.12) !important;
+    color: rgb(196 181 253) !important;
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-btn {
+    background-color: rgb(139 92 246 / 0.12) !important;
+    color: rgb(124 58 237) !important;
+    font-weight: 600;
+}
+
+:is(.dark .fi-sidebar-item.fi-active .fi-sidebar-item-btn) {
+    background-color: rgb(167 139 250 / 0.2) !important;
+    color: rgb(221 214 254) !important;
+}
+
+/* Topbar styling */
+.fi-topbar {
+    border-bottom: 1px solid var(--border, rgb(228 228 231 / 0.8));
+    backdrop-filter: blur(12px);
+    background-color: rgb(255 255 255 / 0.85);
+}
+
+:is(.dark .fi-topbar) {
+    background-color: rgb(24 24 27 / 0.85);
+    border-bottom-color: var(--border, rgb(39 39 42 / 0.8));
+}
+
+/* Clean rounded controls */
+.fi-btn {
+    border-radius: 0.75rem !important;
+    font-weight: 600;
+    transition: all 150ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.fi-badge {
+    border-radius: 0.5rem !important;
+    font-weight: 700;
+    letter-spacing: 0.025em;
+}

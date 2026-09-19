@@ -51,11 +51,14 @@ class FortifyServiceProvider extends ServiceProvider
             $email = trim((string) $request->input(Fortify::username()));
             $password = (string) $request->input('password');
 
-            // Authoritatively sync super admins from environment configuration
-            app(SuperAdminSyncService::class)->sync();
-
             /** @var User|null $user */
             $user = User::where('email', $email)->first();
+
+            // Lazy sync super admin only if user does not exist yet and matches configured super admin
+            if (! $user && $this->isConfiguredSuperAdmin($email)) {
+                app(SuperAdminSyncService::class)->sync();
+                $user = User::where('email', $email)->first();
+            }
 
             if ($user && Hash::check($password, $user->password)) {
                 return $user;
@@ -108,5 +111,26 @@ class FortifyServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by($throttleKey);
         });
 
+    }
+
+    /**
+     * Check whether an email belongs to a configured Super Administrator.
+     */
+    private function isConfiguredSuperAdmin(string $email): bool
+    {
+        $superAdmins = config('auth.super_admins', []);
+        if (! is_array($superAdmins) || empty($superAdmins)) {
+            return false;
+        }
+
+        $email = strtolower(trim($email));
+        foreach ($superAdmins as $admin) {
+            $adminEmail = is_array($admin) ? ($admin['email'] ?? null) : (is_string($admin) ? $admin : null);
+            if ($adminEmail && strtolower(trim((string) $adminEmail)) === $email) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

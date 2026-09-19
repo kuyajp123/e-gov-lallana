@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Household\HouseholdMemberController::store
- * @see app/Http/Controllers/Household/HouseholdMemberController.php:17
+ * @see app/Http/Controllers/Household/HouseholdMemberController.php:18
  * @route '/household/members'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Household\HouseholdMemberController::store
- * @see app/Http/Controllers/Household/HouseholdMemberController.php:17
+ * @see app/Http/Controllers/Household/HouseholdMemberController.php:18
  * @route '/household/members'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Household\HouseholdMemberController::store
- * @see app/Http/Controllers/Household/HouseholdMemberController.php:17
+ * @see app/Http/Controllers/Household/HouseholdMemberController.php:18
  * @route '/household/members'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -35,7 +35,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Household\HouseholdMemberController::store
- * @see app/Http/Controllers/Household/HouseholdMemberController.php:17
+ * @see app/Http/Controllers/Household/HouseholdMemberController.php:18
  * @route '/household/members'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -45,7 +45,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Household\HouseholdMemberController::store
- * @see app/Http/Controllers/Household/HouseholdMemberController.php:17
+ * @see app/Http/Controllers/Household/HouseholdMemberController.php:18
  * @route '/household/members'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -56,7 +56,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Household\HouseholdMemberController::update
- * @see app/Http/Controllers/Household/HouseholdMemberController.php:45
+ * @see app/Http/Controllers/Household/HouseholdMemberController.php:66
  * @route '/household/members/{member}'
  */
 export const update = (args: { member: number | { id: number } } | [member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -71,7 +71,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Household\HouseholdMemberController::update
- * @see app/Http/Controllers/Household/HouseholdMemberController.php:45
+ * @see app/Http/Controllers/Household/HouseholdMemberController.php:66
  * @route '/household/members/{member}'
  */
 update.url = (args: { member: number | { id: number } } | [member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -104,7 +104,7 @@ update.url = (args: { member: number | { id: number } } | [member: number | { id
 
 /**
 * @see \App\Http\Controllers\Household\HouseholdMemberController::update
- * @see app/Http/Controllers/Household/HouseholdMemberController.php:45
+ * @see app/Http/Controllers/Household/HouseholdMemberController.php:66
  * @route '/household/members/{member}'
  */
 update.put = (args: { member: number | { id: number } } | [member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -114,7 +114,7 @@ update.put = (args: { member: number | { id: number } } | [member: number | { id
 
     /**
 * @see \App\Http\Controllers\Household\HouseholdMemberController::update
- * @see app/Http/Controllers/Household/HouseholdMemberController.php:45
+ * @see app/Http/Controllers/Household/HouseholdMemberController.php:66
  * @route '/household/members/{member}'
  */
     const updateForm = (args: { member: number | { id: number } } | [member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -129,7 +129,7 @@ update.put = (args: { member: number | { id: number } } | [member: number | { id
 
             /**
 * @see \App\Http\Controllers\Household\HouseholdMemberController::update
- * @see app/Http/Controllers/Household/HouseholdMemberController.php:45
+ * @see app/Http/Controllers/Household/HouseholdMemberController.php:66
  * @route '/household/members/{member}'
  */
         updateForm.put = (args: { member: number | { id: number } } | [member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -145,7 +145,7 @@ update.put = (args: { member: number | { id: number } } | [member: number | { id
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Household\HouseholdMemberController::destroy
- * @see app/Http/Controllers/Household/HouseholdMemberController.php:62
+ * @see app/Http/Controllers/Household/HouseholdMemberController.php:83
  * @route '/household/members/{member}'
  */
 export const destroy = (args: { member: number | { id: number } } | [member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -160,7 +160,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Household\HouseholdMemberController::destroy
- * @see app/Http/Controllers/Household/HouseholdMemberController.php:62
+ * @see app/Http/Controllers/Household/HouseholdMemberController.php:83
  * @route '/household/members/{member}'
  */
 destroy.url = (args: { member: number | { id: number } } | [member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -193,7 +193,7 @@ destroy.url = (args: { member: number | { id: number } } | [member: number | { i
 
 /**
 * @see \App\Http\Controllers\Household\HouseholdMemberController::destroy
- * @see app/Http/Controllers/Household/HouseholdMemberController.php:62
+ * @see app/Http/Controllers/Household/HouseholdMemberController.php:83
  * @route '/household/members/{member}'
  */
 destroy.delete = (args: { member: number | { id: number } } | [member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -203,7 +203,7 @@ destroy.delete = (args: { member: number | { id: number } } | [member: number | 
 
     /**
 * @see \App\Http\Controllers\Household\HouseholdMemberController::destroy
- * @see app/Http/Controllers/Household/HouseholdMemberController.php:62
+ * @see app/Http/Controllers/Household/HouseholdMemberController.php:83
  * @route '/household/members/{member}'
  */
     const destroyForm = (args: { member: number | { id: number } } | [member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -218,7 +218,7 @@ destroy.delete = (args: { member: number | { id: number } } | [member: number | 
 
             /**
 * @see \App\Http\Controllers\Household\HouseholdMemberController::destroy
- * @see app/Http/Controllers/Household/HouseholdMemberController.php:62
+ * @see app/Http/Controllers/Household/HouseholdMemberController.php:83
  * @route '/household/members/{member}'
  */
         destroyForm.delete = (args: { member: number | { id: number } } | [member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

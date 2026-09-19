@@ -2,20 +2,22 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Dashboard;
+use App\Filament\Widgets\AdminStatsOverviewWidget;
+use App\Filament\Widgets\DemographicsChartWidget;
+use App\Filament\Widgets\DocumentRequestVolumeChartWidget;
+use App\Filament\Widgets\SpecialSectorsChartWidget;
 use App\Http\Middleware\Filament\AuthenticateAdmin;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
-use Filament\Navigation\NavigationItem;
-use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
-use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -32,22 +34,28 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->brandName('Barangay Lallana Admin')
+            ->brandLogo(fn () => view('filament.admin.logo'))
+            ->brandLogoHeight('2.5rem')
+            ->favicon(asset('lallana-icon.png'))
             ->colors([
                 'primary' => Color::Violet,
+                'gray' => Color::Zinc,
             ])
+            ->font('Instrument Sans')
+            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->renderHook(
+                PanelsRenderHook::PAGE_START,
+                fn () => view('filament.admin.dashboard-header'),
+                scopes: [Dashboard::class],
+            )
             ->spa()
             ->maxContentWidth(Width::Full)
             ->sidebarCollapsibleOnDesktop()
-            ->navigationGroups([
+            ->navigationGroups(array_filter([
                 'Document Services',
                 'Administration',
-            ])
-            ->navigationItems([
-                NavigationItem::make('Resident Dashboard')
-                    ->url('/dashboard')
-                    ->icon(Heroicon::OutlinedHome)
-                    ->sort(99),
-            ])
+                app()->environment(['local', 'staging', 'testing']) ? 'Developer Modules' : null,
+            ]))
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Resident Dashboard')
@@ -61,8 +69,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
+                AdminStatsOverviewWidget::class,
+                DemographicsChartWidget::class,
+                SpecialSectorsChartWidget::class,
+                DocumentRequestVolumeChartWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

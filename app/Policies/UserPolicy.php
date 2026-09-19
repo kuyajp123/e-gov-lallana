@@ -35,7 +35,31 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        return $user->isAdmin();
+        if (! $user->isAdmin()) {
+            return false;
+        }
+
+        // Users can always update their own account
+        if ($model->id === $user->id) {
+            return true;
+        }
+
+        // Cannot update a super admin unless the user is a super admin
+        if ($model->isSuperAdmin() && ! $user->isSuperAdmin()) {
+            return false;
+        }
+
+        // Co-super-admin protection: If both are super admins, neither can edit the other
+        if ($model->isSuperAdmin() && $user->isSuperAdmin()) {
+            return false;
+        }
+
+        // Co-admin protection: A regular admin cannot edit another admin
+        if ($model->isAdmin() && ! $user->isSuperAdmin()) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -43,6 +67,22 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        return $user->isAdmin() && $model->id !== $user->id && ! $model->isAdmin();
+        if (! $user->isAdmin()) {
+            return false;
+        }
+
+        if ($model->id === $user->id) {
+            return false;
+        }
+
+        if ($model->isSuperAdmin()) {
+            return false;
+        }
+
+        if ($model->isAdmin() && ! $user->isSuperAdmin()) {
+            return false;
+        }
+
+        return true;
     }
 }

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Models\ResidentProfile;
+use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,9 +21,19 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        /** @var User $user */
+        $user = $request->user();
+        /** @var ResidentProfile|null $profile */
+        $profile = $user->residentProfile()->with(['avatar', 'governmentId'])->first();
+
         return Inertia::render('settings/profile', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
+            'profile' => $profile ? [
+                ...$profile->toArray(),
+                'government_id_url' => $profile->governmentId?->getUrl(30),
+                'avatar_url' => $profile->avatar?->getUrl(60),
+            ] : null,
         ]);
     }
 
@@ -30,13 +42,36 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        /** @var User $user */
+        $user = $request->user();
+        $validated = $request->validated();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $fullName = trim(implode(' ', array_filter([
+            $validated['first_name'] ?? null,
+            $validated['middle_name'] ?? null,
+            $validated['last_name'] ?? null,
+            $validated['suffix'] ?? null,
+        ])));
+
+        $user->name = $fullName;
+        $user->email = $validated['email'];
+        $user->phone_number = $validated['phone_number'] ?? null;
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $user->save();
+
+        $user->residentProfile()->updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'first_name' => $validated['first_name'],
+                'middle_name' => $validated['middle_name'] ?? null,
+                'last_name' => $validated['last_name'],
+                'suffix' => $validated['suffix'] ?? null,
+            ]
+        );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Profile updated.')]);
 

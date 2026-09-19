@@ -3,13 +3,15 @@
 namespace App\Filament\Resources\ResidentProfiles\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Carbon;
 
 class ResidentProfilesTable
 {
@@ -25,6 +27,10 @@ class ResidentProfilesTable
                 TextColumn::make('user.email')
                     ->label('Email')
                     ->searchable(),
+                TextColumn::make('birthdate')
+                    ->label('Age')
+                    ->formatStateUsing(fn ($state): string => $state ? Carbon::parse($state)->age.' yrs' : '—')
+                    ->sortable(),
                 TextColumn::make('gender')
                     ->label('Sex')
                     ->formatStateUsing(fn (?string $state): string => ucfirst($state ?? '—')),
@@ -47,6 +53,9 @@ class ResidentProfilesTable
                     ->boolean(),
                 IconColumn::make('pwd_status')
                     ->label('PWD')
+                    ->boolean(),
+                IconColumn::make('solo_parent_status')
+                    ->label('Solo Parent')
                     ->boolean(),
                 TextColumn::make('created_at')
                     ->label('Registered')
@@ -82,9 +91,12 @@ class ResidentProfilesTable
                     ->label('Senior Citizen'),
                 TernaryFilter::make('pwd_status')
                     ->label('PWD'),
+                TernaryFilter::make('solo_parent_status')
+                    ->label('Solo Parent'),
             ])
             ->recordActions([
-                EditAction::make(),
+                ViewAction::make(),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

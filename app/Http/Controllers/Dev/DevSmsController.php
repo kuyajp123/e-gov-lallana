@@ -14,25 +14,34 @@ class DevSmsController extends Controller
 {
     public function __construct(
         protected SmsService $smsService
-    ) {}
+    ) {
+        abort_unless(app()->environment(['local', 'staging', 'testing']), 404);
+    }
 
     public function index(): Response
     {
-        abort_unless(app()->isLocal(), 404);
-
         $fakeService = app(FakeSmsService::class);
 
         return Inertia::render('dev/sms-inbox', [
             'messages' => $fakeService->getMessages(),
             'currentMode' => $fakeService->getMode(),
             'configuredProvider' => config('sms.default'),
+            'appEnv' => app()->environment(),
+            'diagnostics' => [
+                'phpVersion' => PHP_VERSION,
+                'laravelVersion' => app()->version(),
+                'environment' => app()->environment(),
+                'debugMode' => (bool) config('app.debug'),
+                'smsProvider' => config('sms.default'),
+                'databaseDriver' => config('database.default'),
+                'queueDriver' => config('queue.default'),
+                'systemTime' => now()->format('M d, Y h:i:s A T'),
+            ],
         ]);
     }
 
     public function setMode(Request $request): RedirectResponse
     {
-        abort_unless(app()->isLocal(), 404);
-
         $request->validate([
             'mode' => 'required|in:SUCCESS,FAILURE,TIMEOUT,RATE_LIMITED',
         ]);
@@ -45,14 +54,13 @@ class DevSmsController extends Controller
 
     public function sendTest(Request $request): RedirectResponse
     {
-        abort_unless(app()->isLocal(), 404);
-
         $validated = $request->validate([
             'recipient' => 'required|string',
             'message' => 'required|string',
         ]);
 
-        $result = $this->smsService->send($validated['recipient'], $validated['message']);
+        $fakeService = app(FakeSmsService::class);
+        $result = $fakeService->send($validated['recipient'], $validated['message']);
 
         if ($result->success) {
             return back()->with('success', 'Test message sent successfully.');
@@ -63,8 +71,6 @@ class DevSmsController extends Controller
 
     public function clear(): RedirectResponse
     {
-        abort_unless(app()->isLocal(), 404);
-
         $fakeService = app(FakeSmsService::class);
         $fakeService->clearMessages();
 

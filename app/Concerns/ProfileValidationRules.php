@@ -16,19 +16,13 @@ trait ProfileValidationRules
     protected function profileRules(?int $userId = null): array
     {
         return [
-            'name' => $this->nameRules(),
+            'first_name' => ['required', 'string', 'max:100'],
+            'middle_name' => ['nullable', 'string', 'max:100'],
+            'last_name' => ['required', 'string', 'max:100'],
+            'suffix' => ['nullable', 'string', 'max:20'],
             'email' => $this->emailRules($userId),
+            'phone_number' => $this->phoneNumberRules($userId),
         ];
-    }
-
-    /**
-     * Get the validation rules used to validate user names.
-     *
-     * @return array<int, ValidationRule|array<mixed>|string>
-     */
-    protected function nameRules(): array
-    {
-        return ['required', 'string', 'max:255'];
     }
 
     /**
@@ -43,6 +37,23 @@ trait ProfileValidationRules
             'string',
             'email',
             'max:255',
+            $userId === null
+                ? Rule::unique(User::class)
+                : Rule::unique(User::class)->ignore($userId),
+        ];
+    }
+
+    /**
+     * Get the validation rules used to validate user phone numbers.
+     *
+     * @return array<int, ValidationRule|array<mixed>|string>
+     */
+    protected function phoneNumberRules(?int $userId = null): array
+    {
+        return [
+            'nullable',
+            'string',
+            'max:20',
             $userId === null
                 ? Rule::unique(User::class)
                 : Rule::unique(User::class)->ignore($userId),

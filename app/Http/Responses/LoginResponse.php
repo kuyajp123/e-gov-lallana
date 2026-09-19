@@ -20,7 +20,7 @@ class LoginResponse implements LoginResponseContract
         /** @var User|null $user */
         $user = $request->user();
 
-        if ($user && ($user->isAdmin() || $user->isSubAdmin())) {
+        if ($user && ($user->isAdmin() || $user->isSubAdmin() || $user->isSuperAdmin())) {
             return Inertia::location(url('/admin'));
         }
 

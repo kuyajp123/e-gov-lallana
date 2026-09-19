@@ -6,6 +6,7 @@ use App\Enums\DocumentRequestStatus;
 use App\Enums\PaymentStatus;
 use App\Models\DocumentRequest;
 use App\Models\DocumentType;
+use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -159,7 +160,7 @@ class DocumentRequestsTable
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->visible(fn (): bool => Auth::user()?->isAdmin() ?? false),
+                        ->visible(fn (): bool => ($user = Auth::user()) instanceof User && $user->isAdmin()),
                 ]),
             ]);
     }

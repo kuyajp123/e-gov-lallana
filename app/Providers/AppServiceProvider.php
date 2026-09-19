@@ -47,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Date::use(CarbonImmutable::class);
 
-        if (app()->isProduction()) {
+        if (app()->environment(['production', 'staging']) || str_starts_with((string) config('app.url'), 'https://')) {
             URL::forceScheme('https');
         }
 

@@ -1,24 +1,23 @@
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import {
-    FileText,
-    Users,
-    Home as HomeIcon,
-    ShieldCheck,
-    Building2,
-    MapPin,
-    Phone,
-    Mail,
-    Clock,
-    Send,
-    ChevronRight,
+    ArrowRight,
     Award,
-    CheckCircle2,
+    Building2,
     Calendar,
+    CheckCircle2,
+    ChevronRight,
+    Clock,
+    FileText,
+    Home as HomeIcon,
+    Landmark,
+    MapPin,
     Menu,
+    Phone,
+    QrCode,
+    Send,
+    ShieldCheck,
+    Users,
     X,
-    Sparkles,
-    FileCheck2,
-    ExternalLink,
 } from 'lucide-react';
 import { useState } from 'react';
 import { TurnstileWidget } from '@/shared/components/turnstile-widget';
@@ -73,14 +72,21 @@ export default function Welcome({
     services,
     announcements,
 }: LandingProps) {
-    const { auth, flash } = usePage<{
+    const { auth } = usePage<{
         auth: { user?: { name: string } };
-        flash: { success?: string; error?: string };
     }>().props;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     // Inquiry Contact Form
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        errors,
+        reset,
+        recentlySuccessful,
+    } = useForm({
         name: '',
         email: '',
         subject: '',
@@ -107,423 +113,589 @@ export default function Welcome({
     };
 
     return (
-        <div className="min-h-screen bg-neutral-50 font-sans text-neutral-900 selection:bg-violet-500 selection:text-white dark:bg-neutral-950 dark:text-neutral-100">
-            <Head title="Barangay Lallana — E-Government Web Portal" />
+        <div className="min-h-screen bg-background font-sans text-foreground selection:bg-violet-600 selection:text-white">
+            <Head title="Barangay Lallana — Official E-Government Web Portal" />
 
-            {/* Navigation Topbar */}
-            <header className="sticky top-0 z-50 border-b border-neutral-200/80 bg-white/80 backdrop-blur-md dark:border-neutral-800 dark:bg-neutral-900/80">
-                <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-                    {/* Logo & Identity */}
-                    <a href="#home" className="group flex items-center gap-3">
-                        <img
-                            src="/lallana-icon.png"
-                            alt="Barangay Lallana Logo"
-                            className="h-12 w-12 rounded-xl object-contain shadow-xs transition-transform group-hover:scale-105"
-                        />
-                        <div>
-                            <span className="block text-lg leading-none font-bold tracking-tight text-neutral-950 dark:text-white">
-                                BARANGAY LALLANA
-                            </span>
-                            <span className="text-xs font-medium text-violet-600 dark:text-violet-400">
-                                Trece Martires City, Cavite
-                            </span>
-                        </div>
-                    </a>
-
-                    {/* Desktop Navigation Links */}
-                    <nav className="hidden items-center gap-6 text-sm font-medium text-neutral-600 lg:flex dark:text-neutral-300">
-                        <a
-                            href="#home"
-                            className="transition-colors hover:text-violet-600 dark:hover:text-violet-400"
-                        >
-                            {t.nav?.home || 'Home'}
-                        </a>
-                        <a
-                            href="#about"
-                            className="transition-colors hover:text-violet-600 dark:hover:text-violet-400"
-                        >
-                            {t.nav?.about || 'About'}
-                        </a>
-                        <a
-                            href="#leadership"
-                            className="transition-colors hover:text-violet-600 dark:hover:text-violet-400"
-                        >
-                            {t.nav?.leadership || 'Leadership'}
-                        </a>
-                        <a
-                            href="#services"
-                            className="transition-colors hover:text-violet-600 dark:hover:text-violet-400"
-                        >
-                            {t.nav?.services || 'Services'}
-                        </a>
-                        <a
-                            href="#statistics"
-                            className="transition-colors hover:text-violet-600 dark:hover:text-violet-400"
-                        >
-                            {t.nav?.statistics || 'Stats'}
-                        </a>
-                        <a
-                            href="#announcements"
-                            className="transition-colors hover:text-violet-600 dark:hover:text-violet-400"
-                        >
-                            {t.nav?.announcements || 'Announcements'}
-                        </a>
-                        <a
-                            href="#contact"
-                            className="transition-colors hover:text-violet-600 dark:hover:text-violet-400"
-                        >
-                            {t.nav?.contact || 'Contact'}
-                        </a>
-                    </nav>
-
-                    {/* Right Actions: Locale + Auth */}
-                    <div className="hidden items-center gap-3 lg:flex">
-                        {/* Language Switcher */}
-                        <div className="flex items-center rounded-lg bg-neutral-100 p-1 text-xs font-semibold dark:bg-neutral-800">
-                            <button
-                                type="button"
-                                onClick={() => handleLocaleSwitch('en')}
-                                className={`cursor-pointer rounded-md px-2.5 py-1 transition-all ${
-                                    locale === 'en'
-                                        ? 'bg-white text-violet-600 shadow-xs dark:bg-neutral-700 dark:text-violet-300'
-                                        : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
-                                }`}
-                            >
-                                EN
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => handleLocaleSwitch('fil')}
-                                className={`cursor-pointer rounded-md px-2.5 py-1 transition-all ${
-                                    locale === 'fil'
-                                        ? 'bg-white text-violet-600 shadow-xs dark:bg-neutral-700 dark:text-violet-300'
-                                        : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
-                                }`}
-                            >
-                                FIL
-                            </button>
-                        </div>
-
-                        {auth.user ? (
-                            <Link href="/dashboard">
-                                <Button
-                                    size="sm"
-                                    className="bg-violet-600 text-white shadow-xs hover:bg-violet-700"
-                                >
-                                    Dashboard
-                                </Button>
-                            </Link>
-                        ) : (
-                            <>
-                                <Link href="/login">
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="text-neutral-700 dark:text-neutral-200"
-                                    >
-                                        {t.nav?.login || 'Sign In'}
-                                    </Button>
-                                </Link>
-                                <Link href="/register">
-                                    <Button
-                                        size="sm"
-                                        className="bg-violet-600 text-white shadow-xs hover:bg-violet-700"
-                                    >
-                                        {t.nav?.register || 'Create Account'}
-                                    </Button>
-                                </Link>
-                            </>
-                        )}
+            {/* Emergency Hotline Alert Strip */}
+            <div className="border-b border-violet-200/50 bg-violet-50/70 px-4 py-2 text-xs text-violet-950 dark:border-violet-900/40 dark:bg-violet-950/40 dark:text-violet-200">
+                <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 text-[11px] sm:text-xs">
+                    <div className="flex items-center gap-2">
+                        <span className="inline-flex size-2 animate-pulse rounded-full bg-emerald-500" />
+                        <span className="font-semibold tracking-wide text-violet-800 uppercase dark:text-violet-300">
+                            Barangay Hall Active Desk:
+                        </span>
+                        <span className="font-mono font-medium">
+                            (046) 419-0000
+                        </span>
                     </div>
-
-                    {/* Mobile Menu Button */}
-                    <div className="flex items-center gap-2 lg:hidden">
-                        <button
-                            type="button"
-                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            className="rounded-lg p-2 text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
-                        >
-                            {mobileMenuOpen ? (
-                                <X className="h-6 w-6" />
-                            ) : (
-                                <Menu className="h-6 w-6" />
-                            )}
-                        </button>
+                    <div className="flex items-center gap-4 text-muted-foreground">
+                        <span className="hidden sm:inline">
+                            Trece Martires PNP:{' '}
+                            <strong className="font-mono font-semibold text-foreground">
+                                0998-598-5606
+                            </strong>
+                        </span>
+                        <span>
+                            BFP Fire:{' '}
+                            <strong className="font-mono font-semibold text-foreground">
+                                (046) 419-0352
+                            </strong>
+                        </span>
+                        <span className="hidden md:inline">
+                            CDRRMO Emergency:{' '}
+                            <strong className="font-mono font-semibold text-foreground">
+                                (046) 419-1234
+                            </strong>
+                        </span>
                     </div>
                 </div>
+            </div>
 
-                {/* Mobile Dropdown */}
-                {mobileMenuOpen && (
-                    <div className="space-y-3 border-b border-neutral-200 bg-white px-4 py-4 lg:hidden dark:border-neutral-800 dark:bg-neutral-900">
-                        <nav className="flex flex-col gap-2 text-sm font-medium">
+            {/* Floating Island Navigation Header */}
+            <div className="sticky top-3 z-50 px-4 sm:px-6 lg:px-8">
+                <header className="mx-auto max-w-6xl rounded-2xl border border-border/80 bg-background/85 px-4 shadow-sm backdrop-blur-xl transition-all sm:px-6 dark:bg-card/85">
+                    <div className="flex h-16 items-center justify-between gap-4">
+                        {/* Logo & Municipal Identity */}
+                        <a
+                            href="#home"
+                            className="group flex items-center gap-3"
+                        >
+                            <div className="relative flex size-10 items-center justify-center rounded-xl bg-violet-600/10 p-1 ring-1 ring-violet-600/20 transition-transform group-hover:scale-105 dark:bg-violet-400/10 dark:ring-violet-400/20">
+                                <img
+                                    src="/lallana-icon.png"
+                                    alt="Barangay Lallana Official Seal"
+                                    className="size-8 object-contain"
+                                />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-sm font-bold tracking-tight text-foreground">
+                                    BARANGAY LALLANA
+                                </span>
+                                <span className="text-[10px] font-medium tracking-wide text-violet-700 uppercase dark:text-violet-300">
+                                    Trece Martires City • Cavite
+                                </span>
+                            </div>
+                        </a>
+
+                        {/* Desktop Navigation Links */}
+                        <nav className="hidden items-center gap-1 text-xs font-medium lg:flex">
                             <a
                                 href="#home"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="rounded-md px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                className="rounded-lg px-3 py-1.5 text-muted-foreground transition-colors hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/50 dark:hover:text-violet-300"
                             >
                                 {t.nav?.home || 'Home'}
                             </a>
                             <a
                                 href="#about"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="rounded-md px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                className="rounded-lg px-3 py-1.5 text-muted-foreground transition-colors hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/50 dark:hover:text-violet-300"
                             >
                                 {t.nav?.about || 'About'}
                             </a>
                             <a
                                 href="#leadership"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="rounded-md px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                className="rounded-lg px-3 py-1.5 text-muted-foreground transition-colors hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/50 dark:hover:text-violet-300"
                             >
                                 {t.nav?.leadership || 'Leadership'}
                             </a>
                             <a
                                 href="#services"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="rounded-md px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                className="rounded-lg px-3 py-1.5 text-muted-foreground transition-colors hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/50 dark:hover:text-violet-300"
                             >
                                 {t.nav?.services || 'Services'}
                             </a>
                             <a
                                 href="#statistics"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="rounded-md px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                className="rounded-lg px-3 py-1.5 text-muted-foreground transition-colors hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/50 dark:hover:text-violet-300"
                             >
-                                {t.nav?.statistics || 'Stats'}
+                                {t.nav?.statistics || 'Registry'}
                             </a>
                             <a
                                 href="#announcements"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="rounded-md px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                className="rounded-lg px-3 py-1.5 text-muted-foreground transition-colors hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/50 dark:hover:text-violet-300"
                             >
-                                {t.nav?.announcements || 'Announcements'}
+                                {t.nav?.announcements || 'Advisories'}
                             </a>
                             <a
                                 href="#contact"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="rounded-md px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                className="rounded-lg px-3 py-1.5 text-muted-foreground transition-colors hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/50 dark:hover:text-violet-300"
                             >
                                 {t.nav?.contact || 'Contact'}
                             </a>
                         </nav>
 
-                        <div className="flex items-center justify-between border-t border-neutral-200 pt-3 dark:border-neutral-800">
-                            <div className="flex items-center rounded-lg bg-neutral-100 p-1 text-xs font-semibold dark:bg-neutral-800">
+                        {/* Right Section: Language Switcher & Auth Access */}
+                        <div className="hidden items-center gap-2.5 lg:flex">
+                            {/* Segmented Language Switcher */}
+                            <div className="flex items-center rounded-full bg-muted/80 p-0.5 text-[11px] font-semibold">
                                 <button
                                     type="button"
                                     onClick={() => handleLocaleSwitch('en')}
-                                    className={`rounded-md px-3 py-1 ${locale === 'en' ? 'bg-white text-violet-600 dark:bg-neutral-700' : ''}`}
+                                    className={`cursor-pointer rounded-full px-2.5 py-0.5 transition-all ${
+                                        locale === 'en'
+                                            ? 'bg-card text-violet-700 shadow-xs dark:bg-neutral-800 dark:text-violet-300'
+                                            : 'text-muted-foreground hover:text-foreground'
+                                    }`}
                                 >
                                     EN
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => handleLocaleSwitch('fil')}
-                                    className={`rounded-md px-3 py-1 ${locale === 'fil' ? 'bg-white text-violet-600 dark:bg-neutral-700' : ''}`}
+                                    className={`cursor-pointer rounded-full px-2.5 py-0.5 transition-all ${
+                                        locale === 'fil'
+                                            ? 'bg-card text-violet-700 shadow-xs dark:bg-neutral-800 dark:text-violet-300'
+                                            : 'text-muted-foreground hover:text-foreground'
+                                    }`}
                                 >
                                     FIL
                                 </button>
                             </div>
-                            <div className="flex gap-2">
-                                <Link href="/login">
-                                    <Button variant="outline" size="sm">
-                                        Sign In
-                                    </Button>
-                                </Link>
-                                <Link href="/register">
+
+                            {auth.user ? (
+                                <Link href="/dashboard">
                                     <Button
                                         size="sm"
-                                        className="bg-violet-600 text-white"
+                                        className="h-9 cursor-pointer rounded-xl bg-violet-600 px-4 text-xs font-semibold text-white shadow-xs hover:bg-violet-700"
                                     >
-                                        Register
+                                        Resident Dashboard
+                                    </Button>
+                                </Link>
+                            ) : (
+                                <div className="flex items-center gap-1.5">
+                                    <Link href="/login">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-8 rounded-lg px-3 text-xs font-medium text-foreground hover:bg-muted"
+                                        >
+                                            {t.nav?.login || 'Sign In'}
+                                        </Button>
+                                    </Link>
+                                    <Link href="/register">
+                                        <Button
+                                            size="sm"
+                                            className="h-8 cursor-pointer rounded-xl bg-violet-600 px-3.5 text-xs font-semibold text-white shadow-xs hover:bg-violet-700"
+                                        >
+                                            {t.nav?.register || 'Register'}
+                                        </Button>
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Mobile Menu Toggle */}
+                        <div className="flex items-center gap-2 lg:hidden">
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setMobileMenuOpen(!mobileMenuOpen)
+                                }
+                                className="flex size-9 items-center justify-center rounded-xl border border-border bg-card text-foreground hover:bg-muted"
+                                aria-label="Toggle Navigation Menu"
+                            >
+                                {mobileMenuOpen ? (
+                                    <X className="size-5" />
+                                ) : (
+                                    <Menu className="size-5" />
+                                )}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Mobile Drawer */}
+                    {mobileMenuOpen && (
+                        <div className="space-y-3 border-t border-border/80 px-2 py-4 lg:hidden">
+                            <nav className="flex flex-col gap-1 text-sm font-medium">
+                                <a
+                                    href="#home"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="rounded-lg px-3 py-2 text-foreground hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/50"
+                                >
+                                    {t.nav?.home || 'Home'}
+                                </a>
+                                <a
+                                    href="#about"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="rounded-lg px-3 py-2 text-foreground hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/50"
+                                >
+                                    {t.nav?.about || 'About'}
+                                </a>
+                                <a
+                                    href="#leadership"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="rounded-lg px-3 py-2 text-foreground hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/50"
+                                >
+                                    {t.nav?.leadership || 'Leadership'}
+                                </a>
+                                <a
+                                    href="#services"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="rounded-lg px-3 py-2 text-foreground hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/50"
+                                >
+                                    {t.nav?.services || 'Services'}
+                                </a>
+                                <a
+                                    href="#statistics"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="rounded-lg px-3 py-2 text-foreground hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/50"
+                                >
+                                    {t.nav?.statistics || 'Registry'}
+                                </a>
+                                <a
+                                    href="#announcements"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="rounded-lg px-3 py-2 text-foreground hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/50"
+                                >
+                                    {t.nav?.announcements || 'Advisories'}
+                                </a>
+                                <a
+                                    href="#contact"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="rounded-lg px-3 py-2 text-foreground hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/50"
+                                >
+                                    {t.nav?.contact || 'Contact'}
+                                </a>
+                            </nav>
+
+                            <div className="flex items-center justify-between border-t border-border pt-3">
+                                <div className="flex items-center rounded-full bg-muted p-0.5 text-xs font-semibold">
+                                    <button
+                                        type="button"
+                                        onClick={() => handleLocaleSwitch('en')}
+                                        className={`rounded-full px-3 py-1 ${locale === 'en' ? 'bg-card text-violet-700 shadow-xs' : 'text-muted-foreground'}`}
+                                    >
+                                        EN
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            handleLocaleSwitch('fil')
+                                        }
+                                        className={`rounded-full px-3 py-1 ${locale === 'fil' ? 'bg-card text-violet-700 shadow-xs' : 'text-muted-foreground'}`}
+                                    >
+                                        FIL
+                                    </button>
+                                </div>
+                                <div className="flex gap-2">
+                                    <Link href="/login">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="rounded-xl text-xs"
+                                        >
+                                            Sign In
+                                        </Button>
+                                    </Link>
+                                    <Link href="/register">
+                                        <Button
+                                            size="sm"
+                                            className="rounded-xl bg-violet-600 text-xs text-white hover:bg-violet-700"
+                                        >
+                                            Register
+                                        </Button>
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </header>
+            </div>
+
+            {/* Section 1: Asymmetric Hero Section */}
+            <section
+                id="home"
+                className="relative isolate overflow-hidden pt-8 pb-20 md:pt-14 md:pb-28"
+            >
+                {/* Background Texture with Dignified Scrim */}
+                <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+                    <img
+                        src="/hero-bg.jpg"
+                        alt="Barangay Lallana Community Landscape"
+                        className="h-full w-full object-cover object-center opacity-30 dark:opacity-15"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background" />
+                    <div className="absolute inset-0 bg-radial from-violet-600/5 via-transparent to-transparent dark:from-violet-500/10" />
+                </div>
+
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
+                        {/* Left Hero Column: Value Proposition & CTAs */}
+                        <div className="space-y-6 lg:col-span-7">
+                            <div className="inline-flex items-center gap-2 rounded-full border border-violet-200/80 bg-violet-50/80 px-3.5 py-1 text-[11px] font-semibold tracking-wider text-violet-800 uppercase shadow-xs dark:border-violet-800/60 dark:bg-violet-950/60 dark:text-violet-300">
+                                <span className="size-1.5 animate-ping rounded-full bg-violet-600" />
+                                {t.hero?.badge ||
+                                    'Official E-Government Portal'}
+                            </div>
+
+                            <h1 className="text-4xl leading-[1.08] font-extrabold tracking-tight text-balance text-foreground sm:text-5xl md:text-6xl">
+                                {t.hero?.title ||
+                                    'Barangay Lallana E-Government Services'}
+                            </h1>
+
+                            <p className="max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
+                                {t.hero?.subtitle ||
+                                    'Convenient, fast, and transparent digital public services for all residents of Barangay Lallana, Trece Martires City, Cavite.'}
+                            </p>
+
+                            {/* Nested CTA & Button-in-Button Architecture */}
+                            <div className="flex flex-col gap-3.5 pt-2 sm:flex-row sm:items-center">
+                                <Link
+                                    href="/login?intent=request"
+                                    className="group w-full sm:w-auto"
+                                >
+                                    <Button
+                                        size="lg"
+                                        className="h-12 w-full cursor-pointer rounded-full bg-violet-600 pr-2 pl-6 text-sm font-semibold text-white shadow-md shadow-violet-600/20 transition-all hover:bg-violet-700 active:scale-[0.98]"
+                                    >
+                                        <span>
+                                            {t.hero?.cta_request ||
+                                                'Request Document'}
+                                        </span>
+                                        <span className="ml-3 flex size-8 items-center justify-center rounded-full bg-white/20 transition-transform group-hover:translate-x-0.5">
+                                            <ArrowRight className="size-4" />
+                                        </span>
+                                    </Button>
+                                </Link>
+
+                                <Link
+                                    href="/register?intent=household"
+                                    className="w-full sm:w-auto"
+                                >
+                                    <Button
+                                        variant="outline"
+                                        size="lg"
+                                        className="h-12 w-full cursor-pointer rounded-full border-border bg-card px-6 text-sm font-semibold hover:bg-muted active:scale-[0.98]"
+                                    >
+                                        <HomeIcon className="mr-2 size-4 text-violet-600 dark:text-violet-400" />
+                                        <span>
+                                            {t.hero?.cta_household ||
+                                                'Register Household'}
+                                        </span>
                                     </Button>
                                 </Link>
                             </div>
-                        </div>
-                    </div>
-                )}
-            </header>
 
-            {/* Section 1: Hero Section */}
-            <section
-                id="home"
-                className="relative isolate overflow-hidden pt-12 pb-24 md:pt-20 md:pb-32"
-            >
-                {/* Background Image Container with Balanced Scrim */}
-                <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-                    <img
-                        src="/hero-bg.jpg"
-                        alt="Barangay Lallana Community"
-                        className="h-full w-full object-cover object-center"
-                    />
-                    {/* Semi-transparent scrim overlay to balance image visibility with text legibility */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-white/50 to-neutral-50 dark:from-neutral-950/80 dark:via-neutral-950/65 dark:to-neutral-950" />
-                    <div className="absolute inset-0 bg-violet-600/5 mix-blend-multiply dark:mix-blend-color-dodge" />
-                </div>
-
-                <div className="relative z-10 mx-auto max-w-7xl space-y-8 px-4 text-center sm:px-6 lg:px-8">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-violet-200 bg-violet-100/80 px-4 py-1.5 text-xs font-semibold text-violet-800 shadow-xs md:text-sm dark:border-violet-800 dark:bg-violet-950/60 dark:text-violet-300">
-                        <Sparkles className="h-4 w-4 text-violet-600 dark:text-violet-400" />
-                        {t.hero?.badge || 'Official E-Government Portal'}
-                    </div>
-
-                    <h1 className="mx-auto max-w-5xl text-4xl leading-[1.1] font-extrabold tracking-tight text-neutral-950 sm:text-5xl md:text-6xl lg:text-7xl dark:text-white">
-                        {t.hero?.title ||
-                            'Barangay Lallana E-Government Services'}
-                    </h1>
-
-                    <p className="mx-auto max-w-3xl text-lg leading-relaxed text-neutral-600 md:text-xl dark:text-neutral-300">
-                        {t.hero?.subtitle ||
-                            'Convenient, fast, and transparent digital public services for all residents of Barangay Lallana, Trece Martires City, Cavite.'}
-                    </p>
-
-                    <div className="flex flex-col items-center justify-center gap-4 pt-4 sm:flex-row">
-                        <Link
-                            href="/login?intent=request"
-                            className="w-full sm:w-auto"
-                        >
-                            <Button
-                                size="lg"
-                                className="w-full cursor-pointer rounded-xl bg-violet-600 px-8 py-6 text-base font-semibold text-white shadow-lg shadow-violet-500/25 hover:bg-violet-700"
-                            >
-                                <FileText className="mr-2.5 h-5 w-5" />
-                                {t.hero?.cta_request || 'Request Document'}
-                            </Button>
-                        </Link>
-                        <Link
-                            href="/register?intent=household"
-                            className="w-full sm:w-auto"
-                        >
-                            <Button
-                                variant="outline"
-                                size="lg"
-                                className="w-full cursor-pointer rounded-xl border-neutral-300 px-8 py-6 text-base font-semibold hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
-                            >
-                                <HomeIcon className="mr-2.5 h-5 w-5 text-violet-600 dark:text-violet-400" />
-                                {t.hero?.cta_household || 'Register Household'}
-                            </Button>
-                        </Link>
-                    </div>
-
-                    <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 pt-12 text-left sm:grid-cols-3">
-                        <div className="flex items-start gap-3.5 rounded-xl border border-neutral-200/60 bg-white/60 p-4 shadow-xs dark:border-neutral-800 dark:bg-neutral-900/60">
-                            <ShieldCheck className="mt-0.5 h-6 w-6 shrink-0 text-violet-600 dark:text-violet-400" />
-                            <div>
-                                <h4 className="text-sm font-semibold">
-                                    Official QR Verification
-                                </h4>
-                                <p className="mt-0.5 text-xs text-neutral-500">
-                                    Tamper-proof digital certificates with
-                                    instant cryptographic verification.
-                                </p>
+                            {/* Trust Signals & Service Guarantee */}
+                            <div className="grid grid-cols-3 gap-4 border-t border-border/80 pt-6">
+                                <div className="space-y-1">
+                                    <span className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+                                        <QrCode className="size-3.5 text-violet-600 dark:text-violet-400" />
+                                        QR Verified
+                                    </span>
+                                    <p className="text-[11px] text-muted-foreground">
+                                        Tamper-proof certificates with digital
+                                        seal
+                                    </p>
+                                </div>
+                                <div className="space-y-1">
+                                    <span className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+                                        <Phone className="size-3.5 text-violet-600 dark:text-violet-400" />
+                                        SMS Alerts
+                                    </span>
+                                    <p className="text-[11px] text-muted-foreground">
+                                        Real-time status updates delivered to
+                                        phone
+                                    </p>
+                                </div>
+                                <div className="space-y-1">
+                                    <span className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+                                        <Clock className="size-3.5 text-violet-600 dark:text-violet-400" />
+                                        Express Pick-up
+                                    </span>
+                                    <p className="text-[11px] text-muted-foreground">
+                                        Skip lines with scheduled barangay claim
+                                    </p>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="flex items-start gap-3.5 rounded-xl border border-neutral-200/60 bg-white/60 p-4 shadow-xs dark:border-neutral-800 dark:bg-neutral-900/60">
-                            <Phone className="mt-0.5 h-6 w-6 shrink-0 text-violet-600 dark:text-violet-400" />
-                            <div>
-                                <h4 className="text-sm font-semibold">
-                                    SMS & Email Status Alerts
-                                </h4>
-                                <p className="mt-0.5 text-xs text-neutral-500">
-                                    Receive real-time text updates as your
-                                    documents are reviewed and approved.
-                                </p>
-                            </div>
-                        </div>
+                        {/* Right Hero Column: Double-Bezel Interactive Certificate Showcase */}
+                        <div className="lg:col-span-5">
+                            <div className="bezel-outer relative">
+                                <div className="bezel-inner relative overflow-hidden p-6 sm:p-8">
+                                    {/* Republic Header Banner */}
+                                    <div className="flex items-center justify-between border-b border-border/80 pb-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="size-11 rounded-xl bg-violet-600/10 p-1.5 ring-1 ring-violet-600/20">
+                                                <img
+                                                    src="/lallana-icon.png"
+                                                    alt="Barangay Seal"
+                                                    className="size-full object-contain"
+                                                />
+                                            </div>
+                                            <div>
+                                                <span className="block text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
+                                                    Republic of the Philippines
+                                                </span>
+                                                <span className="block text-xs font-extrabold text-foreground">
+                                                    BARANGAY LALLANA
+                                                </span>
+                                                <span className="text-[10px] font-medium text-violet-600 dark:text-violet-400">
+                                                    Trece Martires City, Cavite
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="rounded-lg bg-emerald-50 px-2 py-1 text-[10px] font-bold text-emerald-700 ring-1 ring-emerald-600/20 dark:bg-emerald-950/40 dark:text-emerald-300">
+                                            VERIFIED PORTAL
+                                        </div>
+                                    </div>
 
-                        <div className="flex items-start gap-3.5 rounded-xl border border-neutral-200/60 bg-white/60 p-4 shadow-xs dark:border-neutral-800 dark:bg-neutral-900/60">
-                            <Clock className="mt-0.5 h-6 w-6 shrink-0 text-violet-600 dark:text-violet-400" />
-                            <div>
-                                <h4 className="text-sm font-semibold">
-                                    Fast Pick-up or PDF
-                                </h4>
-                                <p className="mt-0.5 text-xs text-neutral-500">
-                                    Skip long queues and collect your certified
-                                    documents at your convenience.
-                                </p>
+                                    {/* Document Simulation Preview */}
+                                    <div className="my-6 space-y-3 rounded-xl border border-dashed border-border bg-muted/30 p-4">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-[11px] font-semibold text-foreground">
+                                                Official Barangay Clearance
+                                            </span>
+                                            <span className="font-mono text-[10px] text-muted-foreground">
+                                                LAL-2026-0842
+                                            </span>
+                                        </div>
+                                        <div className="h-1.5 w-3/4 rounded-full bg-border" />
+                                        <div className="h-1.5 w-1/2 rounded-full bg-border" />
+
+                                        <div className="flex items-center justify-between pt-2">
+                                            <div className="flex items-center gap-1.5">
+                                                <CheckCircle2 className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+                                                <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-400">
+                                                    Seal & Signature
+                                                    Authenticated
+                                                </span>
+                                            </div>
+                                            <QrCode className="size-6 text-foreground/70" />
+                                        </div>
+                                    </div>
+
+                                    {/* Live Registry Mini-Counters */}
+                                    <div className="grid grid-cols-2 gap-3 pt-2">
+                                        <div className="rounded-xl border border-border/70 bg-card p-3">
+                                            <span className="block font-mono text-xl font-bold tracking-tight text-foreground tabular-nums">
+                                                {statistics.total_residents.toLocaleString()}
+                                                +
+                                            </span>
+                                            <span className="text-[11px] text-muted-foreground">
+                                                Active Residents
+                                            </span>
+                                        </div>
+                                        <div className="rounded-xl border border-border/70 bg-card p-3">
+                                            <span className="block font-mono text-xl font-bold tracking-tight text-violet-700 tabular-nums dark:text-violet-300">
+                                                {statistics.total_households.toLocaleString()}
+                                                +
+                                            </span>
+                                            <span className="text-[11px] text-muted-foreground">
+                                                Verified Households
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-4 flex items-center justify-between rounded-lg bg-violet-50/80 px-3 py-2 text-[11px] text-violet-900 dark:bg-violet-950/40 dark:text-violet-200">
+                                        <span className="flex items-center gap-1.5 font-medium">
+                                            <ShieldCheck className="size-3.5 text-violet-700 dark:text-violet-400" />
+                                            ISO-Aligned Data Privacy Act of 2012
+                                        </span>
+                                        <span className="font-semibold">
+                                            Compliant
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Section 2: About Section */}
+            {/* Section 2: About & Historical Background */}
             <section
                 id="about"
-                className="border-y border-neutral-200 bg-white py-20 dark:border-neutral-800 dark:bg-neutral-900"
+                className="border-y border-border/80 bg-card py-20"
             >
-                <div className="mx-auto max-w-7xl space-y-12 px-4 sm:px-6 lg:px-8">
-                    <div className="mx-auto max-w-3xl space-y-3 text-center">
-                        <span className="text-xs font-bold tracking-wider text-violet-600 uppercase dark:text-violet-400">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="mx-auto max-w-3xl text-center">
+                        <span className="text-xs font-bold tracking-wider text-violet-700 uppercase dark:text-violet-400">
                             Community Background
                         </span>
-                        <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">
+                        <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-foreground md:text-4xl">
                             {t.about?.title || 'About Barangay Lallana'}
                         </h2>
-                        <p className="text-base text-neutral-600 dark:text-neutral-300">
+                        <p className="mt-3 text-base text-muted-foreground">
                             {t.about?.subtitle ||
                                 'A progressive and hospitable community in the heart of Trece Martires City, Cavite.'}
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
-                        <div className="space-y-6 text-sm leading-relaxed text-neutral-700 md:text-base dark:text-neutral-300">
-                            <div className="space-y-3 rounded-2xl border border-neutral-200 bg-neutral-50 p-6 dark:border-neutral-800 dark:bg-neutral-950">
-                                <h3 className="flex items-center gap-2 text-lg font-bold text-neutral-950 dark:text-white">
-                                    <Building2 className="h-5 w-5 text-violet-600" />
-                                    {t.about?.history_title ||
-                                        'Historical Background & Community Profile'}
-                                </h3>
-                                <p>{t.about?.history_p1}</p>
-                                <p>{t.about?.history_p2}</p>
+                    <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-12">
+                        {/* Historical Narrative */}
+                        <div className="space-y-6 lg:col-span-7">
+                            <div className="bezel-outer">
+                                <div className="bezel-inner space-y-4 p-6">
+                                    <h3 className="flex items-center gap-2.5 text-base font-bold text-foreground">
+                                        <Building2 className="size-5 text-violet-600 dark:text-violet-400" />
+                                        {t.about?.history_title ||
+                                            'Historical Background & Community Profile'}
+                                    </h3>
+                                    <p className="text-sm leading-relaxed text-muted-foreground">
+                                        {t.about?.history_p1 ||
+                                            'Barangay Lallana is one of the thriving communities of Trece Martires City, the historical and administrative capital of Cavite. Dedicated to continuous development, the barangay serves its residents with honesty, integrity, and proactive public service.'}
+                                    </p>
+                                    <p className="text-sm leading-relaxed text-muted-foreground">
+                                        {t.about?.history_p2 ||
+                                            'With dedicated purok leaders, active community health programs, and modern infrastructure, Barangay Lallana is pioneering digital governance to make essential government documents and services accessible anytime, anywhere.'}
+                                    </p>
+                                </div>
                             </div>
 
-                            <div className="space-y-3 rounded-2xl border border-neutral-200 bg-neutral-50 p-6 dark:border-neutral-800 dark:bg-neutral-950">
-                                <h3 className="flex items-center gap-2 text-lg font-bold text-neutral-950 dark:text-white">
-                                    <MapPin className="h-5 w-5 text-violet-600" />
-                                    {t.about?.city_title ||
-                                        'Trece Martires City Context'}
-                                </h3>
-                                <p>{t.about?.city_p1}</p>
+                            <div className="bezel-outer">
+                                <div className="bezel-inner space-y-3 p-6">
+                                    <h3 className="flex items-center gap-2.5 text-base font-bold text-foreground">
+                                        <Landmark className="size-5 text-violet-600 dark:text-violet-400" />
+                                        {t.about?.city_title ||
+                                            'Trece Martires City Context'}
+                                    </h3>
+                                    <p className="text-sm leading-relaxed text-muted-foreground">
+                                        {t.about?.city_p1 ||
+                                            'As part of Trece Martires City - the premier government and growth center of Cavite - Barangay Lallana contributes to peace and order, socio-economic progress, and community empowerment.'}
+                                    </p>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="relative flex min-h-[380px] flex-col justify-between overflow-hidden rounded-3xl bg-gradient-to-br from-violet-600 to-indigo-900 p-8 text-white shadow-xl md:p-12">
-                            <div className="space-y-4">
-                                <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur-md">
-                                    <Award className="h-4 w-4 text-amber-300" />
-                                    Pioneering Digital Governance
+                        {/* Civic Pillar Card */}
+                        <div className="lg:col-span-5">
+                            <div className="flex h-full flex-col justify-between rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-900 to-indigo-950 p-8 text-white shadow-lg dark:border-violet-800/50">
+                                <div className="space-y-4">
+                                    <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold backdrop-blur-md">
+                                        <Award className="size-4 text-amber-300" />
+                                        Pioneering Digital Governance
+                                    </div>
+                                    <h3 className="text-2xl leading-snug font-bold">
+                                        Modern Public Records, Accessible to
+                                        Every Family.
+                                    </h3>
+                                    <p className="text-sm leading-relaxed text-violet-200">
+                                        Barangay Lallana is committed to
+                                        streamlining public records, eliminating
+                                        unnecessary bureaucratic delays, and
+                                        ensuring every resident receives
+                                        compassionate, transparent service.
+                                    </p>
                                 </div>
-                                <h3 className="text-2xl leading-snug font-bold md:text-3xl">
-                                    Empowering Citizens through Modern
-                                    E-Government.
-                                </h3>
-                                <p className="text-sm leading-relaxed text-violet-100">
-                                    Barangay Lallana is committed to
-                                    streamlining public records, eliminating
-                                    unnecessary bureaucratic delays, and
-                                    ensuring every resident receives
-                                    compassionate, transparent service.
-                                </p>
-                            </div>
 
-                            <div className="grid grid-cols-2 gap-4 border-t border-white/20 pt-6 text-xs">
-                                <div>
-                                    <span className="block text-lg font-bold text-white">
-                                        6 Puroks
-                                    </span>
-                                    <span className="text-violet-200">
-                                        Active Community Zones
-                                    </span>
-                                </div>
-                                <div>
-                                    <span className="block text-lg font-bold text-white">
-                                        100% Online
-                                    </span>
-                                    <span className="text-violet-200">
-                                        Document Request Tracking
-                                    </span>
+                                <div className="mt-8 grid grid-cols-2 gap-4 border-t border-white/15 pt-6 text-xs">
+                                    <div>
+                                        <span className="block font-mono text-2xl font-bold text-white">
+                                            6 Puroks
+                                        </span>
+                                        <span className="text-violet-300">
+                                            Active Community Zones
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span className="block font-mono text-2xl font-bold text-white">
+                                            100%
+                                        </span>
+                                        <span className="text-violet-300">
+                                            Online Request Tracking
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -531,87 +703,115 @@ export default function Welcome({
                 </div>
             </section>
 
-            {/* Section 3: Leadership & Governance Section */}
-            <section
-                id="leadership"
-                className="bg-neutral-50 py-20 dark:bg-neutral-950"
-            >
-                <div className="mx-auto max-w-7xl space-y-12 px-4 sm:px-6 lg:px-8">
-                    <div className="mx-auto max-w-3xl space-y-3 text-center">
-                        <span className="text-xs font-bold tracking-wider text-violet-600 uppercase dark:text-violet-400">
+            {/* Section 3: Leadership & Governance */}
+            <section id="leadership" className="bg-background py-20">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="mx-auto max-w-3xl text-center">
+                        <span className="text-xs font-bold tracking-wider text-violet-700 uppercase dark:text-violet-400">
                             Public Servants
                         </span>
-                        <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">
+                        <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-foreground md:text-4xl">
                             {t.leadership?.title ||
                                 'Barangay Leadership & Governance'}
                         </h2>
-                        <p className="text-base text-neutral-600 dark:text-neutral-300">
+                        <p className="mt-3 text-base text-muted-foreground">
                             {t.leadership?.subtitle ||
                                 'Dedicated public servants serving with transparency, discipline, and compassion.'}
                         </p>
                     </div>
 
-                    <div className="relative mx-auto max-w-4xl overflow-hidden rounded-3xl border border-neutral-200 bg-white p-8 shadow-xs md:p-12 dark:border-neutral-800 dark:bg-neutral-900">
-                        <div className="absolute top-0 right-0 -z-10 h-64 w-64 rounded-full bg-violet-500/10 blur-3xl" />
+                    {/* Executive Captain Feature Card */}
+                    <div className="mx-auto mt-12 max-w-4xl">
+                        <div className="bezel-outer">
+                            <div className="bezel-inner p-6 sm:p-10">
+                                <div className="flex flex-col items-center gap-8 md:flex-row md:items-start">
+                                    {/* Dignified Executive Badge Avatar */}
+                                    <div className="relative flex size-36 shrink-0 flex-col items-center justify-center rounded-2xl bg-gradient-to-tr from-violet-700 to-indigo-800 p-4 text-center text-white shadow-md ring-2 ring-violet-500/20 md:size-44">
+                                        <img
+                                            src="/lallana-icon.png"
+                                            alt="Barangay Crest"
+                                            className="mb-2 size-16 object-contain drop-shadow-md"
+                                        />
+                                        <span className="text-[10px] font-extrabold tracking-widest text-violet-200 uppercase">
+                                            Punong Barangay
+                                        </span>
+                                        <span className="text-xs font-bold">
+                                            DECILO
+                                        </span>
+                                    </div>
 
-                        <div className="flex flex-col items-center gap-8 md:flex-row md:items-start">
-                            <div className="flex h-36 w-36 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-700 text-5xl font-black text-white shadow-lg md:h-44 md:w-44">
-                                CMD
-                            </div>
+                                    <div className="space-y-4 text-center md:text-left">
+                                        <div>
+                                            <span className="text-xs font-bold tracking-wider text-violet-700 uppercase dark:text-violet-400">
+                                                {t.leadership?.captain_title ||
+                                                    'Punong Barangay / Barangay Captain'}
+                                            </span>
+                                            <h3 className="mt-1 text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
+                                                {t.leadership?.captain_name ||
+                                                    'HON. CECILIA M. DECILLO'}
+                                            </h3>
+                                        </div>
 
-                            <div className="space-y-4 text-center md:text-left">
-                                <div>
-                                    <span className="text-xs font-bold tracking-wider text-violet-600 uppercase dark:text-violet-400">
-                                        {t.leadership?.captain_title ||
-                                            'Punong Barangay / Barangay Captain'}
-                                    </span>
-                                    <h3 className="mt-0.5 text-2xl font-extrabold text-neutral-950 md:text-3xl dark:text-white">
-                                        {t.leadership?.captain_name ||
-                                            'HON. CECILIA M. DECILLO'}
-                                    </h3>
-                                </div>
+                                        <blockquote className="rounded-xl border-l-4 border-violet-600 bg-violet-50/50 p-4 text-sm leading-relaxed text-foreground italic md:text-base dark:bg-violet-950/20">
+                                            "
+                                            {t.leadership?.captain_quote ||
+                                                'Good governance needs self-discipline. Only discipline within can ensure discipline without. We are committed to serving every family in Barangay Lallana with integrity and genuine care.'}
+                                            "
+                                        </blockquote>
 
-                                <blockquote className="rounded-r-xl border-l-4 border-violet-600 bg-violet-50/50 py-1 pl-4 text-base leading-relaxed text-neutral-700 italic md:text-lg dark:bg-violet-950/20 dark:text-neutral-300">
-                                    "{t.leadership?.captain_quote}"
-                                </blockquote>
-
-                                <div className="flex flex-wrap items-center justify-center gap-3 pt-2 text-xs font-semibold text-neutral-600 md:justify-start dark:text-neutral-400">
-                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-neutral-100 px-3 py-1 dark:bg-neutral-800">
-                                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />{' '}
-                                        Accountable Leadership
-                                    </span>
-                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-neutral-100 px-3 py-1 dark:bg-neutral-800">
-                                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />{' '}
-                                        Citizen Welfare
-                                    </span>
+                                        <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1 text-xs font-semibold md:justify-start">
+                                            <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-foreground">
+                                                <CheckCircle2 className="size-3.5 text-emerald-600" />
+                                                Accountable Leadership
+                                            </span>
+                                            <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-foreground">
+                                                <CheckCircle2 className="size-3.5 text-emerald-600" />
+                                                Citizen Welfare First
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="mx-auto max-w-5xl space-y-6 pt-6">
-                        <h4 className="text-center text-sm font-bold tracking-wide text-neutral-700 uppercase dark:text-neutral-300">
+                    {/* Council Kagawads Grid */}
+                    <div className="mx-auto mt-10 max-w-5xl">
+                        <h4 className="mb-6 text-center text-xs font-bold tracking-widest text-muted-foreground uppercase">
                             {t.leadership?.officials_title ||
-                                'Barangay Officials & Staff'}
+                                'Barangay Council & Executive Staff'}
                         </h4>
 
                         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-                            {[1, 2, 3, 4].map((num) => (
-                                <div
-                                    key={num}
-                                    className="space-y-2 rounded-2xl border border-dashed border-neutral-300 bg-white p-5 text-center transition-colors hover:border-violet-400 dark:border-neutral-800 dark:bg-neutral-900"
-                                >
-                                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-neutral-100 text-sm font-bold text-neutral-400 dark:bg-neutral-800">
-                                        BK {num}
-                                    </div>
-                                    <div>
-                                        <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                                            {t.leadership?.placeholder_name}{' '}
-                                            {num}
+                            {[
+                                {
+                                    name: 'Committee on Peace & Order',
+                                    role: 'Barangay Kagawad',
+                                },
+                                {
+                                    name: 'Committee on Health & Sanitation',
+                                    role: 'Barangay Kagawad',
+                                },
+                                {
+                                    name: 'Committee on Public Works',
+                                    role: 'Barangay Kagawad',
+                                },
+                                {
+                                    name: 'Committee on Education & Youth',
+                                    role: 'SK Chairperson',
+                                },
+                            ].map((item, index) => (
+                                <div key={index} className="bezel-outer">
+                                    <div className="bezel-inner space-y-1.5 p-4 text-center">
+                                        <div className="mx-auto flex size-10 items-center justify-center rounded-xl bg-violet-600/10 text-violet-700 dark:bg-violet-400/10 dark:text-violet-300">
+                                            <Users className="size-5" />
                                         </div>
-                                        <div className="text-xs text-neutral-500">
-                                            {t.leadership?.placeholder_role}
-                                        </div>
+                                        <h5 className="text-xs font-bold text-foreground">
+                                            {item.name}
+                                        </h5>
+                                        <span className="block text-[10px] text-muted-foreground">
+                                            {item.role}
+                                        </span>
                                     </div>
                                 </div>
                             ))}
@@ -620,605 +820,585 @@ export default function Welcome({
                 </div>
             </section>
 
-            {/* Section 4: Confirmed Services */}
+            {/* Section 4: Services & Document Catalog */}
             <section
                 id="services"
-                className="border-t border-neutral-200 bg-white py-20 dark:border-neutral-800 dark:bg-neutral-900"
+                className="border-y border-border/80 bg-card py-20"
             >
-                <div className="mx-auto max-w-7xl space-y-12 px-4 sm:px-6 lg:px-8">
-                    <div className="mx-auto max-w-3xl space-y-3 text-center">
-                        <span className="text-xs font-bold tracking-wider text-violet-600 uppercase dark:text-violet-400">
-                            Available Online
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="mx-auto max-w-3xl text-center">
+                        <span className="text-xs font-bold tracking-wider text-violet-700 uppercase dark:text-violet-400">
+                            Civic E-Services
                         </span>
-                        <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">
+                        <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-foreground md:text-4xl">
                             {t.services?.title || 'Barangay Digital Services'}
                         </h2>
-                        <p className="text-base text-neutral-600 dark:text-neutral-300">
+                        <p className="mt-3 text-base text-muted-foreground">
                             {t.services?.subtitle ||
                                 'Fast, verified, and secure online document requests with SMS and email status notifications.'}
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-                        {services.map((service) => (
-                            <div
-                                key={service.id}
-                                className="flex flex-col justify-between space-y-6 rounded-3xl border border-neutral-200 bg-neutral-50 p-8 shadow-xs transition-all hover:border-violet-300 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-violet-800"
-                            >
-                                <div className="space-y-4">
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-violet-600 shadow-xs dark:bg-violet-950/80 dark:text-violet-400">
-                                        <FileCheck2 className="h-6 w-6" />
-                                    </div>
+                    <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                        {services && services.length > 0 ? (
+                            services.map((service) => (
+                                <div
+                                    key={service.id}
+                                    className="bezel-outer group"
+                                >
+                                    <div className="bezel-inner flex h-full flex-col justify-between p-6 transition-all hover:border-violet-300 dark:hover:border-violet-700">
+                                        <div className="space-y-3">
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex size-10 items-center justify-center rounded-xl bg-violet-600/10 text-violet-700 dark:bg-violet-400/10 dark:text-violet-300">
+                                                    <FileText className="size-5" />
+                                                </div>
+                                                <span className="font-mono text-xs font-bold text-violet-700 dark:text-violet-300">
+                                                    {service.fee || 'FREE'}
+                                                </span>
+                                            </div>
 
-                                    <div>
-                                        <div className="flex items-center justify-between gap-2">
-                                            <h3 className="text-xl font-bold text-neutral-950 dark:text-white">
+                                            <h3 className="text-base font-bold text-foreground">
                                                 {service.name}
                                             </h3>
-                                            <span className="rounded-full bg-violet-100 px-2.5 py-1 text-xs font-bold text-violet-800 dark:bg-violet-950 dark:text-violet-300">
-                                                {service.fee}
-                                            </span>
+
+                                            <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+                                                {service.description}
+                                            </p>
+
+                                            {service.requirements &&
+                                                service.requirements.length >
+                                                    0 && (
+                                                    <div className="border-t border-border/70 pt-3">
+                                                        <span className="text-[10px] font-semibold text-muted-foreground uppercase">
+                                                            Requirements:
+                                                        </span>
+                                                        <ul className="mt-1 space-y-1 text-xs text-foreground">
+                                                            {service.requirements
+                                                                .slice(0, 2)
+                                                                .map(
+                                                                    (
+                                                                        req,
+                                                                        idx,
+                                                                    ) => (
+                                                                        <li
+                                                                            key={
+                                                                                idx
+                                                                            }
+                                                                            className="flex items-center gap-1.5 text-[11px]"
+                                                                        >
+                                                                            <CheckCircle2 className="size-3 shrink-0 text-emerald-600" />
+                                                                            <span className="truncate">
+                                                                                {
+                                                                                    req
+                                                                                }
+                                                                            </span>
+                                                                        </li>
+                                                                    ),
+                                                                )}
+                                                        </ul>
+                                                    </div>
+                                                )}
                                         </div>
-                                        <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-                                            {service.description}
-                                        </p>
+
+                                        <div className="pt-5">
+                                            <Link
+                                                href="/login?intent=request"
+                                                className="block"
+                                            >
+                                                <Button
+                                                    size="sm"
+                                                    className="w-full cursor-pointer rounded-xl bg-violet-600 text-xs font-semibold text-white shadow-xs hover:bg-violet-700 active:scale-[0.98]"
+                                                >
+                                                    {t.services?.request_now ||
+                                                        'Request Online'}
+                                                    <ArrowRight className="ml-1.5 size-3.5" />
+                                                </Button>
+                                            </Link>
+                                        </div>
                                     </div>
-
-                                    {service.requirements &&
-                                        service.requirements.length > 0 && (
-                                            <div className="space-y-2 border-t border-neutral-200 pt-4 dark:border-neutral-800">
-                                                <span className="text-xs font-semibold tracking-wider text-neutral-500 uppercase">
-                                                    {t.services
-                                                        ?.requirements_label ||
-                                                        'Requirements'}
-                                                    :
-                                                </span>
-                                                <ul className="space-y-1.5 text-xs text-neutral-700 dark:text-neutral-300">
-                                                    {service.requirements.map(
-                                                        (req, idx) => (
-                                                            <li
-                                                                key={idx}
-                                                                className="flex items-center gap-2"
-                                                            >
-                                                                <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
-                                                                <span>
-                                                                    {req}
-                                                                </span>
-                                                            </li>
-                                                        ),
-                                                    )}
-                                                </ul>
-                                            </div>
-                                        )}
                                 </div>
-
-                                <Link
-                                    href={`/login?document=${service.slug}`}
-                                    className="w-full"
-                                >
-                                    <Button className="w-full cursor-pointer rounded-xl bg-violet-600 text-white hover:bg-violet-700">
-                                        {t.services?.request_now ||
-                                            'Request Online'}
-                                        <ChevronRight className="ml-1.5 h-4 w-4" />
-                                    </Button>
-                                </Link>
+                            ))
+                        ) : (
+                            <div className="col-span-full py-8 text-center text-sm text-muted-foreground">
+                                No active services configured at this time.
                             </div>
-                        ))}
+                        )}
                     </div>
                 </div>
             </section>
 
-            {/* Section 5: Real-time System Statistics */}
-            <section
-                id="statistics"
-                className="border-t border-neutral-200 bg-gradient-to-b from-neutral-50 to-neutral-100 py-20 dark:border-neutral-800 dark:from-neutral-950 dark:to-neutral-900"
-            >
-                <div className="mx-auto max-w-7xl space-y-12 px-4 sm:px-6 lg:px-8">
-                    <div className="mx-auto max-w-3xl space-y-3 text-center">
-                        <span className="text-xs font-bold tracking-wider text-violet-600 uppercase dark:text-violet-400">
-                            Registry Transparency
+            {/* Section 5: Official Statistics Registry */}
+            <section id="statistics" className="bg-background py-20">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="mx-auto max-w-3xl text-center">
+                        <span className="text-xs font-bold tracking-wider text-violet-700 uppercase dark:text-violet-400">
+                            Transparency Registry
                         </span>
-                        <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">
+                        <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-foreground md:text-4xl">
                             {t.statistics?.title || 'Community by the Numbers'}
                         </h2>
-                        <p className="text-base text-neutral-600 dark:text-neutral-300">
+                        <p className="mt-3 text-base text-muted-foreground">
                             {t.statistics?.subtitle ||
                                 'Real-time aggregate data from the Barangay Lallana E-Government Registry.'}
                         </p>
                     </div>
 
-                    <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 sm:grid-cols-3">
-                        <div className="space-y-3 rounded-3xl border border-neutral-200 bg-white p-8 text-center shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
-                            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-100 text-violet-600 dark:bg-violet-950/80 dark:text-violet-400">
-                                <Users className="h-7 w-7" />
-                            </div>
-                            <div className="text-4xl font-black tracking-tight text-neutral-950 md:text-5xl dark:text-white">
-                                {statistics.total_residents.toLocaleString()}+
-                            </div>
-                            <div className="text-sm font-semibold text-neutral-600 dark:text-neutral-400">
-                                {t.statistics?.total_residents ||
-                                    'Active Residents'}
-                            </div>
-                        </div>
-
-                        <div className="space-y-3 rounded-3xl border border-neutral-200 bg-white p-8 text-center shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
-                            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600 dark:bg-indigo-950/80 dark:text-indigo-400">
-                                <HomeIcon className="h-7 w-7" />
-                            </div>
-                            <div className="text-4xl font-black tracking-tight text-neutral-950 md:text-5xl dark:text-white">
-                                {statistics.total_households.toLocaleString()}+
-                            </div>
-                            <div className="text-sm font-semibold text-neutral-600 dark:text-neutral-400">
-                                {t.statistics?.total_households ||
-                                    'Registered Households'}
+                    <div className="mx-auto mt-12 grid max-w-4xl grid-cols-1 gap-6 sm:grid-cols-3">
+                        <div className="bezel-outer">
+                            <div className="bezel-inner space-y-2 p-6 text-center">
+                                <Users className="mx-auto size-6 text-violet-600 dark:text-violet-400" />
+                                <span className="block font-mono text-3xl font-extrabold tracking-tight text-foreground tabular-nums">
+                                    {statistics.total_residents.toLocaleString()}
+                                </span>
+                                <span className="block text-xs font-semibold text-muted-foreground">
+                                    {t.statistics?.total_residents ||
+                                        'Active Residents'}
+                                </span>
                             </div>
                         </div>
 
-                        <div className="space-y-3 rounded-3xl border border-neutral-200 bg-white p-8 text-center shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
-                            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-100 text-purple-600 dark:bg-purple-950/80 dark:text-purple-400">
-                                <Building2 className="h-7 w-7" />
+                        <div className="bezel-outer">
+                            <div className="bezel-inner space-y-2 p-6 text-center">
+                                <HomeIcon className="mx-auto size-6 text-violet-600 dark:text-violet-400" />
+                                <span className="block font-mono text-3xl font-extrabold tracking-tight text-violet-700 tabular-nums dark:text-violet-300">
+                                    {statistics.total_households.toLocaleString()}
+                                </span>
+                                <span className="block text-xs font-semibold text-muted-foreground">
+                                    {t.statistics?.total_households ||
+                                        'Registered Households'}
+                                </span>
                             </div>
-                            <div className="text-4xl font-black tracking-tight text-neutral-950 md:text-5xl dark:text-white">
-                                {statistics.total_officials.toLocaleString()}
-                            </div>
-                            <div className="text-sm font-semibold text-neutral-600 dark:text-neutral-400">
-                                {t.statistics?.total_officials ||
-                                    'Barangay Personnel'}
+                        </div>
+
+                        <div className="bezel-outer">
+                            <div className="bezel-inner space-y-2 p-6 text-center">
+                                <ShieldCheck className="mx-auto size-6 text-violet-600 dark:text-violet-400" />
+                                <span className="block font-mono text-3xl font-extrabold tracking-tight text-foreground tabular-nums">
+                                    {statistics.total_officials.toLocaleString()}
+                                </span>
+                                <span className="block text-xs font-semibold text-muted-foreground">
+                                    {t.statistics?.total_officials ||
+                                        'Barangay Personnel'}
+                                </span>
                             </div>
                         </div>
                     </div>
 
-                    <p className="mx-auto max-w-xl text-center text-xs text-neutral-500">
+                    <p className="mx-auto mt-8 max-w-xl text-center text-xs text-muted-foreground">
                         {t.statistics?.transparency_note ||
                             'Only verified aggregate statistical counts are shown to protect resident privacy.'}
                     </p>
                 </div>
             </section>
 
-            {/* Section 6: Dynamic Announcements Feed */}
+            {/* Section 6: Official Announcements */}
             <section
                 id="announcements"
-                className="border-t border-neutral-200 bg-white py-20 dark:border-neutral-800 dark:bg-neutral-900"
+                className="border-t border-border/80 bg-card py-20"
             >
-                <div className="mx-auto max-w-7xl space-y-12 px-4 sm:px-6 lg:px-8">
-                    <div className="mx-auto max-w-3xl space-y-3 text-center">
-                        <span className="text-xs font-bold tracking-wider text-violet-600 uppercase dark:text-violet-400">
-                            Community Board
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="mx-auto max-w-3xl text-center">
+                        <span className="text-xs font-bold tracking-wider text-violet-700 uppercase dark:text-violet-400">
+                            Community Notices
                         </span>
-                        <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">
+                        <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-foreground md:text-4xl">
                             {t.announcements?.title ||
                                 'Official Announcements & Advisories'}
                         </h2>
-                        <p className="text-base text-neutral-600 dark:text-neutral-300">
+                        <p className="mt-3 text-base text-muted-foreground">
                             {t.announcements?.subtitle ||
                                 'Stay updated with the latest community news, public notices, and upcoming events.'}
                         </p>
                     </div>
 
-                    {announcements.length === 0 ? (
-                        <div className="mx-auto max-w-2xl space-y-3 rounded-3xl border border-dashed border-neutral-300 bg-neutral-50 p-12 text-center dark:border-neutral-800 dark:bg-neutral-950">
-                            <Calendar className="mx-auto h-12 w-12 text-neutral-400" />
-                            <h3 className="font-semibold text-neutral-700 dark:text-neutral-300">
-                                {t.announcements?.empty_state ||
-                                    'No active announcements published at this time.'}
-                            </h3>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-                            {announcements.map((item) => (
-                                <article
-                                    key={item.id}
-                                    className="flex flex-col justify-between space-y-6 rounded-3xl border border-neutral-200 bg-neutral-50 p-7 shadow-xs transition-all hover:border-violet-300 dark:border-neutral-800 dark:bg-neutral-950"
-                                >
-                                    <div className="space-y-3">
-                                        <div className="flex items-center justify-between gap-2">
-                                            <span className="rounded-full bg-violet-100 px-2.5 py-1 text-xs font-semibold text-violet-800 dark:bg-violet-950 dark:text-violet-300">
-                                                {item.category}
+                    <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+                        {announcements && announcements.length > 0 ? (
+                            announcements.map((item) => (
+                                <div key={item.id} className="bezel-outer">
+                                    <div className="bezel-inner flex h-full flex-col justify-between space-y-4 p-6">
+                                        <div className="space-y-2.5">
+                                            <div className="flex items-center justify-between text-xs">
+                                                <span className="rounded-full bg-violet-100 px-2.5 py-0.5 text-[10px] font-bold tracking-wide text-violet-800 uppercase dark:bg-violet-950/60 dark:text-violet-300">
+                                                    {item.category}
+                                                </span>
+                                                <span className="flex items-center gap-1 font-mono text-[11px] text-muted-foreground">
+                                                    <Calendar className="size-3" />
+                                                    {item.published_at}
+                                                </span>
+                                            </div>
+
+                                            <h3 className="line-clamp-2 text-base font-bold text-foreground">
+                                                {item.title}
+                                            </h3>
+
+                                            <p className="line-clamp-3 text-xs leading-relaxed text-muted-foreground">
+                                                {item.excerpt}
+                                            </p>
+                                        </div>
+
+                                        <div className="border-t border-border/70 pt-3">
+                                            <span className="inline-flex cursor-pointer items-center text-xs font-semibold text-violet-700 hover:underline dark:text-violet-400">
+                                                {t.announcements?.read_more ||
+                                                    'Read Advisory'}
+                                                <ChevronRight className="ml-1 size-3.5" />
                                             </span>
-                                            <span className="text-xs text-neutral-500">
-                                                {item.published_at}
-                                            </span>
-                                        </div>
-
-                                        <h3 className="text-lg leading-snug font-bold text-neutral-950 dark:text-white">
-                                            {item.title}
-                                        </h3>
-
-                                        <p className="line-clamp-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-                                            {item.excerpt}
-                                        </p>
-                                    </div>
-
-                                    <div className="border-t border-neutral-200/80 pt-2 dark:border-neutral-800/80">
-                                        <span className="inline-flex cursor-pointer items-center gap-1 text-xs font-semibold text-violet-600 hover:underline dark:text-violet-400">
-                                            {t.announcements?.read_more ||
-                                                'Read Advisory'}{' '}
-                                            <ChevronRight className="h-3.5 w-3.5" />
-                                        </span>
-                                    </div>
-                                </article>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </section>
-
-            {/* Section 7 & 8: Contact & Public Inquiry Form */}
-            <section
-                id="contact"
-                className="border-t border-neutral-200 bg-neutral-50 py-20 dark:border-neutral-800 dark:bg-neutral-950"
-            >
-                <div className="mx-auto max-w-7xl space-y-12 px-4 sm:px-6 lg:px-8">
-                    <div className="mx-auto max-w-3xl space-y-3 text-center">
-                        <span className="text-xs font-bold tracking-wider text-violet-600 uppercase dark:text-violet-400">
-                            Get In Touch
-                        </span>
-                        <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">
-                            {t.contact?.title || 'Contact & Location'}
-                        </h2>
-                        <p className="text-base text-neutral-600 dark:text-neutral-300">
-                            {t.contact?.subtitle ||
-                                'Reach out to our Barangay Hall for assistance, inquiries, or emergency services.'}
-                        </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
-                        {/* Left: Contact Info & Static Map Card */}
-                        <div className="space-y-6 lg:col-span-5">
-                            <div className="space-y-6 rounded-3xl border border-neutral-200 bg-white p-8 shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
-                                <h3 className="flex items-center gap-2 text-xl font-bold text-neutral-950 dark:text-white">
-                                    <Building2 className="h-5 w-5 text-violet-600" />
-                                    {t.contact?.hall_title ||
-                                        'Barangay Lallana Hall'}
-                                </h3>
-
-                                <div className="space-y-4 text-sm">
-                                    <div className="flex items-start gap-3">
-                                        <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-violet-600" />
-                                        <div>
-                                            <div className="font-semibold">
-                                                {t.contact?.address_label ||
-                                                    'Address'}
-                                            </div>
-                                            <div className="text-neutral-600 dark:text-neutral-400">
-                                                {t.contact?.address_val}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-start gap-3">
-                                        <Phone className="mt-0.5 h-5 w-5 shrink-0 text-violet-600" />
-                                        <div>
-                                            <div className="font-semibold">
-                                                {t.contact?.phone_label ||
-                                                    'Hotlines'}
-                                            </div>
-                                            <div className="text-neutral-600 dark:text-neutral-400">
-                                                {t.contact?.phone_val}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-start gap-3">
-                                        <Mail className="mt-0.5 h-5 w-5 shrink-0 text-violet-600" />
-                                        <div>
-                                            <div className="font-semibold">
-                                                {t.contact?.email_label ||
-                                                    'Official Email'}
-                                            </div>
-                                            <div className="text-neutral-600 dark:text-neutral-400">
-                                                {t.contact?.email_val}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-start gap-3">
-                                        <Clock className="mt-0.5 h-5 w-5 shrink-0 text-violet-600" />
-                                        <div>
-                                            <div className="font-semibold">
-                                                Office Hours
-                                            </div>
-                                            <div className="text-neutral-600 dark:text-neutral-400">
-                                                {t.contact?.operating_hours}
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                            ))
+                        ) : (
+                            <div className="col-span-full py-8 text-center text-sm text-muted-foreground">
+                                {t.announcements?.empty_state ||
+                                    'No active announcements published at this time.'}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </section>
+
+            {/* Section 7: Citizen Contact & Inquiry Form */}
+            <section id="contact" className="bg-background py-20">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
+                        {/* Contact Information & Office Details */}
+                        <div className="space-y-6 lg:col-span-5">
+                            <div>
+                                <span className="text-xs font-bold tracking-wider text-violet-700 uppercase dark:text-violet-400">
+                                    Civic Assistance
+                                </span>
+                                <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-foreground">
+                                    {t.contact?.title || 'Contact & Location'}
+                                </h2>
+                                <p className="mt-2 text-sm text-muted-foreground">
+                                    {t.contact?.subtitle ||
+                                        'Reach out to our Barangay Hall for assistance, inquiries, or emergency services.'}
+                                </p>
                             </div>
 
-                            {/* Static Location Image Container */}
-                            <div className="space-y-3 rounded-3xl border border-neutral-200 bg-white p-6 text-center shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
-                                <div className="flex aspect-video w-full flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-300 bg-neutral-100 p-4 dark:border-neutral-700 dark:bg-neutral-800">
-                                    <MapPin className="mb-2 h-10 w-10 animate-bounce text-violet-600" />
-                                    <span className="text-sm font-bold">
-                                        Barangay Lallana Location Map
+                            <div className="space-y-4 text-sm">
+                                <div className="flex items-start gap-3.5 rounded-xl border border-border/80 bg-card p-4">
+                                    <MapPin className="mt-0.5 size-5 shrink-0 text-violet-600 dark:text-violet-400" />
+                                    <div>
+                                        <h4 className="font-semibold text-foreground">
+                                            Barangay Hall
+                                        </h4>
+                                        <p className="mt-0.5 text-xs text-muted-foreground">
+                                            {t.contact?.address_val ||
+                                                'Barangay Lallana Hall, Trece Martires City, Cavite 4109'}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-start gap-3.5 rounded-xl border border-border/80 bg-card p-4">
+                                    <Phone className="mt-0.5 size-5 shrink-0 text-violet-600 dark:text-violet-400" />
+                                    <div>
+                                        <h4 className="font-semibold text-foreground">
+                                            Office Telephone & Hotlines
+                                        </h4>
+                                        <p className="mt-0.5 font-mono text-xs text-muted-foreground">
+                                            {t.contact?.phone_val ||
+                                                '+63 (46) 419-0000 / 0917-000-0000'}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-start gap-3.5 rounded-xl border border-border/80 bg-card p-4">
+                                    <Clock className="mt-0.5 size-5 shrink-0 text-violet-600 dark:text-violet-400" />
+                                    <div>
+                                        <h4 className="font-semibold text-foreground">
+                                            Operating Schedule
+                                        </h4>
+                                        <p className="mt-0.5 text-xs text-muted-foreground">
+                                            {t.contact?.operating_hours ||
+                                                'Monday - Friday: 8:00 AM - 5:00 PM'}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Inquiry Form */}
+                        <div className="lg:col-span-7">
+                            <div className="bezel-outer">
+                                <div className="bezel-inner p-6 sm:p-8">
+                                    <h3 className="text-lg font-bold text-foreground">
+                                        {t.contact?.inquiry_title ||
+                                            'Send Us an Inquiry'}
+                                    </h3>
+                                    <p className="mt-1 text-xs text-muted-foreground">
+                                        {t.contact?.inquiry_desc ||
+                                            'Have a question or request assistance? Fill out the form below and our staff will respond via email.'}
+                                    </p>
+
+                                    {recentlySuccessful && (
+                                        <div className="mt-4 flex items-center gap-2 rounded-xl bg-emerald-50 p-4 text-xs font-semibold text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">
+                                            <CheckCircle2 className="size-4 shrink-0 text-emerald-600" />
+                                            <span>
+                                                {t.contact?.form_success ||
+                                                    'Thank you! Your inquiry has been sent successfully. We will get back to you shortly.'}
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    <form
+                                        onSubmit={handleInquirySubmit}
+                                        className="mt-6 space-y-4"
+                                    >
+                                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                            <div className="space-y-1.5">
+                                                <Label
+                                                    htmlFor="name"
+                                                    className="text-xs font-semibold"
+                                                >
+                                                    {t.contact?.form_name ||
+                                                        'Full Name'}
+                                                </Label>
+                                                <Input
+                                                    id="name"
+                                                    value={data.name}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'name',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    required
+                                                    className="rounded-xl"
+                                                    placeholder="Juan Dela Cruz"
+                                                />
+                                                {errors.name && (
+                                                    <p className="text-[11px] text-destructive">
+                                                        {errors.name}
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            <div className="space-y-1.5">
+                                                <Label
+                                                    htmlFor="email"
+                                                    className="text-xs font-semibold"
+                                                >
+                                                    {t.contact?.form_email ||
+                                                        'Email Address'}
+                                                </Label>
+                                                <Input
+                                                    id="email"
+                                                    type="email"
+                                                    value={data.email}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'email',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    required
+                                                    className="rounded-xl"
+                                                    placeholder="juan@example.com"
+                                                />
+                                                {errors.email && (
+                                                    <p className="text-[11px] text-destructive">
+                                                        {errors.email}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-1.5">
+                                            <Label
+                                                htmlFor="subject"
+                                                className="text-xs font-semibold"
+                                            >
+                                                {t.contact?.form_subject ||
+                                                    'Subject'}
+                                            </Label>
+                                            <Input
+                                                id="subject"
+                                                value={data.subject}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'subject',
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                required
+                                                className="rounded-xl"
+                                                placeholder="Document requirement inquiry..."
+                                            />
+                                            {errors.subject && (
+                                                <p className="text-[11px] text-destructive">
+                                                    {errors.subject}
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        <div className="space-y-1.5">
+                                            <Label
+                                                htmlFor="message"
+                                                className="text-xs font-semibold"
+                                            >
+                                                {t.contact?.form_message ||
+                                                    'Message / Inquiry Details'}
+                                            </Label>
+                                            <Textarea
+                                                id="message"
+                                                rows={4}
+                                                value={data.message}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'message',
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                required
+                                                className="rounded-xl"
+                                                placeholder="Please state your inquiry or request details clearly..."
+                                            />
+                                            {errors.message && (
+                                                <p className="text-[11px] text-destructive">
+                                                    {errors.message}
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        <div className="pt-1">
+                                            <TurnstileWidget
+                                                onSuccess={(token: string) =>
+                                                    setData(
+                                                        'cf-turnstile-response',
+                                                        token,
+                                                    )
+                                                }
+                                            />
+                                        </div>
+
+                                        <Button
+                                            type="submit"
+                                            disabled={processing}
+                                            className="h-11 w-full cursor-pointer rounded-xl bg-violet-600 font-semibold text-white shadow-xs hover:bg-violet-700 active:scale-[0.98]"
+                                        >
+                                            <Send className="mr-2 size-4" />
+                                            {processing
+                                                ? t.contact?.form_sending ||
+                                                  'Sending...'
+                                                : t.contact?.form_submit ||
+                                                  'Send Inquiry'}
+                                        </Button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Official Civic Footer */}
+            <footer className="border-t border-border bg-card py-12 text-xs text-muted-foreground">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
+                        {/* Col 1: Barangay Seal & Identity */}
+                        <div className="space-y-3 md:col-span-2">
+                            <div className="flex items-center gap-3">
+                                <img
+                                    src="/lallana-icon.png"
+                                    alt="Barangay Lallana Seal"
+                                    className="size-10 object-contain"
+                                />
+                                <div>
+                                    <span className="block text-sm font-bold text-foreground">
+                                        BARANGAY LALLANA
                                     </span>
-                                    <span className="text-xs text-neutral-500">
+                                    <span className="text-[11px] font-semibold text-violet-700 dark:text-violet-300">
                                         Trece Martires City, Cavite
                                     </span>
                                 </div>
                             </div>
+                            <p className="max-w-md text-xs leading-relaxed">
+                                The official e-government web portal of Barangay
+                                Lallana, empowering residents with secure,
+                                digital document processing, household
+                                management, and municipal transparency.
+                            </p>
+                            <div className="flex items-center gap-2 pt-2 text-[11px]">
+                                <span className="inline-block size-2 rounded-full bg-emerald-500" />
+                                <span>
+                                    Philippine Standard Time (PST): Active
+                                </span>
+                            </div>
                         </div>
 
-                        {/* Right: Public Inquiry Form with Turnstile */}
-                        <div className="lg:col-span-7">
-                            <div className="space-y-6 rounded-3xl border border-neutral-200 bg-white p-8 shadow-xs md:p-10 dark:border-neutral-800 dark:bg-neutral-900">
-                                <div>
-                                    <h3 className="text-2xl font-bold text-neutral-950 dark:text-white">
-                                        {t.contact?.inquiry_title ||
-                                            'Send Us an Inquiry'}
-                                    </h3>
-                                    <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
-                                        {t.contact?.inquiry_desc ||
-                                            'Fill out the form below and our staff will respond via email.'}
-                                    </p>
-                                </div>
-
-                                {flash.success && (
-                                    <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
-                                        <CheckCircle2 className="h-5 w-5 shrink-0" />
-                                        <span>{flash.success}</span>
-                                    </div>
-                                )}
-
-                                <form
-                                    onSubmit={handleInquirySubmit}
-                                    className="space-y-4"
-                                >
-                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                        <div>
-                                            <Label
-                                                htmlFor="name"
-                                                className="text-xs font-semibold"
-                                            >
-                                                {t.contact?.form_name ||
-                                                    'Full Name'}
-                                            </Label>
-                                            <Input
-                                                id="name"
-                                                value={data.name}
-                                                onChange={(
-                                                    e: React.ChangeEvent<HTMLInputElement>,
-                                                ) =>
-                                                    setData(
-                                                        'name',
-                                                        e.target.value,
-                                                    )
-                                                }
-                                                placeholder="Juan Dela Cruz"
-                                                required
-                                                className="mt-1"
-                                            />
-                                            {errors.name && (
-                                                <p className="mt-1 text-xs text-rose-600">
-                                                    {errors.name}
-                                                </p>
-                                            )}
-                                        </div>
-
-                                        <div>
-                                            <Label
-                                                htmlFor="email"
-                                                className="text-xs font-semibold"
-                                            >
-                                                {t.contact?.form_email ||
-                                                    'Email Address'}
-                                            </Label>
-                                            <Input
-                                                id="email"
-                                                type="email"
-                                                value={data.email}
-                                                onChange={(
-                                                    e: React.ChangeEvent<HTMLInputElement>,
-                                                ) =>
-                                                    setData(
-                                                        'email',
-                                                        e.target.value,
-                                                    )
-                                                }
-                                                placeholder="juan@example.com"
-                                                required
-                                                className="mt-1"
-                                            />
-                                            {errors.email && (
-                                                <p className="mt-1 text-xs text-rose-600">
-                                                    {errors.email}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <Label
-                                            htmlFor="subject"
-                                            className="text-xs font-semibold"
-                                        >
-                                            {t.contact?.form_subject ||
-                                                'Subject'}
-                                        </Label>
-                                        <Input
-                                            id="subject"
-                                            value={data.subject}
-                                            onChange={(
-                                                e: React.ChangeEvent<HTMLInputElement>,
-                                            ) =>
-                                                setData(
-                                                    'subject',
-                                                    e.target.value,
-                                                )
-                                            }
-                                            placeholder="Request for Document Clarification / Assistance"
-                                            required
-                                            className="mt-1"
-                                        />
-                                        {errors.subject && (
-                                            <p className="mt-1 text-xs text-rose-600">
-                                                {errors.subject}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    <div>
-                                        <Label
-                                            htmlFor="message"
-                                            className="text-xs font-semibold"
-                                        >
-                                            {t.contact?.form_message ||
-                                                'Message'}
-                                        </Label>
-                                        <Textarea
-                                            id="message"
-                                            rows={4}
-                                            value={data.message}
-                                            onChange={(
-                                                e: React.ChangeEvent<HTMLTextAreaElement>,
-                                            ) =>
-                                                setData(
-                                                    'message',
-                                                    e.target.value,
-                                                )
-                                            }
-                                            placeholder="Write your detailed inquiry or question here..."
-                                            required
-                                            className="mt-1"
-                                        />
-                                        {errors.message && (
-                                            <p className="mt-1 text-xs text-rose-600">
-                                                {errors.message}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    {/* Cloudflare Turnstile Bot Challenge */}
-                                    <div>
-                                        <TurnstileWidget
-                                            onSuccess={(token) =>
-                                                setData(
-                                                    'cf-turnstile-response',
-                                                    token,
-                                                )
-                                            }
-                                            onError={() =>
-                                                setData(
-                                                    'cf-turnstile-response',
-                                                    '',
-                                                )
-                                            }
-                                            onExpire={() =>
-                                                setData(
-                                                    'cf-turnstile-response',
-                                                    '',
-                                                )
-                                            }
-                                        />
-                                        {errors['cf-turnstile-response'] && (
-                                            <p className="mt-1 text-center text-xs text-rose-600">
-                                                {
-                                                    errors[
-                                                        'cf-turnstile-response'
-                                                    ]
-                                                }
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    <Button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="w-full cursor-pointer rounded-xl bg-violet-600 py-6 text-base font-semibold text-white shadow-xs hover:bg-violet-700"
+                        {/* Col 2: Quick Links */}
+                        <div className="space-y-2.5">
+                            <h5 className="text-xs font-bold tracking-wider text-foreground uppercase">
+                                Citizen Navigation
+                            </h5>
+                            <ul className="space-y-1.5 text-xs">
+                                <li>
+                                    <a
+                                        href="#services"
+                                        className="hover:text-violet-700 dark:hover:text-violet-300"
                                     >
-                                        <Send className="mr-2 h-4 w-4" />
-                                        {processing
-                                            ? t.contact?.form_sending ||
-                                              'Sending...'
-                                            : t.contact?.form_submit ||
-                                              'Send Inquiry'}
-                                    </Button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Footer */}
-            <footer className="border-t border-neutral-800 bg-neutral-900 py-12 text-sm text-neutral-400">
-                <div className="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
-                    <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
-                        <div className="flex items-center gap-3">
-                            <img
-                                src="/lallana-icon.png"
-                                alt="Barangay Logo"
-                                className="h-10 w-10 rounded-lg object-contain"
-                            />
-                            <div>
-                                <span className="block font-bold text-white">
-                                    Barangay Lallana E-Government
-                                </span>
-                                <span className="text-xs text-neutral-500">
-                                    Trece Martires City, Cavite
-                                </span>
-                            </div>
+                                        Document Requests
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="#about"
+                                        className="hover:text-violet-700 dark:hover:text-violet-300"
+                                    >
+                                        Community Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="#leadership"
+                                        className="hover:text-violet-700 dark:hover:text-violet-300"
+                                    >
+                                        Barangay Officials
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="#announcements"
+                                        className="hover:text-violet-700 dark:hover:text-violet-300"
+                                    >
+                                        Public Advisories
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
 
-                        <div className="flex flex-wrap items-center justify-center gap-6 text-xs font-medium">
-                            <a
-                                href="#home"
-                                className="transition-colors hover:text-white"
-                            >
-                                {t.nav?.home || 'Home'}
-                            </a>
-                            <a
-                                href="#about"
-                                className="transition-colors hover:text-white"
-                            >
-                                {t.nav?.about || 'About'}
-                            </a>
-                            <a
-                                href="#services"
-                                className="transition-colors hover:text-white"
-                            >
-                                {t.nav?.services || 'Services'}
-                            </a>
-                            <a
-                                href="#announcements"
-                                className="transition-colors hover:text-white"
-                            >
-                                {t.nav?.announcements || 'Announcements'}
-                            </a>
-                            <a
-                                href="#contact"
-                                className="transition-colors hover:text-white"
-                            >
-                                {t.nav?.contact || 'Contact'}
-                            </a>
-                            <Link
-                                href="/login"
-                                className="text-violet-400 hover:underline"
-                            >
-                                Resident Portal
-                            </Link>
+                        {/* Col 3: Government Transparency */}
+                        <div className="space-y-2.5">
+                            <h5 className="text-xs font-bold tracking-wider text-foreground uppercase">
+                                Republic of the Philippines
+                            </h5>
+                            <ul className="space-y-1.5 text-xs">
+                                <li>Republic Act No. 10173 (DPA 2012)</li>
+                                <li>Ease of Doing Business Act (RA 11032)</li>
+                                <li>Barangay Citizen's Charter</li>
+                                <li>City of Trece Martires Official Portal</li>
+                            </ul>
                         </div>
                     </div>
 
-                    <div className="flex flex-col items-center justify-between gap-4 border-t border-neutral-800/80 pt-6 text-xs text-neutral-500 sm:flex-row">
+                    <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border/80 pt-6 text-[11px] sm:flex-row">
                         <p>
                             © {new Date().getFullYear()} Barangay Lallana, Trece
-                            Martires City. All rights reserved.
+                            Martires City, Cavite. All rights reserved.
                         </p>
-                        <p className="flex items-center gap-2">
-                            <span>Powered by Modern E-Gov Platform</span>
-                            <span>•</span>
-                            <a
-                                href="https://trecemartirescity.gov.ph"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 hover:text-neutral-300"
-                            >
-                                Trece Martires City{' '}
-                                <ExternalLink className="h-3 w-3" />
+                        <div className="flex items-center gap-4">
+                            <a href="#" className="hover:text-foreground">
+                                Privacy Policy
                             </a>
-                        </p>
+                            <span>•</span>
+                            <a href="#" className="hover:text-foreground">
+                                Terms of Service
+                            </a>
+                            <span>•</span>
+                            <a href="#" className="hover:text-foreground">
+                                Accessibility
+                            </a>
+                        </div>
                     </div>
                 </div>
             </footer>

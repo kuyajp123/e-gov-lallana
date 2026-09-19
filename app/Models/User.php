@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\Household\HouseholdSuccessionService;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -27,11 +28,19 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read Role|null $role
  * @property-read ResidentProfile|null $residentProfile
+ * @property-read bool $can_access_admin
  */
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+
+    /**
+     * @var list<string>
+     */
+    protected $appends = [
+        'can_access_admin',
+    ];
 
     protected $fillable = [
         'role_id',
@@ -58,12 +67,31 @@ class User extends Authenticatable implements FilamentUser
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::deleting(function (User $user) {
+            $successionService = app(HouseholdSuccessionService::class);
+            $households = Household::where('family_head_id', $user->id)->get();
+
+            foreach ($households as $household) {
+                $successionService->handleHeadDeletion($household, deletedHeadUserId: $user->id);
+            }
+        });
+    }
+
     /**
      * Determine whether the user can access the given Filament panel.
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->isAdmin() || $this->isSubAdmin();
+        return ($this->isAdmin() || $this->isSubAdmin() || $this->isSuperAdmin())
+            && ($this->status ?? 'active') === 'active';
+    }
+
+    public function getCanAccessAdminAttribute(): bool
+    {
+        return ($this->isAdmin() || $this->isSubAdmin() || $this->isSuperAdmin())
+            && ($this->status ?? 'active') === 'active';
     }
 
     /**
@@ -98,9 +126,61 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(DocumentRequest::class);
     }
 
+    /**
+     * @return HasMany<AppNotification, $this>
+     */
+    public function appNotifications(): HasMany
+    {
+        return $this->hasMany(AppNotification::class);
+    }
+
+    /**
+     * @return HasOne<NotificationPreference, $this>
+     */
+    public function notificationPreference(): HasOne
+    {
+        return $this->hasOne(NotificationPreference::class);
+    }
+
+    /**
+     * Get or create user notification preferences.
+     */
+    public function getNotificationPreference(): NotificationPreference
+    {
+        return $this->notificationPreference ?? NotificationPreference::firstOrCreate(
+            ['user_id' => $this->id],
+            [
+                'preferred_channel' => 'email',
+                'notify_document_updates' => true,
+                'notify_household_updates' => true,
+                'notify_announcements' => true,
+            ]
+        );
+    }
+
     public function isAdmin(): bool
     {
-        return $this->role?->slug === 'admin';
+        return in_array($this->role?->slug, ['admin', 'super_admin'], true);
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        if ($this->role?->slug === 'super_admin') {
+            return true;
+        }
+
+        $superAdmins = config('auth.super_admins', []);
+        if (! empty($superAdmins)) {
+            $emails = array_map(function ($admin) {
+                return is_array($admin) ? strtolower(trim((string) ($admin['email'] ?? ''))) : strtolower(trim((string) $admin));
+            }, $superAdmins);
+
+            if (in_array(strtolower(trim((string) $this->email)), $emails, true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function isSubAdmin(): bool

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Households\Schemas;
 
-use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -86,19 +85,6 @@ class HouseholdInfolist
                         TextEntry::make('verification.review_notes')
                             ->label('Official Review Remarks')
                             ->placeholder('No remarks recorded'),
-                    ]),
-
-                Section::make('Registered Household Members')
-                    ->schema([
-                        RepeatableEntry::make('members')
-                            ->schema([
-                                Grid::make(4)->schema([
-                                    TextEntry::make('full_name')->label('Name')->weight('bold'),
-                                    TextEntry::make('relationship_to_head')->label('Relationship'),
-                                    TextEntry::make('gender')->label('Sex'),
-                                    TextEntry::make('occupation')->label('Occupation')->placeholder('—'),
-                                ]),
-                            ]),
                     ]),
             ]);
     }

@@ -67,9 +67,18 @@ export function HouseholdWizard({
 
             if (res.data.success) {
                 setOtpSent(true);
+                const devNotice = res.data.dev_code
+                    ? ` (Dev code: ${res.data.dev_code})`
+                    : '';
+
                 setOtpMessage(
-                    `Verification code sent to your ${channel.toUpperCase()}!`,
+                    `Verification code sent to your ${channel.toUpperCase()}!${devNotice}`,
                 );
+
+                if (res.data.dev_code) {
+                    setData('otp_code', res.data.dev_code);
+                }
+
                 setData('verification_channel', channel);
                 // Start cooldown countdown
                 setOtpCooldown(60);

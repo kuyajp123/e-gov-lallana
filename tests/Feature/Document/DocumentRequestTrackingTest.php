@@ -3,6 +3,7 @@
 use App\Enums\DocumentRequestStatus;
 use App\Models\DocumentRequest;
 use App\Models\DocumentType;
+use App\Models\FileRecord;
 use App\Models\ResidentProfile;
 use App\Models\Role;
 use App\Models\User;
@@ -11,6 +12,14 @@ beforeEach(function () {
     $this->residentRole = Role::firstOrCreate(['slug' => 'resident'], ['name' => 'Resident']);
 
     $this->user1 = User::factory()->create(['role_id' => $this->residentRole->id]);
+    $file1 = FileRecord::create([
+        'user_id' => $this->user1->id,
+        'file_name' => 'id1.png',
+        'disk' => 'local',
+        'path' => 'ids/id1.png',
+        'mime_type' => 'image/png',
+        'is_private' => true,
+    ]);
     ResidentProfile::create([
         'user_id' => $this->user1->id,
         'first_name' => 'Juan',
@@ -18,9 +27,19 @@ beforeEach(function () {
         'birthdate' => '1990-01-01',
         'gender' => 'male',
         'civil_status' => 'married',
+        'citizenship' => 'Filipino',
+        'government_id_file_id' => $file1->id,
     ]);
 
     $this->user2 = User::factory()->create(['role_id' => $this->residentRole->id]);
+    $file2 = FileRecord::create([
+        'user_id' => $this->user2->id,
+        'file_name' => 'id2.png',
+        'disk' => 'local',
+        'path' => 'ids/id2.png',
+        'mime_type' => 'image/png',
+        'is_private' => true,
+    ]);
     ResidentProfile::create([
         'user_id' => $this->user2->id,
         'first_name' => 'Maria',
@@ -28,6 +47,8 @@ beforeEach(function () {
         'birthdate' => '1992-02-02',
         'gender' => 'female',
         'civil_status' => 'single',
+        'citizenship' => 'Filipino',
+        'government_id_file_id' => $file2->id,
     ]);
 
     $this->docType = DocumentType::create([

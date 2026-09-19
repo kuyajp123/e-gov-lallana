@@ -1,18 +1,37 @@
 import { Head, router } from '@inertiajs/react';
 import {
-    Phone,
-    Send,
-    Trash2,
-    ShieldAlert,
+    Activity,
+    AlertTriangle,
+    Check,
     CheckCircle2,
     Clock,
+    Copy,
+    Cpu,
+    Database,
+    Phone,
+    Radio,
+    Send,
+    ShieldAlert,
+    ShieldCheck,
+    Sparkles,
+    Terminal,
+    Trash2,
     XCircle,
-    AlertTriangle,
 } from 'lucide-react';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/shared/components/ui/card';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
+import { Textarea } from '@/shared/components/ui/textarea';
+import type { BreadcrumbItem } from '@/shared/types';
 
 interface SmsMessage {
     id: string;
@@ -24,22 +43,93 @@ interface SmsMessage {
     sent_at: string;
 }
 
+interface SystemDiagnostics {
+    phpVersion: string;
+    laravelVersion: string;
+    environment: string;
+    debugMode: boolean;
+    smsProvider: string;
+    databaseDriver: string;
+    queueDriver: string;
+    systemTime: string;
+}
+
 interface DevSmsInboxProps {
     messages: SmsMessage[];
     currentMode: string;
     configuredProvider: string;
+    appEnv?: string;
+    diagnostics?: SystemDiagnostics;
 }
 
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Admin Console', href: '/admin' },
+    { title: 'Developer Diagnostics', href: '/dev/sms' },
+];
+
+const PRESETS = [
+    {
+        id: 'otp',
+        label: '🔢 OTP Code',
+        generate: () =>
+            `Your Barangay Lallana OTP is ${Math.floor(100000 + Math.random() * 900000)}. Valid for 5 minutes.`,
+    },
+    {
+        id: 'ready',
+        label: '📄 Document Ready',
+        generate: () =>
+            'Good day! Your requested Barangay Clearance (REQ-2026-0042) is now ready for pickup at the Barangay Hall.',
+    },
+    {
+        id: 'verified',
+        label: '🏠 Household Verified',
+        generate: () =>
+            'Congratulations! Your household profile (HH-2026-0015) has been officially verified by Barangay Lallana.',
+    },
+    {
+        id: 'clarify',
+        label: '⚠️ Action Required',
+        generate: () =>
+            'Barangay Lallana: Your document request requires clarification. Please sign in to your resident portal.',
+    },
+];
+
+const MODES = [
+    {
+        id: 'SUCCESS',
+        label: 'SUCCESS',
+        description: 'Normal 200 OK delivery',
+    },
+    {
+        id: 'FAILURE',
+        label: 'FAILURE',
+        description: 'Simulated 500 error',
+    },
+    {
+        id: 'TIMEOUT',
+        label: 'TIMEOUT',
+        description: 'Gateway network timeout',
+    },
+    {
+        id: 'RATE_LIMITED',
+        label: 'RATE LIMITED',
+        description: '429 quota exhaustion',
+    },
+];
+
 export default function DevSmsInbox({
-    messages,
-    currentMode,
-    configuredProvider,
+    messages = [],
+    currentMode = 'SUCCESS',
+    configuredProvider = 'fake',
+    appEnv = 'local',
+    diagnostics,
 }: DevSmsInboxProps) {
     const [recipient, setRecipient] = useState('09171234567');
     const [message, setMessage] = useState(
         'Your Barangay Lallana OTP is 483921.',
     );
     const [isSending, setIsSending] = useState(false);
+    const [copiedId, setCopiedId] = useState<string | null>(null);
 
     const handleModeChange = (mode: string) => {
         router.post('/dev/sms/mode', { mode }, { preserveScroll: true });
@@ -59,241 +149,459 @@ export default function DevSmsInbox({
     };
 
     const handleClear = () => {
-        if (confirm('Clear all simulated messages?')) {
+        if (
+            confirm(
+                'Are you sure you want to clear all simulated SMS messages?',
+            )
+        ) {
             router.delete('/dev/sms/clear', { preserveScroll: true });
         }
+    };
+
+    const handleCopy = (id: string, text: string) => {
+        navigator.clipboard.writeText(text);
+        setCopiedId(id);
+        setTimeout(() => setCopiedId(null), 2000);
+    };
+
+    const applyPreset = (generate: () => string) => {
+        setMessage(generate());
     };
 
     const getStatusBadge = (status: string) => {
         switch (status) {
             case 'SENT':
                 return (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-400">
-                        <CheckCircle2 className="h-3.5 w-3.5" /> SENT
-                    </span>
+                    <Badge
+                        variant="outline"
+                        className="gap-1 border-emerald-500/20 bg-emerald-500/10 text-xs font-semibold text-emerald-700 dark:text-emerald-400"
+                    >
+                        <CheckCircle2 className="h-3 w-3" /> SENT
+                    </Badge>
                 );
             case 'TIMEOUT':
                 return (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-400">
-                        <Clock className="h-3.5 w-3.5" /> TIMEOUT
-                    </span>
+                    <Badge
+                        variant="outline"
+                        className="gap-1 border-amber-500/20 bg-amber-500/10 text-xs font-semibold text-amber-700 dark:text-amber-400"
+                    >
+                        <Clock className="h-3 w-3" /> TIMEOUT
+                    </Badge>
                 );
             case 'RATE_LIMITED':
                 return (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-purple-200 bg-purple-50 px-2.5 py-1 text-xs font-semibold text-purple-700 dark:border-purple-800 dark:bg-purple-950/50 dark:text-purple-400">
-                        <AlertTriangle className="h-3.5 w-3.5" /> RATE LIMITED
-                    </span>
+                    <Badge
+                        variant="outline"
+                        className="gap-1 border-purple-500/20 bg-purple-500/10 text-xs font-semibold text-purple-700 dark:text-purple-400"
+                    >
+                        <AlertTriangle className="h-3 w-3" /> RATE LIMITED
+                    </Badge>
                 );
             case 'FAILED':
             default:
                 return (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-700 dark:border-rose-800 dark:bg-rose-950/50 dark:text-rose-400">
-                        <XCircle className="h-3.5 w-3.5" /> FAILED
-                    </span>
+                    <Badge
+                        variant="outline"
+                        className="gap-1 border-rose-500/20 bg-rose-500/10 text-xs font-semibold text-rose-700 dark:text-rose-400"
+                    >
+                        <XCircle className="h-3 w-3" /> FAILED
+                    </Badge>
                 );
         }
     };
 
     return (
-        <div className="min-h-screen bg-neutral-50 p-6 font-sans text-neutral-900 md:p-10 dark:bg-neutral-950 dark:text-neutral-100">
-            <Head title="Developer SMS Inbox — Barangay Lallana" />
+        <>
+            <Head title="Developer Diagnostics & SMS Simulator | Admin Console" />
 
-            <div className="mx-auto max-w-5xl space-y-8">
-                {/* Header */}
-                <div className="flex flex-col justify-between gap-4 border-b border-neutral-200 pb-6 md:flex-row md:items-center dark:border-neutral-800">
+            <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-4 md:p-6">
+                {/* Page Header */}
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                        <div className="flex items-center gap-2">
-                            <span className="rounded bg-violet-100 px-2.5 py-0.5 font-mono text-xs font-semibold text-violet-800 dark:bg-violet-950 dark:text-violet-300">
-                                LOCAL DEV ONLY
-                            </span>
-                            <span className="text-xs text-neutral-500">
-                                Provider:{' '}
-                                <code className="font-mono font-semibold text-neutral-700 dark:text-neutral-300">
-                                    {configuredProvider}
-                                </code>
-                            </span>
+                        <div className="flex items-center gap-2.5">
+                            <div className="rounded-lg bg-violet-500/10 p-2 text-violet-600 dark:text-violet-400">
+                                <Terminal className="h-5 w-5" />
+                            </div>
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                                        Developer Diagnostics & SMS Simulator
+                                    </h1>
+                                    <Badge
+                                        variant="secondary"
+                                        className="bg-violet-500/10 font-mono text-[11px] text-violet-700 dark:text-violet-400"
+                                    >
+                                        {appEnv.toUpperCase()} ONLY
+                                    </Badge>
+                                </div>
+                                <p className="mt-0.5 text-xs text-muted-foreground">
+                                    System runtime telemetry, mock telecom
+                                    dispatch simulator, and local notification
+                                    audit log.
+                                </p>
+                            </div>
                         </div>
-                        <h1 className="mt-1 flex items-center gap-2.5 text-2xl font-bold tracking-tight md:text-3xl">
-                            <Phone className="h-7 w-7 text-violet-600" />
-                            Developer SMS Simulator & Inbox
-                        </h1>
-                        <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
-                            Simulates and visualizes all outbound SMS, OTP
-                            codes, and document notifications with zero telco
-                            charges.
-                        </p>
                     </div>
 
-                    {messages.length > 0 && (
-                        <Button
+                    <div className="flex flex-wrap items-center gap-2">
+                        <Badge
                             variant="outline"
-                            size="sm"
-                            onClick={handleClear}
-                            className="self-start text-rose-600 hover:text-rose-700 md:self-auto"
+                            className="gap-1 border-emerald-500/20 bg-emerald-500/10 text-xs text-emerald-700 dark:text-emerald-400"
                         >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Clear Inbox
-                        </Button>
-                    )}
-                </div>
-
-                {/* Simulator Controls & Dispatch */}
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                    {/* Mode Selector */}
-                    <div className="space-y-4 rounded-xl border border-neutral-200 bg-white p-6 shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
-                        <div className="flex items-center gap-2 text-sm font-semibold text-neutral-800 dark:text-neutral-200">
-                            <ShieldAlert className="h-4 w-4 text-violet-600" />
-                            Simulation Response Mode
-                        </div>
-                        <p className="text-xs text-neutral-500">
-                            Force the fake provider to simulate different
-                            network/carrier outcomes:
-                        </p>
-
-                        <div className="grid grid-cols-2 gap-2">
-                            {[
-                                'SUCCESS',
-                                'FAILURE',
-                                'TIMEOUT',
-                                'RATE_LIMITED',
-                            ].map((mode) => (
-                                <button
-                                    key={mode}
-                                    type="button"
-                                    onClick={() => handleModeChange(mode)}
-                                    className={`rounded-lg border px-3 py-2 text-center text-xs font-semibold transition-all ${
-                                        currentMode === mode
-                                            ? 'border-violet-600 bg-violet-600 text-white shadow-xs'
-                                            : 'border-neutral-200 bg-neutral-50 text-neutral-700 hover:border-violet-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300'
-                                    }`}
-                                >
-                                    {mode.replace('_', ' ')}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Test Send Form */}
-                    <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-xs md:col-span-2 dark:border-neutral-800 dark:bg-neutral-900">
-                        <form onSubmit={handleSendTest} className="space-y-4">
-                            <div className="flex items-center gap-2 text-sm font-semibold text-neutral-800 dark:text-neutral-200">
-                                <Send className="h-4 w-4 text-violet-600" />
-                                Send Test Simulated SMS
-                            </div>
-
-                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                                <div>
-                                    <Label
-                                        htmlFor="recipient"
-                                        className="text-xs"
-                                    >
-                                        Recipient Number
-                                    </Label>
-                                    <Input
-                                        id="recipient"
-                                        value={recipient}
-                                        onChange={(
-                                            e: React.ChangeEvent<HTMLInputElement>,
-                                        ) => setRecipient(e.target.value)}
-                                        placeholder="09171234567"
-                                        required
-                                        className="mt-1 font-mono text-sm"
-                                    />
-                                </div>
-                                <div className="sm:col-span-2">
-                                    <Label
-                                        htmlFor="message"
-                                        className="text-xs"
-                                    >
-                                        Message Content
-                                    </Label>
-                                    <Input
-                                        id="message"
-                                        value={message}
-                                        onChange={(
-                                            e: React.ChangeEvent<HTMLInputElement>,
-                                        ) => setMessage(e.target.value)}
-                                        placeholder="Enter SMS text..."
-                                        required
-                                        className="mt-1 text-sm"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="flex justify-end">
-                                <Button
-                                    type="submit"
-                                    size="sm"
-                                    disabled={isSending}
-                                    className="bg-violet-600 text-white hover:bg-violet-700"
-                                >
-                                    <Send className="mr-2 h-3.5 w-3.5" />
-                                    {isSending
-                                        ? 'Simulating...'
-                                        : 'Dispatch Simulated SMS'}
-                                </Button>
-                            </div>
-                        </form>
+                            <ShieldCheck className="h-3.5 w-3.5" />
+                            Production 404 Guard Active
+                        </Badge>
+                        {messages.length > 0 && (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={handleClear}
+                                className="h-8 gap-1.5 text-xs text-destructive hover:text-destructive"
+                            >
+                                <Trash2 className="h-3.5 w-3.5" />
+                                Clear Inbox ({messages.length})
+                            </Button>
+                        )}
                     </div>
                 </div>
 
-                {/* Messages List */}
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <h2 className="text-lg font-bold">
-                            Simulated Messages ({messages.length})
-                        </h2>
-                        <span className="text-xs text-neutral-500">
-                            Auto-persisted in local cache (7 days)
-                        </span>
-                    </div>
-
-                    {messages.length === 0 ? (
-                        <div className="rounded-xl border border-dashed border-neutral-300 bg-white p-12 text-center dark:border-neutral-800 dark:bg-neutral-900">
-                            <Phone className="mx-auto mb-3 h-10 w-10 text-neutral-300 dark:text-neutral-700" />
-                            <h3 className="font-semibold text-neutral-700 dark:text-neutral-300">
-                                No simulated SMS sent yet
-                            </h3>
-                            <p className="mt-1 text-sm text-neutral-500">
-                                Trigger an OTP, document update, or use the test
-                                form above to see messages appear here.
-                            </p>
+                {/* System Diagnostics Metrics Grid */}
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                    <Card className="gap-2 p-4">
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                            <span>Runtime Engine</span>
+                            <Cpu className="h-4 w-4 text-primary" />
                         </div>
-                    ) : (
-                        <div className="space-y-3">
-                            {messages.map((msg) => (
-                                <div
-                                    key={msg.id}
-                                    className="space-y-3 rounded-xl border border-neutral-200 bg-white p-5 shadow-xs dark:border-neutral-800 dark:bg-neutral-900"
-                                >
-                                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-100 pb-3 dark:border-neutral-800/60">
-                                        <div className="flex items-center gap-3">
-                                            <span className="font-mono text-sm font-semibold text-violet-600 dark:text-violet-400">
-                                                {msg.recipient}
+                        <div className="text-base font-bold text-foreground">
+                            PHP {diagnostics?.phpVersion ?? '8.4+'}
+                        </div>
+                        <div className="font-mono text-[11px] text-muted-foreground">
+                            Laravel v{diagnostics?.laravelVersion ?? '12'}
+                        </div>
+                    </Card>
+
+                    <Card className="gap-2 p-4">
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                            <span>Environment Mode</span>
+                            <Activity className="h-4 w-4 text-violet-500" />
+                        </div>
+                        <div className="flex items-center gap-1.5 text-base font-bold text-foreground">
+                            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                            {appEnv.toUpperCase()}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground">
+                            Debug:{' '}
+                            {diagnostics?.debugMode ? 'Enabled' : 'Disabled'}
+                        </div>
+                    </Card>
+
+                    <Card className="gap-2 p-4">
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                            <span>Data & Queue</span>
+                            <Database className="h-4 w-4 text-blue-500" />
+                        </div>
+                        <div className="text-base font-bold text-foreground capitalize">
+                            {diagnostics?.databaseDriver ?? 'sqlite'}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground">
+                            Queue: {diagnostics?.queueDriver ?? 'sync'}
+                        </div>
+                    </Card>
+
+                    <Card className="gap-2 p-4">
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                            <span>SMS Gateway</span>
+                            <Radio className="h-4 w-4 text-emerald-500" />
+                        </div>
+                        <div className="font-mono text-base font-bold text-foreground">
+                            {configuredProvider}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground">
+                            Sim Mode:{' '}
+                            <strong className="text-violet-600 dark:text-violet-400">
+                                {currentMode}
+                            </strong>
+                        </div>
+                    </Card>
+                </div>
+
+                {/* Simulation Controls & Dispatch Form */}
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                    {/* Carrier Simulation Modes */}
+                    <Card className="gap-4">
+                        <CardHeader className="pb-2">
+                            <div className="flex items-center gap-2">
+                                <ShieldAlert className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+                                <CardTitle className="text-sm font-semibold">
+                                    Carrier Simulation Mode
+                                </CardTitle>
+                            </div>
+                            <CardDescription className="text-xs">
+                                Force the fake SMS provider to mimic various
+                                carrier and network response outcomes:
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                            <div className="grid grid-cols-2 gap-2">
+                                {MODES.map((mode) => {
+                                    const isActive = currentMode === mode.id;
+
+                                    return (
+                                        <button
+                                            key={mode.id}
+                                            type="button"
+                                            onClick={() =>
+                                                handleModeChange(mode.id)
+                                            }
+                                            className={`flex flex-col items-start rounded-lg border p-3 text-left transition-all ${
+                                                isActive
+                                                    ? 'border-violet-600 bg-violet-600/10 text-violet-900 shadow-2xs dark:border-violet-500 dark:bg-violet-950/40 dark:text-violet-200'
+                                                    : 'border-border bg-card text-foreground hover:border-violet-300 dark:hover:border-violet-700'
+                                            }`}
+                                        >
+                                            <div className="flex w-full items-center justify-between">
+                                                <span className="text-xs font-bold">
+                                                    {mode.label}
+                                                </span>
+                                                {isActive && (
+                                                    <span className="h-2 w-2 rounded-full bg-violet-600 dark:bg-violet-400" />
+                                                )}
+                                            </div>
+                                            <span className="mt-0.5 text-[10px] text-muted-foreground">
+                                                {mode.description}
                                             </span>
-                                            {getStatusBadge(msg.status)}
-                                        </div>
-                                        <span className="font-mono text-xs text-neutral-400">
-                                            {msg.sent_at}
-                                        </span>
-                                    </div>
+                                        </button>
+                                    );
+                                })}
+                            </div>
 
-                                    <div className="rounded-lg border border-neutral-100 bg-neutral-50 p-3 font-mono text-sm leading-relaxed break-words dark:border-neutral-800 dark:bg-neutral-950/60">
-                                        {msg.message}
-                                    </div>
+                            <div className="rounded-md border border-dashed border-border/80 bg-muted/40 p-2.5 text-[11px] text-muted-foreground">
+                                Active mode applies to all outbound SMS in the
+                                application (registration OTP, document updates,
+                                etc.).
+                            </div>
+                        </CardContent>
+                    </Card>
 
-                                    {msg.error && (
-                                        <div className="flex items-center gap-1.5 text-xs text-rose-600 dark:text-rose-400">
-                                            <XCircle className="h-3.5 w-3.5 shrink-0" />
-                                            {msg.error}
-                                        </div>
-                                    )}
+                    {/* Dispatch Test SMS Form */}
+                    <Card className="gap-4 lg:col-span-2">
+                        <CardHeader className="pb-2">
+                            <div className="flex items-center gap-2">
+                                <Send className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+                                <CardTitle className="text-sm font-semibold">
+                                    Dispatch Simulated SMS
+                                </CardTitle>
+                            </div>
+                            <CardDescription className="text-xs">
+                                Test mobile notification triggers and preview
+                                SMS formatting with live carrier simulation.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <form
+                                onSubmit={handleSendTest}
+                                className="space-y-4"
+                            >
+                                {/* Quick Presets */}
+                                <div>
+                                    <div className="mb-1.5 flex items-center gap-1.5 text-xs text-muted-foreground">
+                                        <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+                                        <span>Quick Scenario Presets:</span>
+                                    </div>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {PRESETS.map((preset) => (
+                                            <button
+                                                key={preset.id}
+                                                type="button"
+                                                onClick={() =>
+                                                    applyPreset(preset.generate)
+                                                }
+                                                className="rounded-md border border-border bg-muted/60 px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:border-primary/40 hover:bg-muted"
+                                            >
+                                                {preset.label}
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
-                            ))}
-                        </div>
-                    )}
+
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                                    <div>
+                                        <Label
+                                            htmlFor="recipient"
+                                            className="text-xs"
+                                        >
+                                            Recipient Mobile Number
+                                        </Label>
+                                        <Input
+                                            id="recipient"
+                                            value={recipient}
+                                            onChange={(
+                                                e: React.ChangeEvent<HTMLInputElement>,
+                                            ) => setRecipient(e.target.value)}
+                                            placeholder="09171234567"
+                                            required
+                                            className="mt-1 h-9 font-mono text-sm"
+                                        />
+                                    </div>
+                                    <div className="sm:col-span-2">
+                                        <div className="flex items-center justify-between">
+                                            <Label
+                                                htmlFor="message"
+                                                className="text-xs"
+                                            >
+                                                SMS Message Body
+                                            </Label>
+                                            <span className="text-[11px] text-muted-foreground">
+                                                {message.length} chars (
+                                                {Math.ceil(
+                                                    message.length / 160,
+                                                ) || 1}{' '}
+                                                SMS segment)
+                                            </span>
+                                        </div>
+                                        <Textarea
+                                            id="message"
+                                            rows={3}
+                                            value={message}
+                                            onChange={(
+                                                e: React.ChangeEvent<HTMLTextAreaElement>,
+                                            ) => setMessage(e.target.value)}
+                                            placeholder="Enter SMS message body..."
+                                            required
+                                            className="mt-1 min-h-[72px] font-sans text-xs"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center justify-between pt-1">
+                                    <div className="text-xs text-muted-foreground">
+                                        Active Carrier Mode:{' '}
+                                        <strong className="font-mono text-violet-600 dark:text-violet-400">
+                                            {currentMode}
+                                        </strong>
+                                    </div>
+                                    <Button
+                                        type="submit"
+                                        size="sm"
+                                        disabled={isSending}
+                                        className="h-8 gap-1.5 bg-violet-600 text-xs text-white shadow-2xs hover:bg-violet-700"
+                                    >
+                                        <Send className="h-3.5 w-3.5" />
+                                        {isSending
+                                            ? 'Simulating Dispatch...'
+                                            : 'Dispatch Message'}
+                                    </Button>
+                                </div>
+                            </form>
+                        </CardContent>
+                    </Card>
                 </div>
+
+                {/* Simulated Outbox & Audit Stream */}
+                <Card className="gap-4">
+                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <div>
+                            <div className="flex items-center gap-2">
+                                <Phone className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+                                <CardTitle className="text-sm font-semibold">
+                                    Intercepted SMS Outbox ({messages.length})
+                                </CardTitle>
+                            </div>
+                            <CardDescription className="text-xs">
+                                Real-time capture of all outbound OTPs, status
+                                alerts, and notifications generated by the
+                                system.
+                            </CardDescription>
+                        </div>
+                        {diagnostics?.systemTime && (
+                            <span className="font-mono text-[11px] text-muted-foreground">
+                                System Clock: {diagnostics.systemTime}
+                            </span>
+                        )}
+                    </CardHeader>
+                    <CardContent>
+                        {messages.length === 0 ? (
+                            <div className="rounded-xl border border-dashed border-border/80 p-12 text-center">
+                                <Phone className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
+                                <h3 className="text-sm font-semibold text-foreground">
+                                    No simulated SMS messages intercepted yet
+                                </h3>
+                                <p className="mx-auto mt-1 max-w-sm text-xs text-muted-foreground">
+                                    Trigger a household OTP verification,
+                                    document status change, or use the dispatch
+                                    tool above to see messages logged here in
+                                    real-time.
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="space-y-3">
+                                {messages.map((msg) => (
+                                    <div
+                                        key={msg.id}
+                                        className="rounded-lg border border-border bg-card p-4 transition-all hover:border-violet-300/60 dark:hover:border-violet-700/60"
+                                    >
+                                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-2.5">
+                                            <div className="flex items-center gap-2.5">
+                                                <span className="font-mono text-sm font-bold text-foreground">
+                                                    {msg.recipient}
+                                                </span>
+                                                {getStatusBadge(msg.status)}
+                                                <Badge
+                                                    variant="secondary"
+                                                    className="font-mono text-[10px]"
+                                                >
+                                                    MODE: {msg.mode}
+                                                </Badge>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-mono text-xs text-muted-foreground">
+                                                    {msg.sent_at}
+                                                </span>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() =>
+                                                        handleCopy(
+                                                            msg.id,
+                                                            msg.message,
+                                                        )
+                                                    }
+                                                    className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                                                    title="Copy Message Text"
+                                                >
+                                                    {copiedId === msg.id ? (
+                                                        <Check className="h-3.5 w-3.5 text-emerald-600" />
+                                                    ) : (
+                                                        <Copy className="h-3.5 w-3.5" />
+                                                    )}
+                                                </Button>
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-2.5 rounded-md border border-border/50 bg-muted/40 p-3 font-mono text-xs leading-relaxed break-words text-foreground">
+                                            {msg.message}
+                                        </div>
+
+                                        {msg.error && (
+                                            <div className="mt-2 flex items-center gap-1.5 rounded-md border border-destructive/20 bg-destructive/10 px-2.5 py-1.5 text-xs text-destructive">
+                                                <XCircle className="h-3.5 w-3.5 shrink-0" />
+                                                <span>
+                                                    Simulation Failure:{' '}
+                                                    {msg.error}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
             </div>
-        </div>
+        </>
     );
 }
+
+DevSmsInbox.layout = {
+    breadcrumbs,
+};

@@ -35,6 +35,7 @@ export function AddMemberDialog() {
         civil_status: 'single',
         occupation: '',
         residency_status: 'resident',
+        email: '',
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -255,6 +256,33 @@ export function AddMemberDialog() {
                                 }
                                 placeholder="e.g. Student, Driver, Self-Employed"
                             />
+                        </div>
+
+                        <div className="space-y-1.5 sm:col-span-2">
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="mem_email">Account Email</Label>
+                                <span className="text-xs text-muted-foreground">
+                                    Optional — portal invitation
+                                </span>
+                            </div>
+                            <Input
+                                id="mem_email"
+                                type="email"
+                                value={data.email}
+                                onChange={(e) =>
+                                    setData('email', e.target.value)
+                                }
+                                placeholder="e.g. resident@example.com"
+                            />
+                            <p className="text-[11px] text-muted-foreground">
+                                If provided, an invitation will be sent for the
+                                member to link their portal account.
+                            </p>
+                            {errors.email && (
+                                <p className="text-xs text-destructive">
+                                    {errors.email}
+                                </p>
+                            )}
                         </div>
                     </div>
 

@@ -61,8 +61,8 @@ RUN chmod +x docker/start.sh \
     && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose web ports
-EXPOSE 80 10000
+# Expose single web port for Render
+EXPOSE 10000
 
 # Start services via entrypoint
 CMD ["/var/www/html/docker/start.sh"]

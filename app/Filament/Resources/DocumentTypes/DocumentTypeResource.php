@@ -2,9 +2,6 @@
 
 namespace App\Filament\Resources\DocumentTypes;
 
-use App\Filament\Resources\DocumentTypes\Pages\CreateDocumentType;
-use App\Filament\Resources\DocumentTypes\Pages\EditDocumentType;
-use App\Filament\Resources\DocumentTypes\Pages\ListDocumentTypes;
 use App\Filament\Resources\DocumentTypes\Schemas\DocumentTypeForm;
 use App\Filament\Resources\DocumentTypes\Tables\DocumentTypesTable;
 use App\Models\DocumentType;
@@ -35,12 +32,13 @@ class DocumentTypeResource extends Resource
         return DocumentTypesTable::configure($table);
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public static function getPages(): array
     {
-        return [
-            'index' => ListDocumentTypes::route('/'),
-            'create' => CreateDocumentType::route('/create'),
-            'edit' => EditDocumentType::route('/{record}/edit'),
-        ];
+        return [];
     }
 }

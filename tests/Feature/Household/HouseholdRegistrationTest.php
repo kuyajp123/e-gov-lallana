@@ -1,43 +1,67 @@
 <?php
 
+use App\Mail\HouseholdRegistrationOtpMail;
+use App\Models\FileRecord;
 use App\Models\Household;
 use App\Models\ResidentProfile;
 use App\Models\User;
 use App\Services\Auth\OtpService;
+use Illuminate\Support\Facades\Mail;
 
-beforeEach(function () {
-    $this->user = User::factory()->create(['email' => 'juan@example.com', 'phone_number' => '09171234567']);
+function createHouseholdTestUser(): User
+{
+    $user = User::factory()->create(['email' => 'juan@example.com', 'phone_number' => '09171234567']);
+    $file = FileRecord::create([
+        'user_id' => $user->id,
+        'file_name' => 'id.png',
+        'disk' => 'local',
+        'path' => 'ids/id.png',
+        'mime_type' => 'image/png',
+        'is_private' => true,
+    ]);
+
     ResidentProfile::create([
-        'user_id' => $this->user->id,
+        'user_id' => $user->id,
         'first_name' => 'Juan',
         'last_name' => 'Dela Cruz',
         'birthdate' => '1990-01-01',
         'gender' => 'male',
         'civil_status' => 'married',
         'citizenship' => 'Filipino',
+        'government_id_file_id' => $file->id,
     ]);
-});
+
+    return $user;
+}
 
 test('resident with complete profile can view household registration page', function () {
-    $response = $this->actingAs($this->user)->get('/household/register');
+    $user = createHouseholdTestUser();
+
+    $response = $this->actingAs($user)->get('/household/register');
 
     $response->assertOk();
 });
 
 test('resident can request and verify OTP for household registration', function () {
+    Mail::fake();
+    $user = createHouseholdTestUser();
     $otpService = app(OtpService::class);
 
     // Send OTP
-    $sendResponse = $this->actingAs($this->user)->postJson('/household/register/otp/send', [
+    $sendResponse = $this->actingAs($user)->postJson('/household/register/otp/send', [
         'channel' => 'email',
     ]);
     $sendResponse->assertOk()->assertJson(['success' => true]);
+
+    Mail::assertSent(HouseholdRegistrationOtpMail::class, function ($mail) {
+        return $mail->hasTo('juan@example.com') && ! empty($mail->otpCode);
+    });
 
     // Force known OTP for verification test
     $otp = $otpService->generate('juan@example.com', 'household_registration');
 
     // Verify OTP
-    $verifyResponse = $this->actingAs($this->user)->postJson('/household/register/otp/verify', [
+    $verifyResponse = $this->actingAs($user)->postJson('/household/register/otp/verify', [
         'channel' => 'email',
         'otp_code' => $otp,
     ]);
@@ -45,10 +69,11 @@ test('resident can request and verify OTP for household registration', function 
 });
 
 test('resident can register new household with valid OTP', function () {
+    $user = createHouseholdTestUser();
     $otpService = app(OtpService::class);
     $otp = $otpService->generate('juan@example.com', 'household_registration');
 
-    $response = $this->actingAs($this->user)->post('/household/register', [
+    $response = $this->actingAs($user)->post('/household/register', [
         'purok_sitio' => 'Purok 1',
         'address' => 'Block 1 Lot 5, Sampaguita St.',
         'notes' => 'Near chapel',
@@ -59,18 +84,18 @@ test('resident can register new household with valid OTP', function () {
     $response->assertRedirect('/household');
 
     $this->assertDatabaseHas('households', [
-        'family_head_id' => $this->user->id,
+        'family_head_id' => $user->id,
         'purok_sitio' => 'Purok 1',
         'address' => 'Block 1 Lot 5, Sampaguita St.',
         'status' => 'unverified',
     ]);
 
-    $household = Household::where('family_head_id', $this->user->id)->first();
+    $household = Household::where('family_head_id', $user->id)->first();
     expect($household->household_code)->toMatch('/HH-\d{4}-\d{4}/');
 
     $this->assertDatabaseHas('household_members', [
         'household_id' => $household->id,
-        'user_id' => $this->user->id,
+        'user_id' => $user->id,
         'is_family_head' => true,
         'first_name' => 'Juan',
     ]);
@@ -83,7 +108,9 @@ test('resident can register new household with valid OTP', function () {
 });
 
 test('household registration rejects invalid OTP', function () {
-    $response = $this->actingAs($this->user)->post('/household/register', [
+    $user = createHouseholdTestUser();
+
+    $response = $this->actingAs($user)->post('/household/register', [
         'purok_sitio' => 'Purok 1',
         'address' => 'Block 1 Lot 5, Sampaguita St.',
         'verification_channel' => 'email',

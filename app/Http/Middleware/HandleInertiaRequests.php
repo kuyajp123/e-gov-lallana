@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\Notification\NotificationService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -39,7 +40,9 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'name' => config('app.name'),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user()?->loadMissing('role'),
+                'unreadNotificationsCount' => $request->user() ? app(NotificationService::class)->getUnreadCount($request->user()) : 0,
+                'recentNotifications' => $request->user() ? app(NotificationService::class)->getRecent($request->user(), 5) : [],
             ],
             'flash' => [
                 'success' => $request->session()->get('success'),
@@ -48,6 +51,7 @@ class HandleInertiaRequests extends Middleware
             'turnstileSiteKey' => (string) (config('services.turnstile.site_key') ?: '1x00000000000000000000AA'),
             'locale' => app()->getLocale(),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'isDevEnvironment' => app()->environment(['local', 'staging', 'testing']),
         ];
     }
 }

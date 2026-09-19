@@ -1,7 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
-* @see \App\Http\Controllers\Resident\ProfileController::show
- * @see app/Http/Controllers/Resident/ProfileController.php:18
+ * @see routes/web.php:116
  * @route '/resident/profile'
  */
 export const show = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -15,8 +14,7 @@ show.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \App\Http\Controllers\Resident\ProfileController::show
- * @see app/Http/Controllers/Resident/ProfileController.php:18
+ * @see routes/web.php:116
  * @route '/resident/profile'
  */
 show.url = (options?: RouteQueryOptions) => {
@@ -24,8 +22,7 @@ show.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see \App\Http\Controllers\Resident\ProfileController::show
- * @see app/Http/Controllers/Resident/ProfileController.php:18
+ * @see routes/web.php:116
  * @route '/resident/profile'
  */
 show.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -33,8 +30,7 @@ show.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
-* @see \App\Http\Controllers\Resident\ProfileController::show
- * @see app/Http/Controllers/Resident/ProfileController.php:18
+ * @see routes/web.php:116
  * @route '/resident/profile'
  */
 show.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -43,8 +39,7 @@ show.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
-* @see \App\Http\Controllers\Resident\ProfileController::show
- * @see app/Http/Controllers/Resident/ProfileController.php:18
+ * @see routes/web.php:116
  * @route '/resident/profile'
  */
     const showForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -53,8 +48,7 @@ show.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
-* @see \App\Http\Controllers\Resident\ProfileController::show
- * @see app/Http/Controllers/Resident/ProfileController.php:18
+ * @see routes/web.php:116
  * @route '/resident/profile'
  */
         showForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -62,8 +56,7 @@ show.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
-* @see \App\Http\Controllers\Resident\ProfileController::show
- * @see app/Http/Controllers/Resident/ProfileController.php:18
+ * @see routes/web.php:116
  * @route '/resident/profile'
  */
         showForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -78,8 +71,7 @@ show.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     show.form = showForm
 /**
-* @see \App\Http\Controllers\Resident\ProfileController::edit
- * @see app/Http/Controllers/Resident/ProfileController.php:34
+ * @see routes/web.php:117
  * @route '/resident/profile/edit'
  */
 export const edit = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -93,8 +85,7 @@ edit.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \App\Http\Controllers\Resident\ProfileController::edit
- * @see app/Http/Controllers/Resident/ProfileController.php:34
+ * @see routes/web.php:117
  * @route '/resident/profile/edit'
  */
 edit.url = (options?: RouteQueryOptions) => {
@@ -102,8 +93,7 @@ edit.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see \App\Http\Controllers\Resident\ProfileController::edit
- * @see app/Http/Controllers/Resident/ProfileController.php:34
+ * @see routes/web.php:117
  * @route '/resident/profile/edit'
  */
 edit.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -111,8 +101,7 @@ edit.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
-* @see \App\Http\Controllers\Resident\ProfileController::edit
- * @see app/Http/Controllers/Resident/ProfileController.php:34
+ * @see routes/web.php:117
  * @route '/resident/profile/edit'
  */
 edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -121,8 +110,7 @@ edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
-* @see \App\Http\Controllers\Resident\ProfileController::edit
- * @see app/Http/Controllers/Resident/ProfileController.php:34
+ * @see routes/web.php:117
  * @route '/resident/profile/edit'
  */
     const editForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -131,8 +119,7 @@ edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
-* @see \App\Http\Controllers\Resident\ProfileController::edit
- * @see app/Http/Controllers/Resident/ProfileController.php:34
+ * @see routes/web.php:117
  * @route '/resident/profile/edit'
  */
         editForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -140,8 +127,7 @@ edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
-* @see \App\Http\Controllers\Resident\ProfileController::edit
- * @see app/Http/Controllers/Resident/ProfileController.php:34
+ * @see routes/web.php:117
  * @route '/resident/profile/edit'
  */
         editForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -212,7 +198,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Resident\ProfileController::update
- * @see app/Http/Controllers/Resident/ProfileController.php:74
+ * @see app/Http/Controllers/Resident/ProfileController.php:80
  * @route '/resident/profile'
  */
 export const update = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -227,7 +213,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Resident\ProfileController::update
- * @see app/Http/Controllers/Resident/ProfileController.php:74
+ * @see app/Http/Controllers/Resident/ProfileController.php:80
  * @route '/resident/profile'
  */
 update.url = (options?: RouteQueryOptions) => {
@@ -236,7 +222,7 @@ update.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Resident\ProfileController::update
- * @see app/Http/Controllers/Resident/ProfileController.php:74
+ * @see app/Http/Controllers/Resident/ProfileController.php:80
  * @route '/resident/profile'
  */
 update.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -246,7 +232,7 @@ update.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
 
     /**
 * @see \App\Http\Controllers\Resident\ProfileController::update
- * @see app/Http/Controllers/Resident/ProfileController.php:74
+ * @see app/Http/Controllers/Resident/ProfileController.php:80
  * @route '/resident/profile'
  */
     const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -261,7 +247,7 @@ update.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
 
             /**
 * @see \App\Http\Controllers\Resident\ProfileController::update
- * @see app/Http/Controllers/Resident/ProfileController.php:74
+ * @see app/Http/Controllers/Resident/ProfileController.php:80
  * @route '/resident/profile'
  */
         updateForm.put = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
