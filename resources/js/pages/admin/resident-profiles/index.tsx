@@ -405,12 +405,20 @@ export default function AdminResidentIndex({
                                                         <div className="max-w-[210px] min-w-0">
                                                             <div className="flex items-center gap-1.5">
                                                                 <p className="truncate font-semibold text-foreground hover:underline">
-                                                                    {res.full_name}
+                                                                    {
+                                                                        res.full_name
+                                                                    }
                                                                 </p>
                                                                 <AdminRoleBadge
-                                                                    isAdmin={res.is_admin}
-                                                                    isSubAdmin={res.is_sub_admin}
-                                                                    isSuperAdmin={res.is_super_admin}
+                                                                    isAdmin={
+                                                                        res.is_admin
+                                                                    }
+                                                                    isSubAdmin={
+                                                                        res.is_sub_admin
+                                                                    }
+                                                                    isSuperAdmin={
+                                                                        res.is_super_admin
+                                                                    }
                                                                     className="h-4 shrink-0 px-1.5 py-0 text-[9px] leading-none"
                                                                 />
                                                             </div>

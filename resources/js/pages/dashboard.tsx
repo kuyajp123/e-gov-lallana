@@ -653,21 +653,22 @@ export default function Dashboard({
                                     Official Barangay Advisories
                                 </h3>
                             </div>
-                            <a
-                                href="/#announcements"
+                            <Link
+                                href="/announcements"
                                 className="flex items-center gap-1 text-xs font-semibold text-violet-700 hover:underline dark:text-violet-400"
                             >
                                 Public Bulletin Board{' '}
                                 <ArrowRight className="size-3" />
-                            </a>
+                            </Link>
                         </div>
 
                         {announcements.length > 0 ? (
                             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                 {announcements.map((announcement) => (
-                                    <div
+                                    <Link
                                         key={announcement.id}
-                                        className="flex flex-col justify-between rounded-xl border border-border/70 bg-muted/20 p-4 transition-all hover:border-violet-200 hover:bg-muted/40 dark:hover:border-violet-800"
+                                        href={`/announcements/${announcement.slug}`}
+                                        className="group flex flex-col justify-between rounded-xl border border-border/70 bg-muted/20 p-4 transition-all hover:border-violet-300 hover:bg-muted/40 dark:hover:border-violet-800"
                                     >
                                         <div className="space-y-1.5">
                                             <div className="flex items-center justify-between">
@@ -695,7 +696,7 @@ export default function Dashboard({
                                                 </p>
                                             )}
                                         </div>
-                                    </div>
+                                    </Link>
                                 ))}
                             </div>
                         ) : (

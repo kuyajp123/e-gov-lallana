@@ -4,6 +4,7 @@ import AdminHouseholdController from './AdminHouseholdController'
 import AdminResidentProfileController from './AdminResidentProfileController'
 import AdminDocumentTypeController from './AdminDocumentTypeController'
 import AdminStaffController from './AdminStaffController'
+import AdminAnnouncementController from './AdminAnnouncementController'
 const Admin = {
     AdminDashboardController: Object.assign(AdminDashboardController, AdminDashboardController),
 AdminDocumentRequestController: Object.assign(AdminDocumentRequestController, AdminDocumentRequestController),
@@ -11,6 +12,7 @@ AdminHouseholdController: Object.assign(AdminHouseholdController, AdminHousehold
 AdminResidentProfileController: Object.assign(AdminResidentProfileController, AdminResidentProfileController),
 AdminDocumentTypeController: Object.assign(AdminDocumentTypeController, AdminDocumentTypeController),
 AdminStaffController: Object.assign(AdminStaffController, AdminStaffController),
+AdminAnnouncementController: Object.assign(AdminAnnouncementController, AdminAnnouncementController),
 }
 
 export default Admin

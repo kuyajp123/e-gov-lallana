@@ -6,6 +6,7 @@ import {
     FileText,
     Home,
     LayoutGrid,
+    Megaphone,
     ShieldCheck,
     Terminal,
     UserCog,
@@ -42,6 +43,11 @@ const mainNavItems: NavItem[] = [
         href: '/documents',
         icon: FileText,
     },
+    {
+        title: 'Announcements',
+        href: '/announcements',
+        icon: Megaphone,
+    },
 ];
 
 const adminNavItems: NavItem[] = [
@@ -64,6 +70,11 @@ const adminNavItems: NavItem[] = [
         title: 'Resident Registry',
         href: '/admin/resident-profiles',
         icon: Users,
+    },
+    {
+        title: 'Announcements',
+        href: '/admin/announcements',
+        icon: Megaphone,
     },
 ];
 

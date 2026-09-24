@@ -1041,11 +1041,14 @@ export default function Welcome({
                                         </div>
 
                                         <div className="border-t border-border/70 pt-3">
-                                            <span className="inline-flex cursor-pointer items-center text-xs font-semibold text-violet-700 hover:underline dark:text-violet-400">
+                                            <Link
+                                                href={`/announcements/${item.slug}`}
+                                                className="inline-flex cursor-pointer items-center text-xs font-semibold text-violet-700 hover:underline dark:text-violet-400"
+                                            >
                                                 {t.announcements?.read_more ||
                                                     'Read Advisory'}
                                                 <ChevronRight className="ml-1 size-3.5" />
-                                            </span>
+                                            </Link>
                                         </div>
                                     </div>
                                 </div>
@@ -1057,6 +1060,22 @@ export default function Welcome({
                             </div>
                         )}
                     </div>
+
+                    {announcements && announcements.length > 0 && (
+                        <div className="mt-10 text-center">
+                            <Button
+                                asChild
+                                variant="outline"
+                                size="sm"
+                                className="rounded-xl border-violet-200 text-xs font-semibold text-violet-700 hover:bg-violet-50 dark:border-violet-800 dark:text-violet-300 dark:hover:bg-violet-950/50"
+                            >
+                                <Link href="/announcements">
+                                    View All Announcements & Advisories
+                                    <ChevronRight className="ml-1 size-3.5" />
+                                </Link>
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </section>
 

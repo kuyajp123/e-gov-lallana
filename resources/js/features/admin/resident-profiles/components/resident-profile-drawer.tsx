@@ -54,7 +54,7 @@ export function AdminRoleBadge({
             <Badge
                 variant="secondary"
                 className={cn(
-                    'border-purple-500/30 bg-purple-500/10 text-purple-600 dark:text-purple-400 font-semibold',
+                    'border-purple-500/30 bg-purple-500/10 font-semibold text-purple-600 dark:text-purple-400',
                     className,
                 )}
             >
@@ -68,7 +68,7 @@ export function AdminRoleBadge({
             <Badge
                 variant="secondary"
                 className={cn(
-                    'border-primary/30 bg-primary/10 text-primary font-semibold',
+                    'border-primary/30 bg-primary/10 font-semibold text-primary',
                     className,
                 )}
             >
@@ -82,7 +82,7 @@ export function AdminRoleBadge({
             <Badge
                 variant="secondary"
                 className={cn(
-                    'border-sky-500/30 bg-sky-500/10 text-sky-600 dark:text-sky-400 font-semibold',
+                    'border-sky-500/30 bg-sky-500/10 font-semibold text-sky-600 dark:text-sky-400',
                     className,
                 )}
             >

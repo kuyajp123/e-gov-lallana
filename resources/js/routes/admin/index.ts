@@ -4,6 +4,7 @@ import households from './households'
 import residentProfiles from './resident-profiles'
 import documentTypes from './document-types'
 import staff from './staff'
+import announcements from './announcements'
 /**
 * @see \App\Http\Controllers\Admin\AdminDashboardController::__invoke
  * @see app/Http/Controllers/Admin/AdminDashboardController.php:18
@@ -89,6 +90,7 @@ households: Object.assign(households, households),
 residentProfiles: Object.assign(residentProfiles, residentProfiles),
 documentTypes: Object.assign(documentTypes, documentTypes),
 staff: Object.assign(staff, staff),
+announcements: Object.assign(announcements, announcements),
 }
 
 export default admin
