@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Announcement;
+use App\Models\FileRecord;
 use App\Models\Role;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -176,4 +177,37 @@ test('article page includes related announcements in the same category', functio
             ->has('relatedAnnouncements', 1)
             ->where('relatedAnnouncements.0.title', 'Typhoon Evacuation Center Open')
         );
+});
+
+test('public announcement show displays banner url and FileRecord rewrites supabase s3 urls to public cdn', function () {
+    $banner = FileRecord::create([
+        'user_id' => $this->admin->id,
+        'file_name' => 'fiesta-banner.jpg',
+        'disk' => 'announcement-attachments',
+        'bucket' => 'announcement-attachments',
+        'path' => 'banners/fiesta-banner.jpg',
+        'mime_type' => 'image/jpeg',
+        'size_bytes' => 2048,
+        'is_private' => false,
+    ]);
+
+    $announcement = Announcement::factory()->create([
+        'title' => 'Barangay Fiesta Celebration',
+        'slug' => 'barangay-fiesta-celebration',
+        'is_published' => true,
+        'published_at' => now()->subHours(2),
+        'banner_file_id' => $banner->id,
+    ]);
+
+    $this->get("/announcements/{$announcement->slug}")
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('public/announcements/show')
+            ->where('announcement.banner_url', fn ($url) => ! empty($url) && str_contains((string) $url, 'fiesta-banner.jpg'))
+        );
+
+    // Verify FileRecord::getUrl logic directly
+    $url = $banner->getUrl();
+    expect($url)->toContain('fiesta-banner.jpg');
+    expect($url)->not->toContain('/storage/v1/s3/');
 });

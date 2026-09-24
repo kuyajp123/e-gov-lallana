@@ -61,7 +61,13 @@ class FileRecord extends Model
         $storageDisk = Storage::disk($this->disk);
 
         if (! $this->is_private) {
-            return $storageDisk->url($this->path);
+            $url = $storageDisk->url($this->path);
+
+            if (str_contains($url, '/storage/v1/s3/')) {
+                return str_replace('/storage/v1/s3/', '/storage/v1/object/public/', $url);
+            }
+
+            return $url;
         }
 
         // S3 / Supabase private bucket signed URL
