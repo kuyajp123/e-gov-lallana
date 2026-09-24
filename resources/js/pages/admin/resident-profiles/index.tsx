@@ -9,7 +9,10 @@ import {
     X,
 } from 'lucide-react';
 import { useState } from 'react';
-import { ResidentProfileDrawer } from '@/features/admin/resident-profiles/components/resident-profile-drawer';
+import {
+    AdminRoleBadge,
+    ResidentProfileDrawer,
+} from '@/features/admin/resident-profiles/components/resident-profile-drawer';
 import type { AdminResidentProfileItem } from '@/features/admin/resident-profiles/components/resident-profile-drawer';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
@@ -399,10 +402,26 @@ export default function AdminResidentIndex({
                                                                 0,
                                                             )}
                                                         </div>
-                                                        <div className="max-w-[170px] min-w-0">
-                                                            <p className="truncate font-semibold text-foreground hover:underline">
-                                                                {res.full_name}
-                                                            </p>
+                                                        <div className="max-w-[210px] min-w-0">
+                                                            <div className="flex items-center gap-1.5">
+                                                                <p className="truncate font-semibold text-foreground hover:underline">
+                                                                    {
+                                                                        res.full_name
+                                                                    }
+                                                                </p>
+                                                                <AdminRoleBadge
+                                                                    isAdmin={
+                                                                        res.is_admin
+                                                                    }
+                                                                    isSubAdmin={
+                                                                        res.is_sub_admin
+                                                                    }
+                                                                    isSuperAdmin={
+                                                                        res.is_super_admin
+                                                                    }
+                                                                    className="h-4 shrink-0 px-1.5 py-0 text-[9px] leading-none"
+                                                                />
+                                                            </div>
                                                             <p className="truncate text-[11px] text-muted-foreground">
                                                                 {res.email}
                                                             </p>

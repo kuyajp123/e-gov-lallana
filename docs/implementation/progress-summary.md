@@ -1,8 +1,8 @@
 # E-Gov Lallana — Phase Progress Summary & Roadmap Tracker
 
 > **Barangay Lallana E-Government Web-Based Information System**  
-> **Last Updated:** September 17, 2026  
-> **Current Status:** Phase 5 Completed | **Phase 6 (Announcements Module)** is Next Up
+> **Last Updated:** September 24, 2026  
+> **Current Status:** Phase 6 Completed | **Phase 7 (Reports, QR & PDF Generation)** is Next Up
 
 ---
 
@@ -15,8 +15,8 @@
 | **3** | **Document Request System** | <span style="color:green">✅ **COMPLETED**</span> | Dynamic request forms (`form_schema`), request state machine, reference codes (`REQ-YYYY-XXXX`), resident cancellation with remarks, Filament admin processing queue, pickup flow | [Phase 3 Plan](file:///c:/Users/Paul/Projects/e-gov-lallana/docs/implementation/phase-3-document-request-system-implementation-plan.md) |
 | **4** | **Notifications & In-App Alerts** | <span style="color:green">✅ **COMPLETED**</span> | In-app notification center, unread counter badge, notification preferences in settings, automated event-driven alerts for documents & households, external SMS dispatch | [Phase 4 Plan](file:///c:/Users/Paul/Projects/e-gov-lallana/docs/implementation/Phase-4-Notifications-In-App-Alerts.md) |
 | **5** | **Administration & KPI Analytics** | <span style="color:green">✅ **COMPLETED**</span> | Admin dashboard KPI stat widgets, demographic breakdowns (age, sex, civil status, PWD, seniors), staff account management, household administrative restrictions | [Phase 5 Plan](file:///c:/Users/Paul/Projects/e-gov-lallana/docs/implementation/phase-5-administration-and-kpi-analytics-implementation-plan.md) |
-| **6** | **Announcements Module** | <span style="color:blue">⬅️ **NEXT UP**</span> | Admin Announcement CRUD, rich-text editor (Tiptap), media attachments, public announcements feed, resident dashboard announcement stream | [Blueprint §24](file:///c:/Users/Paul/Projects/e-gov-lallana/docs/implementation/barangay-lallana-implementation-blueprint.md) |
-| **7** | **Reports, QR & PDF Generation** | <span style="color:gray">⏳ **UPCOMING**</span> | Official PDF templates (Barangay Clearance, Indigency), RBI (Record of Barangay Inhabitants) export, QR code generation with mobile camera scanner for staff | [Blueprint §25, §28](file:///c:/Users/Paul/Projects/e-gov-lallana/docs/implementation/barangay-lallana-implementation-blueprint.md) |
+| **6** | **Announcements Module** | <span style="color:green">✅ **COMPLETED**</span> | Admin Announcement CRUD, rich-text editor (Tiptap), media attachments, public announcements feed, resident dashboard announcement stream | [Phase 6 Plan](file:///c:/Users/Paul/Projects/e-gov-lallana/docs/implementation/phase-6-announcements-module-implementation-plan.md) |
+| **7** | **Reports, QR & PDF Generation** | <span style="color:blue">⬅️ **NEXT UP**</span> | Official PDF templates (Barangay Clearance, Indigency), RBI (Record of Barangay Inhabitants) export, QR code generation with mobile camera scanner for staff | [Blueprint §25, §28](file:///c:/Users/Paul/Projects/e-gov-lallana/docs/implementation/barangay-lallana-implementation-blueprint.md) |
 | **8** | **Hardening, E2E QA & Deployment** | <span style="color:gray">⏳ **UPCOMING**</span> | Full Playwright E2E journey suite (all 11 scenarios), security audit (rate limiting, signed URLs), accessibility compliance (WCAG), production deployment on Vercel | [Blueprint §40, §42](file:///c:/Users/Paul/Projects/e-gov-lallana/docs/implementation/barangay-lallana-implementation-blueprint.md) |
 
 ---
@@ -101,17 +101,21 @@
 
 ---
 
-### Phase 6: Announcements Module ⬅️ (CURRENT TARGET)
-* [ ] Admin Announcement CRUD in Filament (Create, Edit, Publish/Draft, Delete)
-* [ ] Rich text editor integration (Tiptap / Filament RichEditor)
-* [ ] Attachment and cover photo upload to storage (`announcement-attachments`)
-* [ ] Announcement classifications: Event, Meeting, Advisory, General
-* [ ] Public announcements page with filters and single-view modal/page
-* [ ] Resident dashboard announcement feed widget
+### Phase 6: Announcements Module ✅
+* [x] Administrative Announcement CRUD operations (Create, Edit, Publish/Draft toggle, Delete with cleanup)
+* [x] Headless Tiptap rich-text editor (`rich-text-editor.tsx`) with headings, bold, italic, strikethrough, lists, quotes, dividers, and links
+* [x] Featured banner image upload, storage management, and automatic disk purging on deletion/replacement (`announcement-attachments` disk)
+* [x] Announcement classifications with styled badge indicators: Advisory, Event, Meeting, Emergency
+* [x] Unique slug collision handling and live slug preview for SEO-friendly URLs
+* [x] Public announcements directory (`/announcements`) with real-time category filtering, search, and pagination
+* [x] Public single-article reader (`/announcements/{slug}`) with author attribution, publish timestamps, and related recommendations
+* [x] Protected admin draft preview allowing staff to preview unpublished announcements directly on the reader page
+* [x] Citizen landing page (`welcome.tsx`) and resident dashboard (`dashboard.tsx`) connected with direct reader links
+* [x] 20 passing Pest feature tests verifying admin authorization, validation, file operations, and public views
 
 ---
 
-### Phase 7: Reports, QR Code & PDF Export ⏳
+### Phase 7: Reports, QR Code & PDF Export ⬅️ (CURRENT TARGET)
 * [ ] PDF generation engine integration (`spatie/laravel-pdf` / `dompdf`)
 * [ ] Official print templates:
   * [ ] Barangay Clearance with official seal and signature blocks

@@ -6,8 +6,10 @@ use App\Models\ResidentProfile;
 use App\Models\Role;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
+use Tests\TestCase;
 
 beforeEach(function () {
+    /** @var TestCase $this */
     $this->adminRole = Role::firstOrCreate(['slug' => 'admin'], ['name' => 'Admin']);
     $this->residentRole = Role::firstOrCreate(['slug' => 'resident'], ['name' => 'Resident']);
 
@@ -126,4 +128,48 @@ test('resident user is blocked with 404 from resident profile admin endpoints', 
 test('unauthenticated user is redirected to login for resident profiles', function () {
     $response = $this->get('/admin/resident-profiles');
     $response->assertRedirect('/login');
+});
+
+test('admin can see admin and subadmin role flags for residents in registry index', function () {
+    $subAdminRole = Role::firstOrCreate(['slug' => 'sub_admin'], ['name' => 'Sub-admin']);
+
+    $adminResident = User::factory()->create(['role_id' => $this->adminRole->id]);
+    ResidentProfile::create([
+        'user_id' => $adminResident->id,
+        'first_name' => 'Admin',
+        'last_name' => 'Official',
+        'birthdate' => '1985-05-15',
+        'gender' => 'female',
+        'civil_status' => 'single',
+        'citizenship' => 'Filipino',
+        'residency_status' => 'official',
+        'is_voter' => true,
+    ]);
+
+    $subAdminResident = User::factory()->create(['role_id' => $subAdminRole->id]);
+    ResidentProfile::create([
+        'user_id' => $subAdminResident->id,
+        'first_name' => 'Staff',
+        'last_name' => 'Member',
+        'birthdate' => '1995-08-20',
+        'gender' => 'male',
+        'civil_status' => 'single',
+        'citizenship' => 'Filipino',
+        'residency_status' => 'resident',
+        'is_voter' => true,
+    ]);
+
+    $response = $this->actingAs($this->admin)->get('/admin/resident-profiles');
+
+    $response->assertOk();
+    $response->assertInertia(fn (Assert $page) => $page
+        ->component('admin/resident-profiles/index')
+        ->has('residents.data', 3)
+        ->where('residents.data.0.is_sub_admin', true)
+        ->where('residents.data.0.is_admin', false)
+        ->where('residents.data.1.is_admin', true)
+        ->where('residents.data.1.is_sub_admin', false)
+        ->where('residents.data.2.is_admin', false)
+        ->where('residents.data.2.is_sub_admin', false)
+    );
 });

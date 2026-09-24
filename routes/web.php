@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminAnnouncementController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminDocumentRequestController;
 use App\Http\Controllers\Admin\AdminDocumentTypeController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\Public\InquiryController;
 use App\Http\Controllers\Public\LandingPageController;
 use App\Http\Controllers\Public\LocaleController;
+use App\Http\Controllers\Public\PublicAnnouncementController;
 use App\Http\Controllers\Resident\ProfileAvatarController;
 use App\Http\Controllers\Resident\ProfileController;
 use App\Http\Middleware\EnsureHouseholdIsVerified;
@@ -47,6 +49,12 @@ Route::get('/debug/session-test', function () {
 Route::get('/', LandingPageController::class)->name('home');
 Route::post('/inquiry', InquiryController::class)->name('inquiry.submit');
 Route::post('/locale', LocaleController::class)->name('locale.switch');
+
+// Public Announcements Directory & Reader
+Route::prefix('announcements')->name('announcements.')->group(function () {
+    Route::get('/', [PublicAnnouncementController::class, 'index'])->name('index');
+    Route::get('/{announcement:slug}', [PublicAnnouncementController::class, 'show'])->name('show');
+});
 
 // Authenticated Application Routes
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -80,6 +88,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::prefix('admin/resident-profiles')->name('admin.resident-profiles.')->group(function () {
             Route::get('/', [AdminResidentProfileController::class, 'index'])->name('index');
             Route::get('/{residentProfile}', [AdminResidentProfileController::class, 'show'])->name('show')->whereNumber('residentProfile');
+            Route::delete('/{residentProfile}', [AdminResidentProfileController::class, 'destroy'])->name('destroy')->whereNumber('residentProfile');
         });
 
         // Document Services Configuration
@@ -101,6 +110,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::put('/{user}', [AdminStaffController::class, 'update'])->name('update')->whereNumber('user');
             Route::post('/{user}/toggle-status', [AdminStaffController::class, 'toggleStatus'])->name('toggle-status')->whereNumber('user');
             Route::post('/{user}/revoke', [AdminStaffController::class, 'revoke'])->name('revoke')->whereNumber('user');
+        });
+
+        // Announcements Management
+        Route::prefix('admin/announcements')->name('admin.announcements.')->group(function () {
+            Route::get('/', [AdminAnnouncementController::class, 'index'])->name('index');
+            Route::get('/create', [AdminAnnouncementController::class, 'create'])->name('create');
+            Route::post('/', [AdminAnnouncementController::class, 'store'])->name('store');
+            Route::get('/{announcement}/edit', [AdminAnnouncementController::class, 'edit'])->name('edit')->whereNumber('announcement');
+            Route::put('/{announcement}', [AdminAnnouncementController::class, 'update'])->name('update')->whereNumber('announcement');
+            Route::patch('/{announcement}/toggle', [AdminAnnouncementController::class, 'togglePublish'])->name('toggle')->whereNumber('announcement');
+            Route::delete('/{announcement}', [AdminAnnouncementController::class, 'destroy'])->name('destroy')->whereNumber('announcement');
         });
     });
 

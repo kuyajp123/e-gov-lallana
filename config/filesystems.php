@@ -86,6 +86,11 @@ return [
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
             'region' => env('AWS_DEFAULT_REGION', 'ap-southeast-1'),
             'bucket' => 'avatars',
+            'url' => env('AWS_URL_AVATARS')
+                ?: (env('AWS_URL') ? rtrim((string) env('AWS_URL'), '/').'/avatars' : null)
+                ?: (env('AWS_ENDPOINT') && str_contains((string) env('AWS_ENDPOINT'), '/storage/v1/s3')
+                    ? str_replace('/storage/v1/s3', '/storage/v1/object/public/avatars', (string) env('AWS_ENDPOINT'))
+                    : null),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', true),
             'visibility' => 'public',
@@ -126,6 +131,11 @@ return [
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
             'region' => env('AWS_DEFAULT_REGION', 'ap-southeast-1'),
             'bucket' => 'announcement-attachments',
+            'url' => env('AWS_URL_ANNOUNCEMENT_ATTACHMENTS')
+                ?: (env('AWS_URL') ? rtrim((string) env('AWS_URL'), '/').'/announcement-attachments' : null)
+                ?: (env('AWS_ENDPOINT') && str_contains((string) env('AWS_ENDPOINT'), '/storage/v1/s3')
+                    ? str_replace('/storage/v1/s3', '/storage/v1/object/public/announcement-attachments', (string) env('AWS_ENDPOINT'))
+                    : null),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', true),
             'visibility' => 'public',

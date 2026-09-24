@@ -1,5 +1,13 @@
 import { Head, Link } from '@inertiajs/react';
-import { ArrowLeft, ExternalLink, FileText, Home, Vote } from 'lucide-react';
+import {
+    ArrowLeft,
+    ExternalLink,
+    FileText,
+    Home,
+    Trash2,
+    Vote,
+} from 'lucide-react';
+import { useState } from 'react';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import {
@@ -9,6 +17,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/shared/components/ui/card';
+import { DeleteResidentModal } from './components/delete-resident-modal';
 
 interface ResidentProfileDetails {
     id: number;
@@ -56,7 +65,11 @@ interface ResidentProfileDetails {
         purok_sitio: string;
         relationship_to_head: string;
         is_family_head: boolean;
+        members_count?: number;
     } | null;
+    active_requests_count?: number;
+    is_staff?: boolean;
+    can_delete?: boolean;
 }
 
 interface AdminResidentShowProps {
@@ -74,6 +87,8 @@ export default function AdminResidentShow({
         account: 'Account & Contact Information',
     },
 }: AdminResidentShowProps) {
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
     return (
         <>
             <Head
@@ -102,6 +117,14 @@ export default function AdminResidentShow({
                                 <Badge variant="outline" className="text-xs">
                                     {residentProfile.residency_status}
                                 </Badge>
+                                {residentProfile.is_staff && (
+                                    <Badge
+                                        variant="outline"
+                                        className="border-amber-500/40 bg-amber-500/10 text-xs font-semibold text-amber-700 dark:text-amber-400"
+                                    >
+                                        Staff Account (Protected)
+                                    </Badge>
+                                )}
                             </div>
                             <h1 className="mt-0.5 text-xl font-bold tracking-tight text-foreground sm:text-2xl">
                                 {residentProfile.full_name}
@@ -125,6 +148,24 @@ export default function AdminResidentShow({
                                     {residentProfile.household.household_code}
                                 </Link>
                             </Button>
+                        )}
+
+                        {residentProfile.can_delete && (
+                            <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => setIsDeleteModalOpen(true)}
+                                className="gap-1.5 text-xs"
+                            >
+                                <Trash2 className="size-3.5" />
+                                <span>Delete Resident</span>
+                            </Button>
+                        )}
+
+                        {residentProfile.is_staff && (
+                            <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 px-2.5 py-1 text-[11px] text-amber-700 dark:text-amber-400">
+                                Protected Staff Account
+                            </div>
                         )}
                     </div>
                 </div>
@@ -559,6 +600,25 @@ export default function AdminResidentShow({
                     </div>
                 </div>
             </div>
+
+            {residentProfile.can_delete && (
+                <DeleteResidentModal
+                    isOpen={isDeleteModalOpen}
+                    onClose={() => setIsDeleteModalOpen(false)}
+                    residentId={residentProfile.id}
+                    fullName={residentProfile.full_name}
+                    householdCode={residentProfile.household?.household_code}
+                    isSoleMember={
+                        residentProfile.household
+                            ? residentProfile.household.members_count === 1
+                            : false
+                    }
+                    hasHousehold={Boolean(residentProfile.household)}
+                    activeRequestsCount={
+                        residentProfile.active_requests_count ?? 0
+                    }
+                />
+            )}
         </>
     );
 }
