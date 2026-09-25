@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::index
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:37
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:39
  * @route '/admin/households'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::index
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:37
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:39
  * @route '/admin/households'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::index
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:37
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:39
  * @route '/admin/households'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::index
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:37
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:39
  * @route '/admin/households'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::index
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:37
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:39
  * @route '/admin/households'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::index
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:37
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:39
  * @route '/admin/households'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::index
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:37
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:39
  * @route '/admin/households'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -78,8 +78,86 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     index.form = indexForm
 /**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportRbiPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:469
+ * @route '/admin/households/export/rbi-pdf'
+ */
+export const exportRbiPdf = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: exportRbiPdf.url(options),
+    method: 'get',
+})
+
+exportRbiPdf.definition = {
+    methods: ["get","head"],
+    url: '/admin/households/export/rbi-pdf',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportRbiPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:469
+ * @route '/admin/households/export/rbi-pdf'
+ */
+exportRbiPdf.url = (options?: RouteQueryOptions) => {
+    return exportRbiPdf.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportRbiPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:469
+ * @route '/admin/households/export/rbi-pdf'
+ */
+exportRbiPdf.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: exportRbiPdf.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportRbiPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:469
+ * @route '/admin/households/export/rbi-pdf'
+ */
+exportRbiPdf.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: exportRbiPdf.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportRbiPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:469
+ * @route '/admin/households/export/rbi-pdf'
+ */
+    const exportRbiPdfForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: exportRbiPdf.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportRbiPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:469
+ * @route '/admin/households/export/rbi-pdf'
+ */
+        exportRbiPdfForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: exportRbiPdf.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportRbiPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:469
+ * @route '/admin/households/export/rbi-pdf'
+ */
+        exportRbiPdfForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: exportRbiPdf.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    exportRbiPdf.form = exportRbiPdfForm
+/**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::show
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:142
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:144
  * @route '/admin/households/{household}'
  */
 export const show = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +172,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::show
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:142
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:144
  * @route '/admin/households/{household}'
  */
 show.url = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -127,7 +205,7 @@ show.url = (args: { household: number | { id: number } } | [household: number | 
 
 /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::show
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:142
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:144
  * @route '/admin/households/{household}'
  */
 show.get = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -136,7 +214,7 @@ show.get = (args: { household: number | { id: number } } | [household: number | 
 })
 /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::show
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:142
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:144
  * @route '/admin/households/{household}'
  */
 show.head = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -146,7 +224,7 @@ show.head = (args: { household: number | { id: number } } | [household: number |
 
     /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::show
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:142
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:144
  * @route '/admin/households/{household}'
  */
     const showForm = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -156,7 +234,7 @@ show.head = (args: { household: number | { id: number } } | [household: number |
 
             /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::show
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:142
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:144
  * @route '/admin/households/{household}'
  */
         showForm.get = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -165,7 +243,7 @@ show.head = (args: { household: number | { id: number } } | [household: number |
         })
             /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::show
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:142
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:144
  * @route '/admin/households/{household}'
  */
         showForm.head = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -181,7 +259,7 @@ show.head = (args: { household: number | { id: number } } | [household: number |
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::verify
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:259
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:261
  * @route '/admin/households/{household}/verify'
  */
 export const verify = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -196,7 +274,7 @@ verify.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::verify
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:259
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:261
  * @route '/admin/households/{household}/verify'
  */
 verify.url = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -229,7 +307,7 @@ verify.url = (args: { household: number | { id: number } } | [household: number 
 
 /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::verify
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:259
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:261
  * @route '/admin/households/{household}/verify'
  */
 verify.post = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -239,7 +317,7 @@ verify.post = (args: { household: number | { id: number } } | [household: number
 
     /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::verify
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:259
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:261
  * @route '/admin/households/{household}/verify'
  */
     const verifyForm = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -249,7 +327,7 @@ verify.post = (args: { household: number | { id: number } } | [household: number
 
             /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::verify
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:259
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:261
  * @route '/admin/households/{household}/verify'
  */
         verifyForm.post = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -260,7 +338,7 @@ verify.post = (args: { household: number | { id: number } } | [household: number
     verify.form = verifyForm
 /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::restrict
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:355
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:357
  * @route '/admin/households/{household}/restrict'
  */
 export const restrict = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -275,7 +353,7 @@ restrict.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::restrict
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:355
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:357
  * @route '/admin/households/{household}/restrict'
  */
 restrict.url = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -308,7 +386,7 @@ restrict.url = (args: { household: number | { id: number } } | [household: numbe
 
 /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::restrict
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:355
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:357
  * @route '/admin/households/{household}/restrict'
  */
 restrict.post = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -318,7 +396,7 @@ restrict.post = (args: { household: number | { id: number } } | [household: numb
 
     /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::restrict
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:355
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:357
  * @route '/admin/households/{household}/restrict'
  */
     const restrictForm = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -328,7 +406,7 @@ restrict.post = (args: { household: number | { id: number } } | [household: numb
 
             /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::restrict
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:355
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:357
  * @route '/admin/households/{household}/restrict'
  */
         restrictForm.post = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -339,7 +417,7 @@ restrict.post = (args: { household: number | { id: number } } | [household: numb
     restrict.form = restrictForm
 /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::archive
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:430
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:432
  * @route '/admin/households/{household}/archive'
  */
 export const archive = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -354,7 +432,7 @@ archive.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::archive
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:430
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:432
  * @route '/admin/households/{household}/archive'
  */
 archive.url = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -387,7 +465,7 @@ archive.url = (args: { household: number | { id: number } } | [household: number
 
 /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::archive
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:430
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:432
  * @route '/admin/households/{household}/archive'
  */
 archive.post = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -397,7 +475,7 @@ archive.post = (args: { household: number | { id: number } } | [household: numbe
 
     /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::archive
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:430
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:432
  * @route '/admin/households/{household}/archive'
  */
     const archiveForm = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -407,7 +485,7 @@ archive.post = (args: { household: number | { id: number } } | [household: numbe
 
             /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::archive
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:430
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:432
  * @route '/admin/households/{household}/archive'
  */
         archiveForm.post = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -418,7 +496,7 @@ archive.post = (args: { household: number | { id: number } } | [household: numbe
     archive.form = archiveForm
 /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::transferHead
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:453
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:455
  * @route '/admin/households/{household}/transfer-head'
  */
 export const transferHead = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -433,7 +511,7 @@ transferHead.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::transferHead
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:453
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:455
  * @route '/admin/households/{household}/transfer-head'
  */
 transferHead.url = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -466,7 +544,7 @@ transferHead.url = (args: { household: number | { id: number } } | [household: n
 
 /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::transferHead
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:453
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:455
  * @route '/admin/households/{household}/transfer-head'
  */
 transferHead.post = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -476,7 +554,7 @@ transferHead.post = (args: { household: number | { id: number } } | [household: 
 
     /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::transferHead
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:453
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:455
  * @route '/admin/households/{household}/transfer-head'
  */
     const transferHeadForm = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -486,7 +564,7 @@ transferHead.post = (args: { household: number | { id: number } } | [household: 
 
             /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::transferHead
- * @see app/Http/Controllers/Admin/AdminHouseholdController.php:453
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:455
  * @route '/admin/households/{household}/transfer-head'
  */
         transferHeadForm.post = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -495,6 +573,6 @@ transferHead.post = (args: { household: number | { id: number } } | [household: 
         })
     
     transferHead.form = transferHeadForm
-const AdminHouseholdController = { index, show, verify, restrict, archive, transferHead }
+const AdminHouseholdController = { index, exportRbiPdf, show, verify, restrict, archive, transferHead }
 
 export default AdminHouseholdController

@@ -115,24 +115,27 @@
 
 ---
 
-### Phase 7: Reports, QR Code & PDF Export ⬅️ (CURRENT TARGET)
-* [ ] PDF generation engine integration (`spatie/laravel-pdf` / `dompdf`)
-* [ ] Official print templates:
-  * [ ] Barangay Clearance with official seal and signature blocks
-  * [ ] Barangay Certificate & Indigency Certificate
-  * [ ] Record of Barangay Inhabitants (RBI) summary report
-* [ ] Unique verification QR code embedding on issued PDF documents
-* [ ] Protected mobile camera QR scanner for barangay hall staff to authenticate physical documents
-* [ ] QR validation endpoint with tamper-detection check
+### Phase 7: Reports, QR Code & PDF Export ✅
+* [x] PDF generation engine integration (`spatie/laravel-pdf` + `dompdf/dompdf` pure PHP driver with memory guards)
+* [x] Official print-ready Blade templates per blueprint:
+  * [x] Barangay Clearance with official seal, sidebar roster, and dual signature blocks (`barangay-clearance.blade.php`)
+  * [x] Certificate of Indigency (`certificate-of-indigency.blade.php`)
+  * [x] Certificate of Residency (`certificate-of-residency.blade.php`)
+  * [x] Record of Barangay Inhabitants (RBI) summary report (`rbi-summary.blade.php`, landscape A4 with demographics)
+* [x] Cryptographic verification QR codes with HMAC-SHA256 signatures (`qr_identifiers` table & `QrCodeService.php`)
+* [x] Filament actions on Document Requests (`generate_pdf`, `preview_pdf`, table row `download_pdf`) and Households (`export_rbi_pdf`)
+* [x] Protected mobile camera QR scanner for barangay hall staff (`@zxing/browser`, laser reticle, audio chime, manual fallback, resident KYC drawer) at `/admin/qr-scanner`
+* [x] Public anti-fraud verification portal at `/verify/qr/{token}` with authentic badge and privacy-compliant masked name
+* [x] 11 passing Pest tests, 0 PHPStan Level 5+ errors, TypeScript clean
 
 ---
 
-### Phase 8: Hardening, E2E QA & Production Deployment ⏳
-* [ ] Comprehensive Playwright E2E test coverage across all 11 user journeys
+### Phase 8: Hardening, E2E QA & Production Deployment ⬅️ (CURRENT TARGET)
+* [ ] Comprehensive Playwright E2E test coverage across citizen and staff user journeys
 * [ ] Security and rate-limiting audit (auth throttle, OTP cooldown, document request frequency)
 * [ ] WCAG 2.1 accessibility audit (keyboard navigation, ARIA attributes, contrast)
 * [ ] Database query optimization and index verification
-* [ ] Final Vercel production deployment and environment variable audit
+* [ ] Production deployment and environment variable audit
 
 ---
 

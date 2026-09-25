@@ -7,6 +7,7 @@ use App\Enums\PaymentStatus;
 use App\Models\DocumentRequest;
 use App\Models\DocumentType;
 use App\Models\User;
+use App\Services\Pdf\PdfGenerationService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -90,6 +91,22 @@ class DocumentRequestsTable
             ])
             ->recordActions([
                 ViewAction::make(),
+
+                Action::make('download_pdf')
+                    ->label('PDF')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('success')
+                    ->visible(fn (DocumentRequest $record): bool => in_array($record->current_status, [
+                        DocumentRequestStatus::Processing,
+                        DocumentRequestStatus::ReadyForPickup,
+                        DocumentRequestStatus::Completed,
+                    ], true))
+                    ->action(function (DocumentRequest $record) {
+                        $pdfService = app(PdfGenerationService::class);
+                        $fileRecord = $record->generatedPdf ?? $pdfService->generateDocumentPdf($record, Auth::user());
+
+                        return redirect()->away($fileRecord->getUrl());
+                    }),
 
                 Action::make('start_processing')
                     ->label('Start')

@@ -9,11 +9,14 @@ use App\Http\Requests\Admin\UpdateDocumentRequestPaymentRequest;
 use App\Http\Requests\Admin\UpdateDocumentRequestStatusRequest;
 use App\Models\DocumentRequest;
 use App\Models\DocumentType;
+use App\Services\Pdf\PdfGenerationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class AdminDocumentRequestController extends Controller
 {
@@ -249,5 +252,26 @@ class AdminDocumentRequestController extends Controller
         $documentRequest->update(['admin_notes' => $validated['admin_notes'] ?? null]);
 
         return back()->with('success', "Internal notes for {$documentRequest->reference_code} saved.");
+    }
+
+    /**
+     * Download or view the official generated PDF certificate for a document request.
+     */
+    public function downloadPdf(DocumentRequest $documentRequest, PdfGenerationService $pdfService): SymfonyResponse
+    {
+        $fileRecord = $documentRequest->generatedPdf ?? $pdfService->generateDocumentPdf($documentRequest, Auth::user());
+
+        if (Storage::disk($fileRecord->disk)->exists($fileRecord->path)) {
+            return Storage::disk($fileRecord->disk)->response(
+                $fileRecord->path,
+                $fileRecord->file_name,
+                [
+                    'Content-Type' => 'application/pdf',
+                    'Content-Disposition' => 'inline; filename="'.$fileRecord->file_name.'"',
+                ]
+            );
+        }
+
+        return redirect()->away($fileRecord->getUrl());
     }
 }

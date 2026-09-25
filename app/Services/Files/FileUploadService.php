@@ -21,6 +21,10 @@ class FileUploadService
         $storageDisk = $disk ?? (string) config('filesystems.default', 'local');
         $path = $file->store($folder, $storageDisk);
 
+        if (! $path) {
+            throw new \RuntimeException("Failed to store file on disk [{$storageDisk}]. Please verify storage bucket configuration.");
+        }
+
         return FileRecord::create([
             'user_id' => $userId,
             'file_name' => $file->getClientOriginalName(),

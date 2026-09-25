@@ -461,6 +461,28 @@ export default function AdminDocumentIndex({
                                                                         Page
                                                                     </Link>
                                                                 </DropdownMenuItem>
+                                                                {[
+                                                                    'processing',
+                                                                    'ready_for_pickup',
+                                                                    'completed',
+                                                                ].includes(
+                                                                    req.current_status,
+                                                                ) && (
+                                                                    <DropdownMenuItem
+                                                                        asChild
+                                                                    >
+                                                                        <a
+                                                                            href={`/admin/document-requests/${req.id}/pdf`}
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            className="font-medium text-emerald-600 dark:text-emerald-400"
+                                                                        >
+                                                                            <FileCheck className="mr-2 size-3.5 text-emerald-600 dark:text-emerald-400" />
+                                                                            Certificate
+                                                                            PDF
+                                                                        </a>
+                                                                    </DropdownMenuItem>
+                                                                )}
                                                                 <DropdownMenuSeparator />
 
                                                                 {/* Status Action Items */}

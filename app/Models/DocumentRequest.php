@@ -120,6 +120,22 @@ class DocumentRequest extends Model
             ->withTimestamps();
     }
 
+    /**
+     * @return HasMany<QrIdentifier, $this>
+     */
+    public function qrIdentifiers(): HasMany
+    {
+        return $this->hasMany(QrIdentifier::class);
+    }
+
+    /**
+     * Get the latest active QR identifier.
+     */
+    public function latestQrIdentifier(): ?QrIdentifier
+    {
+        return $this->qrIdentifiers()->latest()->first();
+    }
+
     public function getFormattedFeeAttribute(): string
     {
         if ($this->fee_cents === 0) {

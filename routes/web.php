@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminDocumentRequestController;
 use App\Http\Controllers\Admin\AdminDocumentTypeController;
 use App\Http\Controllers\Admin\AdminHouseholdController;
+use App\Http\Controllers\Admin\AdminQrScannerController;
 use App\Http\Controllers\Admin\AdminResidentProfileController;
 use App\Http\Controllers\Admin\AdminStaffController;
 use App\Http\Controllers\DashboardController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\Public\InquiryController;
 use App\Http\Controllers\Public\LandingPageController;
 use App\Http\Controllers\Public\LocaleController;
 use App\Http\Controllers\Public\PublicAnnouncementController;
+use App\Http\Controllers\Public\PublicDocumentVerificationController;
 use App\Http\Controllers\Resident\ProfileAvatarController;
 use App\Http\Controllers\Resident\ProfileController;
 use App\Http\Middleware\EnsureHouseholdIsVerified;
@@ -56,6 +58,9 @@ Route::prefix('announcements')->name('announcements.')->group(function () {
     Route::get('/{announcement:slug}', [PublicAnnouncementController::class, 'show'])->name('show');
 });
 
+// Public Anti-Fraud Document Verification Portal
+Route::get('/verify/qr/{token}', [PublicDocumentVerificationController::class, 'show'])->name('public.verify.qr');
+
 // Authenticated Application Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
@@ -69,6 +74,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::prefix('admin/document-requests')->name('admin.document-requests.')->group(function () {
             Route::get('/', [AdminDocumentRequestController::class, 'index'])->name('index');
             Route::get('/{documentRequest}', [AdminDocumentRequestController::class, 'show'])->name('show')->whereNumber('documentRequest');
+            Route::get('/{documentRequest}/pdf', [AdminDocumentRequestController::class, 'downloadPdf'])->name('pdf')->whereNumber('documentRequest');
             Route::patch('/{documentRequest}/status', [AdminDocumentRequestController::class, 'updateStatus'])->name('update-status')->whereNumber('documentRequest');
             Route::patch('/{documentRequest}/payment', [AdminDocumentRequestController::class, 'updatePayment'])->name('update-payment')->whereNumber('documentRequest');
             Route::patch('/{documentRequest}/notes', [AdminDocumentRequestController::class, 'updateNotes'])->name('update-notes')->whereNumber('documentRequest');
@@ -77,6 +83,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Households Management & Verification
         Route::prefix('admin/households')->name('admin.households.')->group(function () {
             Route::get('/', [AdminHouseholdController::class, 'index'])->name('index');
+            Route::get('/export/rbi-pdf', [AdminHouseholdController::class, 'exportRbiPdf'])->name('export-rbi-pdf');
             Route::get('/{household}', [AdminHouseholdController::class, 'show'])->name('show')->whereNumber('household');
             Route::post('/{household}/verify', [AdminHouseholdController::class, 'verify'])->name('verify')->whereNumber('household');
             Route::post('/{household}/restrict', [AdminHouseholdController::class, 'restrict'])->name('restrict')->whereNumber('household');
@@ -122,6 +129,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::patch('/{announcement}/toggle', [AdminAnnouncementController::class, 'togglePublish'])->name('toggle')->whereNumber('announcement');
             Route::delete('/{announcement}', [AdminAnnouncementController::class, 'destroy'])->name('destroy')->whereNumber('announcement');
         });
+
+        // QR Code Staff Scanner & Verification API
+        Route::get('/admin/qr-scanner', [AdminQrScannerController::class, 'index'])->name('admin.qr-scanner');
+        Route::post('/admin/qr/verify', [AdminQrScannerController::class, 'verify'])->name('admin.qr.verify');
     });
 
     // In-App Notifications
