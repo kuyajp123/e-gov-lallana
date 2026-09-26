@@ -70,7 +70,9 @@ export default function SystemSettings({ keepAlive }: SystemSettingsProps) {
         post('/settings/system/keep-alive', {
             preserveScroll: true,
             onSuccess: () => {
-                toast.success('System keep-alive settings updated successfully.');
+                toast.success(
+                    'System keep-alive settings updated successfully.',
+                );
             },
             onError: (err) => {
                 toast.error(
@@ -190,7 +192,9 @@ export default function SystemSettings({ keepAlive }: SystemSettingsProps) {
 
                                 <Button
                                     type="button"
-                                    variant={data.enabled ? 'default' : 'outline'}
+                                    variant={
+                                        data.enabled ? 'default' : 'outline'
+                                    }
                                     size="sm"
                                     onClick={() =>
                                         setData('enabled', !data.enabled)
@@ -228,7 +232,7 @@ export default function SystemSettings({ keepAlive }: SystemSettingsProps) {
                                                 )
                                             }
                                             placeholder="https://e-gov-lallana.onrender.com/healthz"
-                                            className="pl-9 text-xs font-mono"
+                                            className="pl-9 font-mono text-xs"
                                         />
                                     </div>
                                     <Button
@@ -241,10 +245,14 @@ export default function SystemSettings({ keepAlive }: SystemSettingsProps) {
                                     >
                                         <Activity
                                             className={`size-3.5 ${
-                                                testingPing ? 'animate-spin' : ''
+                                                testingPing
+                                                    ? 'animate-spin'
+                                                    : ''
                                             }`}
                                         />
-                                        {testingPing ? 'Testing...' : 'Test Ping'}
+                                        {testingPing
+                                            ? 'Testing...'
+                                            : 'Test Ping'}
                                     </Button>
                                 </div>
                                 <p className="text-[11px] text-muted-foreground">
@@ -252,8 +260,9 @@ export default function SystemSettings({ keepAlive }: SystemSettingsProps) {
                                     <code className="rounded bg-muted px-1 py-0.5 font-mono text-[10px] text-foreground">
                                         /healthz
                                     </code>{' '}
-                                    route. Returns HTTP 200 without executing any
-                                    database queries or loading session state.
+                                    route. Returns HTTP 200 without executing
+                                    any database queries or loading session
+                                    state.
                                 </p>
                                 {errors.target_url && (
                                     <p className="text-xs text-destructive">
@@ -277,7 +286,8 @@ export default function SystemSettings({ keepAlive }: SystemSettingsProps) {
                                                 <ShieldAlert className="size-4 shrink-0" />
                                             )}
                                             <span>
-                                                HTTP {testResult.status} ({testResult.text})
+                                                HTTP {testResult.status} (
+                                                {testResult.text})
                                             </span>
                                         </div>
                                         <span className="font-mono text-[11px] opacity-80">
@@ -313,10 +323,11 @@ export default function SystemSettings({ keepAlive }: SystemSettingsProps) {
                                             onChange={(e) =>
                                                 setData(
                                                     'interval',
-                                                    parseInt(e.target.value) || 11,
+                                                    parseInt(e.target.value) ||
+                                                        11,
                                                 )
                                             }
-                                            className="pl-9 text-xs font-mono"
+                                            className="pl-9 font-mono text-xs"
                                         />
                                     </div>
 
@@ -335,7 +346,7 @@ export default function SystemSettings({ keepAlive }: SystemSettingsProps) {
                                                 onClick={() =>
                                                     setData('interval', mins)
                                                 }
-                                                className="h-8 px-2.5 text-xs font-mono"
+                                                className="h-8 px-2.5 font-mono text-xs"
                                             >
                                                 {mins}m
                                             </Button>
@@ -343,9 +354,10 @@ export default function SystemSettings({ keepAlive }: SystemSettingsProps) {
                                     </div>
                                 </div>
                                 <p className="text-[11px] text-muted-foreground">
-                                    Recommended: <strong>11 or 12 minutes</strong>{' '}
-                                    to provide a safe safety buffer before
-                                    Render's 15-minute inactivity countdown.
+                                    Recommended:{' '}
+                                    <strong>11 or 12 minutes</strong> to provide
+                                    a safe safety buffer before Render's
+                                    15-minute inactivity countdown.
                                 </p>
                                 {errors.interval && (
                                     <p className="text-xs text-destructive">
@@ -393,7 +405,7 @@ export default function SystemSettings({ keepAlive }: SystemSettingsProps) {
                                 <div className="text-[11px] text-muted-foreground">
                                     Database Driver
                                 </div>
-                                <div className="mt-1 flex items-center gap-1.5 font-medium text-xs">
+                                <div className="mt-1 flex items-center gap-1.5 text-xs font-medium">
                                     <Database className="size-3.5 text-primary" />
                                     {keepAlive.is_pgsql
                                         ? 'PostgreSQL (Supabase)'
@@ -406,7 +418,7 @@ export default function SystemSettings({ keepAlive }: SystemSettingsProps) {
                                 <div className="text-[11px] text-muted-foreground">
                                     pg_cron Extension
                                 </div>
-                                <div className="mt-1 flex items-center gap-1.5 font-medium text-xs">
+                                <div className="mt-1 flex items-center gap-1.5 text-xs font-medium">
                                     {keepAlive.cron_available ? (
                                         <>
                                             <span className="size-2 rounded-full bg-emerald-500" />
@@ -432,7 +444,7 @@ export default function SystemSettings({ keepAlive }: SystemSettingsProps) {
                                 <div className="text-[11px] text-muted-foreground">
                                     pg_net Extension
                                 </div>
-                                <div className="mt-1 flex items-center gap-1.5 font-medium text-xs">
+                                <div className="mt-1 flex items-center gap-1.5 text-xs font-medium">
                                     {keepAlive.net_available ? (
                                         <>
                                             <span className="size-2 rounded-full bg-emerald-500" />
@@ -463,7 +475,8 @@ export default function SystemSettings({ keepAlive }: SystemSettingsProps) {
                                     </span>
                                     <Badge
                                         variant={
-                                            keepAlive.last_ping.status_code === 200
+                                            keepAlive.last_ping.status_code ===
+                                            200
                                                 ? 'default'
                                                 : 'destructive'
                                         }
@@ -472,7 +485,7 @@ export default function SystemSettings({ keepAlive }: SystemSettingsProps) {
                                         HTTP {keepAlive.last_ping.status_code}
                                     </Badge>
                                 </div>
-                                <div className="mt-1 flex items-center gap-4 text-muted-foreground text-[11px]">
+                                <div className="mt-1 flex items-center gap-4 text-[11px] text-muted-foreground">
                                     <span>
                                         Timestamp:{' '}
                                         {keepAlive.last_ping.created ||
@@ -480,7 +493,8 @@ export default function SystemSettings({ keepAlive }: SystemSettingsProps) {
                                     </span>
                                     {keepAlive.last_ping.error_msg && (
                                         <span className="text-destructive">
-                                            Error: {keepAlive.last_ping.error_msg}
+                                            Error:{' '}
+                                            {keepAlive.last_ping.error_msg}
                                         </span>
                                     )}
                                 </div>
@@ -493,14 +507,17 @@ export default function SystemSettings({ keepAlive }: SystemSettingsProps) {
                                 !keepAlive.net_available) && (
                                 <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-900 dark:text-amber-200">
                                     <p className="font-semibold">
-                                        Need to enable pg_cron or pg_net in Supabase?
+                                        Need to enable pg_cron or pg_net in
+                                        Supabase?
                                     </p>
                                     <p className="mt-1 text-[11px] opacity-90">
-                                        Go to your <strong>Supabase Dashboard</strong>{' '}
+                                        Go to your{' '}
+                                        <strong>Supabase Dashboard</strong>{' '}
                                         &rarr; <strong>Database</strong> &rarr;{' '}
-                                        <strong>Extensions</strong>, and toggle on{' '}
-                                        <code>pg_cron</code> and <code>pg_net</code>.
-                                        Or run in the SQL Editor:
+                                        <strong>Extensions</strong>, and toggle
+                                        on <code>pg_cron</code> and{' '}
+                                        <code>pg_net</code>. Or run in the SQL
+                                        Editor:
                                     </p>
                                     <pre className="mt-2 rounded bg-black/80 p-2 font-mono text-[10px] text-white">
                                         {`CREATE EXTENSION IF NOT EXISTS pg_cron;\nCREATE EXTENSION IF NOT EXISTS pg_net WITH SCHEMA extensions;`}
