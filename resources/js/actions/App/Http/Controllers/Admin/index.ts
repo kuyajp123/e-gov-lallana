@@ -5,6 +5,7 @@ import AdminResidentProfileController from './AdminResidentProfileController'
 import AdminDocumentTypeController from './AdminDocumentTypeController'
 import AdminStaffController from './AdminStaffController'
 import AdminAnnouncementController from './AdminAnnouncementController'
+import AdminQrScannerController from './AdminQrScannerController'
 const Admin = {
     AdminDashboardController: Object.assign(AdminDashboardController, AdminDashboardController),
 AdminDocumentRequestController: Object.assign(AdminDocumentRequestController, AdminDocumentRequestController),
@@ -13,6 +14,7 @@ AdminResidentProfileController: Object.assign(AdminResidentProfileController, Ad
 AdminDocumentTypeController: Object.assign(AdminDocumentTypeController, AdminDocumentTypeController),
 AdminStaffController: Object.assign(AdminStaffController, AdminStaffController),
 AdminAnnouncementController: Object.assign(AdminAnnouncementController, AdminAnnouncementController),
+AdminQrScannerController: Object.assign(AdminQrScannerController, AdminQrScannerController),
 }
 
 export default Admin

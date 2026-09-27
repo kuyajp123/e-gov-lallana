@@ -6,6 +6,7 @@ use App\Enums\DocumentRequestStatus;
 use App\Enums\PaymentStatus;
 use App\Filament\Resources\DocumentRequests\DocumentRequestResource;
 use App\Models\DocumentRequest;
+use App\Services\Pdf\PdfGenerationService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -23,6 +24,36 @@ class ViewDocumentRequest extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('generate_pdf')
+                ->label(fn (): string => $this->record->generated_pdf_file_id ? 'Download / Re-generate PDF' : 'Generate & Download PDF')
+                ->icon('heroicon-o-document-arrow-down')
+                ->color('success')
+                ->visible(fn (): bool => in_array($this->record->current_status, [
+                    DocumentRequestStatus::Processing,
+                    DocumentRequestStatus::ReadyForPickup,
+                    DocumentRequestStatus::Completed,
+                ], true))
+                ->action(function () {
+                    $pdfService = app(PdfGenerationService::class);
+                    $fileRecord = $pdfService->generateDocumentPdf($this->record, Auth::user());
+                    $this->refreshFormData(['generated_pdf_file_id']);
+
+                    Notification::make()
+                        ->title('Official PDF Generated')
+                        ->body("Official certificate for {$this->record->reference_code} generated with cryptographic QR verification.")
+                        ->success()
+                        ->send();
+
+                    return redirect()->away($fileRecord->getUrl());
+                }),
+
+            Action::make('preview_pdf')
+                ->label('Preview Document')
+                ->icon('heroicon-o-eye')
+                ->color('gray')
+                ->visible(fn (): bool => ! empty($this->record->generated_pdf_file_id))
+                ->url(fn (): string => $this->record->generatedPdf?->getUrl() ?? '#', shouldOpenInNewTab: true),
+
             Action::make('start_processing')
                 ->label('Start Processing')
                 ->icon('heroicon-o-play')

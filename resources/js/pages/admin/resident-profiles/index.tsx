@@ -2,6 +2,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import {
     Building2,
     Eye,
+    FileDown,
     RotateCcw,
     Search,
     User,
@@ -151,6 +152,21 @@ export default function AdminResidentIndex({
                     </div>
 
                     <div className="flex items-center gap-2">
+                        <Button
+                            asChild
+                            variant="outline"
+                            size="sm"
+                            className="h-8 gap-1.5 border-emerald-500/40 text-xs text-emerald-600 hover:bg-emerald-500/10 dark:text-emerald-400"
+                        >
+                            <a
+                                href="/admin/households/export/rbi-pdf"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <FileDown className="size-3.5" />
+                                Export RBI Report (PDF)
+                            </a>
+                        </Button>
                         <Button
                             asChild
                             variant="outline"

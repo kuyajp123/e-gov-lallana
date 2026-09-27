@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\CancellationReason;
 use App\Enums\DocumentRequestStatus;
 use App\Enums\PaymentStatus;
+use App\Enums\QrStatus;
 use App\Services\Notification\NotificationService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -120,6 +121,22 @@ class DocumentRequest extends Model
             ->withTimestamps();
     }
 
+    /**
+     * @return HasMany<QrIdentifier, $this>
+     */
+    public function qrIdentifiers(): HasMany
+    {
+        return $this->hasMany(QrIdentifier::class);
+    }
+
+    /**
+     * Get the latest active QR identifier.
+     */
+    public function latestQrIdentifier(): ?QrIdentifier
+    {
+        return $this->qrIdentifiers()->latest()->first();
+    }
+
     public function getFormattedFeeAttribute(): string
     {
         if ($this->fee_cents === 0) {
@@ -152,6 +169,10 @@ class DocumentRequest extends Model
 
         if ($newStatus === DocumentRequestStatus::Cancelled && ! $this->cancelled_at) {
             $this->cancelled_at = Carbon::now();
+        }
+
+        if (in_array($newStatus, [DocumentRequestStatus::Cancelled, DocumentRequestStatus::Rejected], true)) {
+            $this->qrIdentifiers()->update(['status' => QrStatus::Revoked->value]);
         }
 
         $this->save();

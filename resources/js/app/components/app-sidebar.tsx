@@ -7,6 +7,7 @@ import {
     Home,
     LayoutGrid,
     Megaphone,
+    QrCode,
     ShieldCheck,
     Terminal,
     UserCog,
@@ -60,6 +61,11 @@ const adminNavItems: NavItem[] = [
         title: 'Document Queue',
         href: '/admin/document-requests',
         icon: FileCheck,
+    },
+    {
+        title: 'QR Document Scanner',
+        href: '/admin/qr-scanner',
+        icon: QrCode,
     },
     {
         title: 'Households',

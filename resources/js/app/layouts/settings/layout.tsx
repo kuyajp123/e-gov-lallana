@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import type { PropsWithChildren } from 'react';
 import { edit as editAppearance } from '@/routes/appearance';
 import { edit } from '@/routes/profile';
@@ -10,7 +10,7 @@ import { useCurrentUrl } from '@/shared/hooks/use-current-url';
 import { cn, toUrl } from '@/shared/lib/utils';
 import type { NavItem } from '@/shared/types';
 
-const sidebarNavItems: NavItem[] = [
+const baseNavItems: NavItem[] = [
     {
         title: 'Profile',
         href: edit(),
@@ -35,6 +35,22 @@ const sidebarNavItems: NavItem[] = [
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
     const { isCurrentOrParentUrl } = useCurrentUrl();
+    const { auth } = usePage<{
+        auth: { user?: { can_access_admin?: boolean } };
+    }>().props;
+
+    const navItems: NavItem[] = [
+        ...baseNavItems,
+        ...(auth.user?.can_access_admin
+            ? [
+                  {
+                      title: 'System',
+                      href: '/settings/system',
+                      icon: null,
+                  },
+              ]
+            : []),
+    ];
 
     return (
         <div className="px-4 py-6">
@@ -49,7 +65,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                         className="flex flex-col space-y-1 space-x-0"
                         aria-label="Settings"
                     >
-                        {sidebarNavItems.map((item, index) => (
+                        {navItems.map((item, index) => (
                             <Button
                                 key={`${toUrl(item.href)}-${index}`}
                                 size="sm"

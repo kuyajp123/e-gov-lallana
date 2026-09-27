@@ -56,4 +56,35 @@ class Announcement extends Model
     {
         return $this->belongsTo(FileRecord::class, 'banner_file_id');
     }
+
+    /**
+     * Mutator to sanitize announcement HTML before persisting to prevent stored XSS.
+     */
+    public function setContentAttribute(?string $value): void
+    {
+        $this->attributes['content'] = self::sanitizeHtml($value);
+    }
+
+    /**
+     * Sanitize HTML to prevent stored XSS attacks while preserving Tiptap formatting tags.
+     */
+    public static function sanitizeHtml(?string $html): string
+    {
+        if (empty($html)) {
+            return '';
+        }
+
+        // 1. Allow only safe rich-text formatting tags used by the Tiptap editor
+        $allowedTags = '<h2><h3><h4><p><b><strong><i><em><u><s><blockquote><ul><ol><li><a><hr><br><img><span>';
+        $cleaned = strip_tags($html, $allowedTags);
+
+        // 2. Disarm any inline event handlers (e.g. onerror=, onclick=, onload=)
+        $cleaned = preg_replace('/(<[a-z0-9]+[^>]*?)\s+on[a-z]+\s*=\s*(["\']?).*?\2/i', '$1', $cleaned) ?? $cleaned;
+
+        // 3. Disarm javascript:, data: (except images), or vbscript: URLs in href/src
+        $cleaned = preg_replace('/href\s*=\s*(["\']?)\s*(?:javascript|vbscript|data):[^"\'>]*\1/i', 'href="#"', $cleaned) ?? $cleaned;
+        $cleaned = preg_replace('/src\s*=\s*(["\']?)\s*(?:javascript|vbscript):[^"\'>]*\1/i', 'src=""', $cleaned) ?? $cleaned;
+
+        return $cleaned;
+    }
 }

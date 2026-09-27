@@ -5,6 +5,7 @@ import {
     CheckCircle2,
     Clock,
     Eye,
+    FileDown,
     Home,
     MoreHorizontal,
     RotateCcw,
@@ -194,6 +195,26 @@ export default function AdminHouseholdIndex({
                     </div>
 
                     <div className="flex items-center gap-2">
+                        <Button
+                            asChild
+                            variant="outline"
+                            size="sm"
+                            className="h-8 gap-1.5 border-emerald-500/40 text-xs text-emerald-600 hover:bg-emerald-500/10 dark:text-emerald-400"
+                        >
+                            <a
+                                href={
+                                    filters.purok_sitio &&
+                                    filters.purok_sitio !== 'all'
+                                        ? `/admin/households/export/rbi-pdf?purok=${encodeURIComponent(filters.purok_sitio)}`
+                                        : '/admin/households/export/rbi-pdf'
+                                }
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <FileDown className="size-3.5" />
+                                Export RBI Report (PDF)
+                            </a>
+                        </Button>
                         <Button
                             asChild
                             variant="outline"

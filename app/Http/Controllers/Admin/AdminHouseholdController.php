@@ -10,12 +10,14 @@ use App\Models\Household;
 use App\Models\HouseholdMember;
 use App\Services\Household\HouseholdSuccessionService;
 use App\Services\Notification\NotificationService;
+use App\Services\Pdf\PdfGenerationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class AdminHouseholdController extends Controller
 {
@@ -459,5 +461,20 @@ class AdminHouseholdController extends Controller
         $successionService->transferHead($household, $targetMember);
 
         return back()->with('success', "Family Head authority transferred to {$targetMember->full_name}.");
+    }
+
+    /**
+     * Export the Record of Barangay Inhabitants (RBI) demographic summary report as PDF.
+     */
+    public function exportRbiPdf(Request $request, PdfGenerationService $pdfService): SymfonyResponse
+    {
+        $purok = $request->string('purok')->trim()->toString();
+        $pdfContent = $pdfService->generateRbiReport($purok !== '' ? $purok : null, Auth::user());
+        $filename = 'RBI-Summary-'.($purok !== '' ? 'Purok-'.str_replace(' ', '-', $purok).'-' : '').now()->format('Ymd-His').'.pdf';
+
+        return response($pdfContent, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => "inline; filename=\"{$filename}\"",
+        ]);
     }
 }

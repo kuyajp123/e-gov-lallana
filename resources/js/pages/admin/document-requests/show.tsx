@@ -6,6 +6,7 @@ import {
     Clock,
     CreditCard,
     ExternalLink,
+    FileCheck,
     FileText,
     Image,
     PauseCircle,
@@ -290,6 +291,27 @@ export default function AdminDocumentShow({
                             >
                                 <CheckCircle2 className="size-3.5" />
                                 Mark as Claimed
+                            </Button>
+                        )}
+
+                        {[
+                            'processing',
+                            'ready_for_pickup',
+                            'completed',
+                        ].includes(documentRequest.current_status) && (
+                            <Button
+                                asChild
+                                size="sm"
+                                className="gap-1.5 bg-emerald-600 text-xs text-white hover:bg-emerald-700"
+                            >
+                                <a
+                                    href={`/admin/document-requests/${documentRequest.id}/pdf`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    <FileCheck className="size-3.5" />
+                                    Download Certificate PDF
+                                </a>
                             </Button>
                         )}
 

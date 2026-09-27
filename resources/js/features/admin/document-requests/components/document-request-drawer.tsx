@@ -5,6 +5,7 @@ import {
     Calendar,
     CheckCircle2,
     Eye,
+    FileCheck,
     Mail,
     PauseCircle,
     Phone,
@@ -429,12 +430,37 @@ export function DocumentRequestDrawer({
                     >
                         Close Drawer
                     </Button>
-                    <Button asChild size="sm" className="gap-1.5 text-xs">
-                        <Link href={`/admin/document-requests/${request.id}`}>
-                            <Eye className="size-3.5" />
-                            Open Full Details
-                        </Link>
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        {[
+                            'processing',
+                            'ready_for_pickup',
+                            'completed',
+                        ].includes(request.current_status) && (
+                            <Button
+                                asChild
+                                size="sm"
+                                variant="outline"
+                                className="gap-1.5 border-emerald-500/40 text-xs text-emerald-600 hover:bg-emerald-500/10 dark:text-emerald-400"
+                            >
+                                <a
+                                    href={`/admin/document-requests/${request.id}/pdf`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    <FileCheck className="size-3.5" />
+                                    Certificate PDF
+                                </a>
+                            </Button>
+                        )}
+                        <Button asChild size="sm" className="gap-1.5 text-xs">
+                            <Link
+                                href={`/admin/document-requests/${request.id}`}
+                            >
+                                <Eye className="size-3.5" />
+                                Open Full Details
+                            </Link>
+                        </Button>
+                    </div>
                 </div>
             </SheetContent>
         </Sheet>

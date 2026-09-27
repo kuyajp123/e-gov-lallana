@@ -3,6 +3,8 @@
 use App\Http\Controllers\Settings\NotificationPreferenceController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
+use App\Http\Controllers\Settings\SystemSettingController;
+use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Auth\Middleware\RequirePassword;
 use Illuminate\Support\Facades\Route;
 
@@ -30,4 +32,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('notifications.preferences.edit');
     Route::patch('settings/notifications', [NotificationPreferenceController::class, 'update'])
         ->name('notifications.preferences.update');
+
+    // System & Server Settings (Administrator Only)
+    Route::middleware([EnsureUserIsAdmin::class])->group(function () {
+        Route::get('settings/system', [SystemSettingController::class, 'edit'])->name('system.edit');
+        Route::post('settings/system/keep-alive', [SystemSettingController::class, 'updateKeepAlive'])->name('system.keep-alive.update');
+    });
 });

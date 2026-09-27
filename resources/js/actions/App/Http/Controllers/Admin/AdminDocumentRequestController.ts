@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::index
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:23
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:26
  * @route '/admin/document-requests'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::index
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:23
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:26
  * @route '/admin/document-requests'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::index
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:23
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:26
  * @route '/admin/document-requests'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::index
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:23
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:26
  * @route '/admin/document-requests'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::index
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:23
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:26
  * @route '/admin/document-requests'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::index
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:23
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:26
  * @route '/admin/document-requests'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::index
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:23
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:26
  * @route '/admin/document-requests'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::show
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:127
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:130
  * @route '/admin/document-requests/{documentRequest}'
  */
 export const show = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::show
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:127
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:130
  * @route '/admin/document-requests/{documentRequest}'
  */
 show.url = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -127,7 +127,7 @@ show.url = (args: { documentRequest: number | { id: number } } | [documentReques
 
 /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::show
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:127
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:130
  * @route '/admin/document-requests/{documentRequest}'
  */
 show.get = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -136,7 +136,7 @@ show.get = (args: { documentRequest: number | { id: number } } | [documentReques
 })
 /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::show
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:127
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:130
  * @route '/admin/document-requests/{documentRequest}'
  */
 show.head = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -146,7 +146,7 @@ show.head = (args: { documentRequest: number | { id: number } } | [documentReque
 
     /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::show
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:127
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:130
  * @route '/admin/document-requests/{documentRequest}'
  */
     const showForm = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -156,7 +156,7 @@ show.head = (args: { documentRequest: number | { id: number } } | [documentReque
 
             /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::show
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:127
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:130
  * @route '/admin/document-requests/{documentRequest}'
  */
         showForm.get = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -165,7 +165,7 @@ show.head = (args: { documentRequest: number | { id: number } } | [documentReque
         })
             /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::show
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:127
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:130
  * @route '/admin/document-requests/{documentRequest}'
  */
         showForm.head = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -180,8 +180,110 @@ show.head = (args: { documentRequest: number | { id: number } } | [documentReque
     
     show.form = showForm
 /**
+* @see \App\Http\Controllers\Admin\AdminDocumentRequestController::downloadPdf
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:260
+ * @route '/admin/document-requests/{documentRequest}/pdf'
+ */
+export const downloadPdf = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: downloadPdf.url(args, options),
+    method: 'get',
+})
+
+downloadPdf.definition = {
+    methods: ["get","head"],
+    url: '/admin/document-requests/{documentRequest}/pdf',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\Admin\AdminDocumentRequestController::downloadPdf
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:260
+ * @route '/admin/document-requests/{documentRequest}/pdf'
+ */
+downloadPdf.url = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { documentRequest: args }
+    }
+
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { documentRequest: args.id }
+        }
+    
+    if (Array.isArray(args)) {
+        args = {
+                    documentRequest: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        documentRequest: typeof args.documentRequest === 'object'
+                ? args.documentRequest.id
+                : args.documentRequest,
+                }
+
+    return downloadPdf.definition.url
+            .replace('{documentRequest}', parsedArgs.documentRequest.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Admin\AdminDocumentRequestController::downloadPdf
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:260
+ * @route '/admin/document-requests/{documentRequest}/pdf'
+ */
+downloadPdf.get = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: downloadPdf.url(args, options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\Admin\AdminDocumentRequestController::downloadPdf
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:260
+ * @route '/admin/document-requests/{documentRequest}/pdf'
+ */
+downloadPdf.head = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: downloadPdf.url(args, options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\Admin\AdminDocumentRequestController::downloadPdf
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:260
+ * @route '/admin/document-requests/{documentRequest}/pdf'
+ */
+    const downloadPdfForm = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: downloadPdf.url(args, options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\Admin\AdminDocumentRequestController::downloadPdf
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:260
+ * @route '/admin/document-requests/{documentRequest}/pdf'
+ */
+        downloadPdfForm.get = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: downloadPdf.url(args, options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\Admin\AdminDocumentRequestController::downloadPdf
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:260
+ * @route '/admin/document-requests/{documentRequest}/pdf'
+ */
+        downloadPdfForm.head = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: downloadPdf.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    downloadPdf.form = downloadPdfForm
+/**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::updateStatus
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:213
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:216
  * @route '/admin/document-requests/{documentRequest}/status'
  */
 export const updateStatus = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -196,7 +298,7 @@ updateStatus.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::updateStatus
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:213
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:216
  * @route '/admin/document-requests/{documentRequest}/status'
  */
 updateStatus.url = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -229,7 +331,7 @@ updateStatus.url = (args: { documentRequest: number | { id: number } } | [docume
 
 /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::updateStatus
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:213
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:216
  * @route '/admin/document-requests/{documentRequest}/status'
  */
 updateStatus.patch = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -239,7 +341,7 @@ updateStatus.patch = (args: { documentRequest: number | { id: number } } | [docu
 
     /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::updateStatus
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:213
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:216
  * @route '/admin/document-requests/{documentRequest}/status'
  */
     const updateStatusForm = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -254,7 +356,7 @@ updateStatus.patch = (args: { documentRequest: number | { id: number } } | [docu
 
             /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::updateStatus
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:213
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:216
  * @route '/admin/document-requests/{documentRequest}/status'
  */
         updateStatusForm.patch = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -270,7 +372,7 @@ updateStatus.patch = (args: { documentRequest: number | { id: number } } | [docu
     updateStatus.form = updateStatusForm
 /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::updatePayment
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:230
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:233
  * @route '/admin/document-requests/{documentRequest}/payment'
  */
 export const updatePayment = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -285,7 +387,7 @@ updatePayment.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::updatePayment
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:230
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:233
  * @route '/admin/document-requests/{documentRequest}/payment'
  */
 updatePayment.url = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -318,7 +420,7 @@ updatePayment.url = (args: { documentRequest: number | { id: number } } | [docum
 
 /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::updatePayment
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:230
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:233
  * @route '/admin/document-requests/{documentRequest}/payment'
  */
 updatePayment.patch = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -328,7 +430,7 @@ updatePayment.patch = (args: { documentRequest: number | { id: number } } | [doc
 
     /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::updatePayment
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:230
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:233
  * @route '/admin/document-requests/{documentRequest}/payment'
  */
     const updatePaymentForm = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -343,7 +445,7 @@ updatePayment.patch = (args: { documentRequest: number | { id: number } } | [doc
 
             /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::updatePayment
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:230
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:233
  * @route '/admin/document-requests/{documentRequest}/payment'
  */
         updatePaymentForm.patch = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -359,7 +461,7 @@ updatePayment.patch = (args: { documentRequest: number | { id: number } } | [doc
     updatePayment.form = updatePaymentForm
 /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::updateNotes
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:243
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:246
  * @route '/admin/document-requests/{documentRequest}/notes'
  */
 export const updateNotes = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -374,7 +476,7 @@ updateNotes.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::updateNotes
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:243
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:246
  * @route '/admin/document-requests/{documentRequest}/notes'
  */
 updateNotes.url = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -407,7 +509,7 @@ updateNotes.url = (args: { documentRequest: number | { id: number } } | [documen
 
 /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::updateNotes
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:243
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:246
  * @route '/admin/document-requests/{documentRequest}/notes'
  */
 updateNotes.patch = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -417,7 +519,7 @@ updateNotes.patch = (args: { documentRequest: number | { id: number } } | [docum
 
     /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::updateNotes
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:243
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:246
  * @route '/admin/document-requests/{documentRequest}/notes'
  */
     const updateNotesForm = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -432,7 +534,7 @@ updateNotes.patch = (args: { documentRequest: number | { id: number } } | [docum
 
             /**
 * @see \App\Http\Controllers\Admin\AdminDocumentRequestController::updateNotes
- * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:243
+ * @see app/Http/Controllers/Admin/AdminDocumentRequestController.php:246
  * @route '/admin/document-requests/{documentRequest}/notes'
  */
         updateNotesForm.patch = (args: { documentRequest: number | { id: number } } | [documentRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -446,6 +548,6 @@ updateNotes.patch = (args: { documentRequest: number | { id: number } } | [docum
         })
     
     updateNotes.form = updateNotesForm
-const AdminDocumentRequestController = { index, show, updateStatus, updatePayment, updateNotes }
+const AdminDocumentRequestController = { index, show, downloadPdf, updateStatus, updatePayment, updateNotes }
 
 export default AdminDocumentRequestController

@@ -24,6 +24,8 @@ test('all defined application tables exist in the database', function () {
         'document_request_status_history',
         'announcements',
         'sms_messages',
+        'qr_identifiers',
+        'system_settings',
         'migrations',
     ];
 
@@ -62,6 +64,8 @@ test('postgresql row level security is enabled on all public tables when on pgsq
         'document_request_status_history',
         'announcements',
         'sms_messages',
+        'qr_identifiers',
+        'system_settings',
         'migrations',
     ];
 
@@ -102,6 +106,8 @@ test('postgresql service_role_only policy exists on all public tables when on pg
         'document_request_status_history',
         'announcements',
         'sms_messages',
+        'qr_identifiers',
+        'system_settings',
         'migrations',
     ];
 
