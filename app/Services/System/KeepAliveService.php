@@ -141,8 +141,16 @@ class KeepAliveService
                     ];
                 }
 
+                if (! filter_var($resolvedUrl, FILTER_VALIDATE_URL) || ! in_array(parse_url($resolvedUrl, PHP_URL_SCHEME), ['http', 'https'], true)) {
+                    return [
+                        'success' => false,
+                        'message' => 'Invalid target URL. Must be an http or https URL.',
+                    ];
+                }
+
                 $cronExpression = "*/{$safeInterval} * * * *";
-                $cronCommand = "SELECT net.http_get(url := '{$resolvedUrl}');";
+                $escapedUrl = str_replace("'", "''", $resolvedUrl);
+                $cronCommand = "SELECT net.http_get(url := '{$escapedUrl}');";
 
                 DB::statement('SELECT cron.schedule(?, ?, ?)', [
                     self::JOB_NAME,

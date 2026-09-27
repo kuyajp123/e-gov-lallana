@@ -11,11 +11,11 @@ class PublicDocumentVerificationController extends Controller
 {
     public function show(string $token, QrCodeService $qrCodeService): Response
     {
-        $result = $qrCodeService->validateToken($token);
+        $result = $qrCodeService->validateToken($token, allowReferenceCode: false);
 
         $verificationData = null;
 
-        if ($result['qr']) {
+        if ($result['valid'] && $result['qr']) {
             $qr = $result['qr'];
             $req = $qr->documentRequest;
             $resident = $qr->resident;

@@ -28,11 +28,16 @@ return new class extends Migration
 
             if ($inPublic?->in_public) {
                 DB::statement('CREATE SCHEMA IF NOT EXISTS extensions;');
-                DB::statement('DROP EXTENSION IF EXISTS pg_net CASCADE;');
-                DB::statement('CREATE EXTENSION pg_net WITH SCHEMA extensions;');
+
+                // Attempt non-destructive relocation so queued HTTP requests and audit tables are preserved
+                try {
+                    DB::statement('ALTER EXTENSION pg_net SET SCHEMA extensions;');
+                } catch (Throwable $e) {
+                    Log::info('Non-destructive pg_net extension relocation skipped: '.$e->getMessage().'. Existing extension preserved.');
+                }
             }
         } catch (Throwable $e) {
-            Log::info('Extension pg_net relocation in migration skipped or requires dashboard superuser: '.$e->getMessage());
+            Log::info('Extension pg_net relocation check in migration skipped: '.$e->getMessage());
         }
     }
 

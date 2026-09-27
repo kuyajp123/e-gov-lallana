@@ -48,7 +48,7 @@ class AdminQrScannerController extends Controller
             $rawToken = last(explode('/verify/qr/', $rawToken));
         }
 
-        $result = $qrCodeService->validateToken($rawToken);
+        $result = $qrCodeService->validateToken($rawToken, allowReferenceCode: true);
 
         if (! $result['valid'] || ! $result['qr']) {
             return response()->json([

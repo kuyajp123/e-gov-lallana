@@ -2,6 +2,7 @@
 
 namespace App\Services\QrCode;
 
+use App\Enums\DocumentRequestStatus;
 use App\Enums\QrStatus;
 use App\Models\DocumentRequest;
 use App\Models\QrIdentifier;
@@ -72,7 +73,7 @@ class QrCodeService
      *
      * @return array{valid: bool, status: string, message: string, qr: QrIdentifier|null}
      */
-    public function validateToken(string $token): array
+    public function validateToken(string $token, bool $allowReferenceCode = false): array
     {
         $cleanToken = trim($token);
 
@@ -82,9 +83,11 @@ class QrCodeService
             'resident.residentProfile',
             'household',
         ])
-            ->where(function ($query) use ($cleanToken) {
-                $query->where('token', $cleanToken)
-                    ->orWhere('reference_code', $cleanToken);
+            ->where(function ($query) use ($cleanToken, $allowReferenceCode) {
+                $query->where('token', $cleanToken);
+                if ($allowReferenceCode) {
+                    $query->orWhere('reference_code', $cleanToken);
+                }
             })
             ->first();
 
@@ -97,7 +100,7 @@ class QrCodeService
             ];
         }
 
-        if ($qr->status === QrStatus::Revoked) {
+        if ($qr->status === QrStatus::Revoked || ($qr->documentRequest && in_array($qr->documentRequest->current_status, [DocumentRequestStatus::Cancelled, DocumentRequestStatus::Rejected], true))) {
             return [
                 'valid' => false,
                 'status' => 'revoked',

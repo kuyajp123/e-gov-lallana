@@ -259,6 +259,16 @@ class AdminDocumentRequestController extends Controller
      */
     public function downloadPdf(DocumentRequest $documentRequest, PdfGenerationService $pdfService): SymfonyResponse
     {
+        $allowedStatuses = [
+            DocumentRequestStatus::Processing,
+            DocumentRequestStatus::ReadyForPickup,
+            DocumentRequestStatus::Completed,
+        ];
+
+        if (! in_array($documentRequest->current_status, $allowedStatuses, true)) {
+            abort(403, 'PDF certificates can only be generated or viewed for requests in Processing, Ready for Pickup, or Completed status.');
+        }
+
         $fileRecord = $documentRequest->generatedPdf ?? $pdfService->generateDocumentPdf($documentRequest, Auth::user());
 
         if (Storage::disk($fileRecord->disk)->exists($fileRecord->path)) {

@@ -2,6 +2,7 @@
 
 namespace App\Services\Pdf;
 
+use App\Enums\DocumentRequestStatus;
 use App\Models\DocumentRequest;
 use App\Models\FileRecord;
 use App\Models\Household;
@@ -10,6 +11,7 @@ use App\Services\Files\FileUploadService;
 use App\Services\QrCode\QrCodeService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
+use InvalidArgumentException;
 use Spatie\LaravelPdf\Facades\Pdf;
 
 class PdfGenerationService
@@ -29,6 +31,18 @@ class PdfGenerationService
         @ini_set('memory_limit', '512M');
 
         $request->loadMissing(['user.residentProfile', 'documentType']);
+
+        $allowedStatuses = [
+            DocumentRequestStatus::Processing,
+            DocumentRequestStatus::ReadyForPickup,
+            DocumentRequestStatus::Completed,
+        ];
+
+        if (! in_array($request->current_status, $allowedStatuses, true)) {
+            throw new InvalidArgumentException(
+                "PDF certificates can only be generated for requests in Processing, Ready for Pickup, or Completed status. Current status: {$request->current_status->value}."
+            );
+        }
 
         // 1. Generate or retrieve QR identifier and vector SVG
         $qr = $this->qrCodeService->generateForDocument($request, $issuer);
