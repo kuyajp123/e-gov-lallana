@@ -366,3 +366,74 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     dashboard.form = dashboardForm
+/**
+ * @see bootstrap/app.php:18
+ * @route '/healthz'
+ */
+export const healthz = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: healthz.url(options),
+    method: 'get',
+})
+
+healthz.definition = {
+    methods: ["get","head"],
+    url: '/healthz',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+ * @see bootstrap/app.php:18
+ * @route '/healthz'
+ */
+healthz.url = (options?: RouteQueryOptions) => {
+    return healthz.definition.url + queryParams(options)
+}
+
+/**
+ * @see bootstrap/app.php:18
+ * @route '/healthz'
+ */
+healthz.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: healthz.url(options),
+    method: 'get',
+})
+/**
+ * @see bootstrap/app.php:18
+ * @route '/healthz'
+ */
+healthz.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: healthz.url(options),
+    method: 'head',
+})
+
+    /**
+ * @see bootstrap/app.php:18
+ * @route '/healthz'
+ */
+    const healthzForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: healthz.url(options),
+        method: 'get',
+    })
+
+            /**
+ * @see bootstrap/app.php:18
+ * @route '/healthz'
+ */
+        healthzForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: healthz.url(options),
+            method: 'get',
+        })
+            /**
+ * @see bootstrap/app.php:18
+ * @route '/healthz'
+ */
+        healthzForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: healthz.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    healthz.form = healthzForm
