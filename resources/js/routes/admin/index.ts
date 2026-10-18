@@ -5,6 +5,7 @@ import residentProfiles from './resident-profiles'
 import documentTypes from './document-types'
 import staff from './staff'
 import announcements from './announcements'
+import inquiries from './inquiries'
 import qr from './qr'
 /**
 * @see \App\Http\Controllers\Admin\AdminDashboardController::__invoke
@@ -170,6 +171,7 @@ residentProfiles: Object.assign(residentProfiles, residentProfiles),
 documentTypes: Object.assign(documentTypes, documentTypes),
 staff: Object.assign(staff, staff),
 announcements: Object.assign(announcements, announcements),
+inquiries: Object.assign(inquiries, inquiries),
 qrScanner: Object.assign(qrScanner, qrScanner),
 qr: Object.assign(qr, qr),
 }
