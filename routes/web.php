@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminDocumentRequestController;
 use App\Http\Controllers\Admin\AdminDocumentTypeController;
 use App\Http\Controllers\Admin\AdminHouseholdController;
+use App\Http\Controllers\Admin\AdminInquiryController;
 use App\Http\Controllers\Admin\AdminQrScannerController;
 use App\Http\Controllers\Admin\AdminResidentProfileController;
 use App\Http\Controllers\Admin\AdminStaffController;
@@ -128,6 +129,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::put('/{announcement}', [AdminAnnouncementController::class, 'update'])->name('update')->whereNumber('announcement');
             Route::patch('/{announcement}/toggle', [AdminAnnouncementController::class, 'togglePublish'])->name('toggle')->whereNumber('announcement');
             Route::delete('/{announcement}', [AdminAnnouncementController::class, 'destroy'])->name('destroy')->whereNumber('announcement');
+        });
+
+        // Citizen Inquiries Management
+        Route::prefix('admin/inquiries')->name('admin.inquiries.')->group(function () {
+            Route::get('/', [AdminInquiryController::class, 'index'])->name('index');
+            Route::get('/{inquiry}', [AdminInquiryController::class, 'show'])->name('show')->whereNumber('inquiry');
+            Route::patch('/{inquiry}/status', [AdminInquiryController::class, 'updateStatus'])->name('update-status')->whereNumber('inquiry');
+            Route::delete('/{inquiry}', [AdminInquiryController::class, 'destroy'])->name('destroy')->whereNumber('inquiry');
         });
 
         // QR Code Staff Scanner & Verification API

@@ -40,6 +40,13 @@ test('public inquiry form successfully validates and processes inquiry with test
     ]);
 
     $response->assertSessionHas('success');
+
+    $this->assertDatabaseHas('inquiries', [
+        'name' => 'Maria Santos',
+        'email' => 'maria@example.com',
+        'subject' => 'Barangay Certificate Requirements',
+        'status' => 'pending',
+    ]);
 });
 
 test('public inquiry form rejects missing turnstile token', function () {

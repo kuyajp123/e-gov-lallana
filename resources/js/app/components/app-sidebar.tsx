@@ -7,6 +7,7 @@ import {
     Home,
     LayoutGrid,
     Megaphone,
+    MessageSquare,
     QrCode,
     ShieldCheck,
     Terminal,
@@ -81,6 +82,11 @@ const adminNavItems: NavItem[] = [
         title: 'Announcements',
         href: '/admin/announcements',
         icon: Megaphone,
+    },
+    {
+        title: 'Citizen Inquiries',
+        href: '/admin/inquiries',
+        icon: MessageSquare,
     },
 ];
 
