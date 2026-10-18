@@ -270,7 +270,7 @@ updateStatus.patch = (args: { inquiry: number | { id: number } } | [inquiry: num
     updateStatus.form = updateStatusForm
 /**
 * @see \App\Http\Controllers\Admin\AdminInquiryController::destroy
- * @see app/Http/Controllers/Admin/AdminInquiryController.php:135
+ * @see app/Http/Controllers/Admin/AdminInquiryController.php:137
  * @route '/admin/inquiries/{inquiry}'
  */
 export const destroy = (args: { inquiry: number | { id: number } } | [inquiry: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -285,7 +285,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\AdminInquiryController::destroy
- * @see app/Http/Controllers/Admin/AdminInquiryController.php:135
+ * @see app/Http/Controllers/Admin/AdminInquiryController.php:137
  * @route '/admin/inquiries/{inquiry}'
  */
 destroy.url = (args: { inquiry: number | { id: number } } | [inquiry: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -318,7 +318,7 @@ destroy.url = (args: { inquiry: number | { id: number } } | [inquiry: number | {
 
 /**
 * @see \App\Http\Controllers\Admin\AdminInquiryController::destroy
- * @see app/Http/Controllers/Admin/AdminInquiryController.php:135
+ * @see app/Http/Controllers/Admin/AdminInquiryController.php:137
  * @route '/admin/inquiries/{inquiry}'
  */
 destroy.delete = (args: { inquiry: number | { id: number } } | [inquiry: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -328,7 +328,7 @@ destroy.delete = (args: { inquiry: number | { id: number } } | [inquiry: number 
 
     /**
 * @see \App\Http\Controllers\Admin\AdminInquiryController::destroy
- * @see app/Http/Controllers/Admin/AdminInquiryController.php:135
+ * @see app/Http/Controllers/Admin/AdminInquiryController.php:137
  * @route '/admin/inquiries/{inquiry}'
  */
     const destroyForm = (args: { inquiry: number | { id: number } } | [inquiry: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -343,7 +343,7 @@ destroy.delete = (args: { inquiry: number | { id: number } } | [inquiry: number 
 
             /**
 * @see \App\Http\Controllers\Admin\AdminInquiryController::destroy
- * @see app/Http/Controllers/Admin/AdminInquiryController.php:135
+ * @see app/Http/Controllers/Admin/AdminInquiryController.php:137
  * @route '/admin/inquiries/{inquiry}'
  */
         destroyForm.delete = (args: { inquiry: number | { id: number } } | [inquiry: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

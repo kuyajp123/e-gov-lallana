@@ -41,7 +41,7 @@ class InquiryFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'status' => 'resolved',
             'admin_notes' => 'Addressed and contacted resident.',
-            'resolved_by_id' => $admin?->id ?? User::factory(),
+            'resolved_by_id' => $admin->id ?? User::factory(),
             'resolved_at' => now(),
         ]);
     }

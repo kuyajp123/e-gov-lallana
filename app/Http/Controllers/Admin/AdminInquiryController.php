@@ -114,14 +114,16 @@ class AdminInquiryController extends Controller
         ]);
 
         $inquiry->status = $validated['status'];
-        $inquiry->admin_notes = $validated['admin_notes'] ?? $inquiry->admin_notes;
+        $inquiry->admin_notes = $validated['admin_notes'] ?? null;
 
-        if ($validated['status'] === 'resolved') {
-            $inquiry->resolved_by_id = $request->user()?->id;
-            $inquiry->resolved_at = now();
-        } elseif ($inquiry->isDirty('status') && $validated['status'] !== 'resolved') {
-            $inquiry->resolved_by_id = null;
-            $inquiry->resolved_at = null;
+        if ($inquiry->isDirty('status')) {
+            if ($validated['status'] === 'resolved') {
+                $inquiry->resolved_by_id = $request->user()?->id;
+                $inquiry->resolved_at = now();
+            } else {
+                $inquiry->resolved_by_id = null;
+                $inquiry->resolved_at = null;
+            }
         }
 
         $inquiry->save();

@@ -5,7 +5,6 @@ import {
     CheckCircle2,
     Clock,
     ExternalLink,
-    Filter,
     Inbox,
     Mail,
     MessageSquare,
@@ -82,9 +81,13 @@ export default function InquiriesIndex({
     const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
 
     // Dialog State
-    const [selectedInquiry, setSelectedInquiry] = useState<InquiryItem | null>(null);
+    const [selectedInquiry, setSelectedInquiry] = useState<InquiryItem | null>(
+        null,
+    );
     const [adminNotes, setAdminNotes] = useState('');
-    const [statusToUpdate, setStatusToUpdate] = useState<'pending' | 'in_progress' | 'resolved' | 'spam'>('pending');
+    const [statusToUpdate, setStatusToUpdate] = useState<
+        'pending' | 'in_progress' | 'resolved' | 'spam'
+    >('pending');
     const [isUpdating, setIsUpdating] = useState(false);
 
     // Delete State
@@ -127,7 +130,10 @@ export default function InquiriesIndex({
 
     const handleSaveStatus = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!selectedInquiry) return;
+
+        if (!selectedInquiry) {
+            return;
+        }
 
         setIsUpdating(true);
         router.patch(
@@ -150,7 +156,9 @@ export default function InquiriesIndex({
     };
 
     const handleConfirmDelete = () => {
-        if (!deleteTarget) return;
+        if (!deleteTarget) {
+            return;
+        }
 
         setIsDeleting(true);
         router.delete(`/admin/inquiries/${deleteTarget.id}`, {
@@ -158,6 +166,7 @@ export default function InquiriesIndex({
             onSuccess: () => {
                 setDeleteTarget(null);
                 setIsDeleting(false);
+
                 if (selectedInquiry?.id === deleteTarget.id) {
                     setSelectedInquiry(null);
                 }
@@ -172,28 +181,40 @@ export default function InquiriesIndex({
         switch (status) {
             case 'pending':
                 return (
-                    <Badge variant="outline" className="border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-700 dark:bg-amber-950/60 dark:text-amber-300">
+                    <Badge
+                        variant="outline"
+                        className="border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-700 dark:bg-amber-950/60 dark:text-amber-300"
+                    >
                         <Clock className="mr-1 size-3" />
                         Pending
                     </Badge>
                 );
             case 'in_progress':
                 return (
-                    <Badge variant="outline" className="border-blue-300 bg-blue-50 text-blue-800 dark:border-blue-700 dark:bg-blue-950/60 dark:text-blue-300">
+                    <Badge
+                        variant="outline"
+                        className="border-blue-300 bg-blue-50 text-blue-800 dark:border-blue-700 dark:bg-blue-950/60 dark:text-blue-300"
+                    >
                         <AlertCircle className="mr-1 size-3" />
                         In Progress
                     </Badge>
                 );
             case 'resolved':
                 return (
-                    <Badge variant="outline" className="border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
+                    <Badge
+                        variant="outline"
+                        className="border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300"
+                    >
                         <CheckCircle2 className="mr-1 size-3" />
                         Resolved
                     </Badge>
                 );
             case 'spam':
                 return (
-                    <Badge variant="outline" className="border-zinc-300 bg-zinc-100 text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+                    <Badge
+                        variant="outline"
+                        className="border-zinc-300 bg-zinc-100 text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+                    >
                         <Archive className="mr-1 size-3" />
                         Spam / Archived
                     </Badge>
@@ -213,7 +234,8 @@ export default function InquiriesIndex({
                             Citizen Inquiries
                         </h1>
                         <p className="text-sm text-muted-foreground">
-                            Review and respond to messages, feedback, and public inquiries submitted by residents.
+                            Review and respond to messages, feedback, and public
+                            inquiries submitted by residents.
                         </p>
                     </div>
                 </div>
@@ -223,12 +245,12 @@ export default function InquiriesIndex({
                     <Card className="border border-border/80 shadow-xs">
                         <CardContent className="p-4 sm:p-5">
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                                <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                                     Total Inquiries
                                 </span>
                                 <MessageSquare className="size-4 text-muted-foreground" />
                             </div>
-                            <div className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl text-foreground">
+                            <div className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
                                 {stats.total}
                             </div>
                         </CardContent>
@@ -237,12 +259,12 @@ export default function InquiriesIndex({
                     <Card className="border border-border/80 shadow-xs">
                         <CardContent className="p-4 sm:p-5">
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-medium text-amber-600 dark:text-amber-400 uppercase tracking-wider">
+                                <span className="text-xs font-medium tracking-wider text-amber-600 uppercase dark:text-amber-400">
                                     Pending Review
                                 </span>
                                 <Clock className="size-4 text-amber-500" />
                             </div>
-                            <div className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl text-amber-600 dark:text-amber-400">
+                            <div className="mt-2 text-2xl font-bold tracking-tight text-amber-600 sm:text-3xl dark:text-amber-400">
                                 {stats.pending}
                             </div>
                         </CardContent>
@@ -251,12 +273,12 @@ export default function InquiriesIndex({
                     <Card className="border border-border/80 shadow-xs">
                         <CardContent className="p-4 sm:p-5">
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wider">
+                                <span className="text-xs font-medium tracking-wider text-blue-600 uppercase dark:text-blue-400">
                                     In Progress
                                 </span>
                                 <AlertCircle className="size-4 text-blue-500" />
                             </div>
-                            <div className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl text-blue-600 dark:text-blue-400">
+                            <div className="mt-2 text-2xl font-bold tracking-tight text-blue-600 sm:text-3xl dark:text-blue-400">
                                 {stats.in_progress}
                             </div>
                         </CardContent>
@@ -265,12 +287,12 @@ export default function InquiriesIndex({
                     <Card className="border border-border/80 shadow-xs">
                         <CardContent className="p-4 sm:p-5">
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+                                <span className="text-xs font-medium tracking-wider text-emerald-600 uppercase dark:text-emerald-400">
                                     Resolved
                                 </span>
                                 <CheckCircle2 className="size-4 text-emerald-500" />
                             </div>
-                            <div className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl text-emerald-600 dark:text-emerald-400">
+                            <div className="mt-2 text-2xl font-bold tracking-tight text-emerald-600 sm:text-3xl dark:text-emerald-400">
                                 {stats.resolved}
                             </div>
                         </CardContent>
@@ -307,20 +329,23 @@ export default function InquiriesIndex({
                     </div>
 
                     {/* Search Form */}
-                    <form onSubmit={handleSearchSubmit} className="relative w-full sm:w-72">
-                        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                    <form
+                        onSubmit={handleSearchSubmit}
+                        className="relative w-full sm:w-72"
+                    >
+                        <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             type="text"
                             placeholder="Search name, email, subject..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="pl-9 pr-8 text-sm"
+                            className="pr-8 pl-9 text-sm"
                         />
                         {search && (
                             <button
                                 type="button"
                                 onClick={handleClearSearch}
-                                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                className="absolute top-1/2 right-2.5 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                             >
                                 <X className="size-3.5" />
                             </button>
@@ -329,7 +354,7 @@ export default function InquiriesIndex({
                 </div>
 
                 {/* Inquiries List */}
-                <div className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+                <div className="overflow-hidden rounded-xl border border-border bg-card shadow-xs">
                     {inquiries.data.length === 0 ? (
                         <div className="flex flex-col items-center justify-center p-12 text-center">
                             <div className="flex size-14 items-center justify-center rounded-full bg-muted">
@@ -338,7 +363,7 @@ export default function InquiriesIndex({
                             <h3 className="mt-4 text-base font-semibold text-foreground">
                                 No inquiries found
                             </h3>
-                            <p className="mt-1 text-sm text-muted-foreground max-w-sm">
+                            <p className="mt-1 max-w-sm text-sm text-muted-foreground">
                                 {search || statusFilter !== 'all'
                                     ? 'No citizen inquiries match your active search and filter criteria.'
                                     : 'There are currently no public messages or inquiries submitted from the portal.'}
@@ -365,9 +390,9 @@ export default function InquiriesIndex({
                                     key={inquiry.id}
                                     className="flex flex-col gap-3 p-4 transition-colors hover:bg-muted/30 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:p-5"
                                 >
-                                    <div className="flex-1 min-w-0">
+                                    <div className="min-w-0 flex-1">
                                         <div className="flex flex-wrap items-center gap-2">
-                                            <span className="font-semibold text-foreground truncate">
+                                            <span className="truncate font-semibold text-foreground">
                                                 {inquiry.subject}
                                             </span>
                                             {getStatusBadge(inquiry.status)}
@@ -387,11 +412,13 @@ export default function InquiriesIndex({
                                                 {inquiry.email}
                                             </span>
                                             <span>
-                                                Submitted {inquiry.created_at_formatted}
+                                                Submitted{' '}
+                                                {inquiry.created_at_formatted}
                                             </span>
                                             {inquiry.resolved_by && (
-                                                <span className="text-emerald-600 dark:text-emerald-400 font-medium">
-                                                    Resolved by {inquiry.resolved_by.name}
+                                                <span className="font-medium text-emerald-600 dark:text-emerald-400">
+                                                    Resolved by{' '}
+                                                    {inquiry.resolved_by.name}
                                                 </span>
                                             )}
                                         </div>
@@ -401,7 +428,9 @@ export default function InquiriesIndex({
                                         <Button
                                             size="sm"
                                             variant="outline"
-                                            onClick={() => handleOpenInquiry(inquiry)}
+                                            onClick={() =>
+                                                handleOpenInquiry(inquiry)
+                                            }
                                             className="h-8 gap-1.5 text-xs"
                                         >
                                             <MessageSquare className="size-3.5" />
@@ -411,7 +440,9 @@ export default function InquiriesIndex({
                                         <Button
                                             size="icon"
                                             variant="ghost"
-                                            onClick={() => setDeleteTarget(inquiry)}
+                                            onClick={() =>
+                                                setDeleteTarget(inquiry)
+                                            }
                                             className="size-8 text-muted-foreground hover:text-destructive"
                                             title="Delete inquiry"
                                         >
@@ -428,18 +459,31 @@ export default function InquiriesIndex({
                 {inquiries.last_page > 1 && (
                     <div className="flex flex-wrap items-center justify-between gap-4 py-2">
                         <div className="text-xs text-muted-foreground">
-                            Showing page <span className="font-medium text-foreground">{inquiries.current_page}</span> of{' '}
-                            <span className="font-medium text-foreground">{inquiries.last_page}</span> ({inquiries.total} total)
+                            Showing page{' '}
+                            <span className="font-medium text-foreground">
+                                {inquiries.current_page}
+                            </span>{' '}
+                            of{' '}
+                            <span className="font-medium text-foreground">
+                                {inquiries.last_page}
+                            </span>{' '}
+                            ({inquiries.total} total)
                         </div>
 
                         <div className="flex items-center gap-1">
                             {inquiries.links.map((link, idx) => {
-                                const isNumber = !isNaN(Number(link.label));
                                 return (
                                     <button
                                         key={idx}
                                         disabled={!link.url}
-                                        onClick={() => link.url && router.get(link.url, {}, { preserveState: true })}
+                                        onClick={() =>
+                                            link.url &&
+                                            router.get(
+                                                link.url,
+                                                {},
+                                                { preserveState: true },
+                                            )
+                                        }
                                         className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                                             link.active
                                                 ? 'bg-primary text-primary-foreground'
@@ -447,7 +491,9 @@ export default function InquiriesIndex({
                                                   ? 'border border-border bg-background text-foreground hover:bg-muted'
                                                   : 'cursor-not-allowed text-muted-foreground/40'
                                         }`}
-                                        dangerouslySetInnerHTML={{ __html: link.label }}
+                                        dangerouslySetInnerHTML={{
+                                            __html: link.label,
+                                        }}
                                     />
                                 );
                             })}
@@ -477,35 +523,39 @@ export default function InquiriesIndex({
                         <div className="flex flex-col gap-4 py-2">
                             {/* Resident Details Card */}
                             <div className="rounded-xl border border-border/80 bg-muted/40 p-4 text-sm">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                     <div className="space-y-3">
                                         <div>
-                                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider block">
+                                            <span className="block text-xs font-medium tracking-wider text-muted-foreground uppercase">
                                                 Sender Name
                                             </span>
-                                            <span className="font-semibold text-foreground text-base mt-0.5 block">
+                                            <span className="mt-0.5 block text-base font-semibold text-foreground">
                                                 {selectedInquiry.name}
                                             </span>
                                         </div>
                                         <div>
-                                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider block">
+                                            <span className="block text-xs font-medium tracking-wider text-muted-foreground uppercase">
                                                 Current Status
                                             </span>
-                                            <div className="mt-1">{getStatusBadge(selectedInquiry.status)}</div>
+                                            <div className="mt-1">
+                                                {getStatusBadge(
+                                                    selectedInquiry.status,
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
 
                                     <div className="space-y-3">
                                         <div>
-                                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider block">
+                                            <span className="block text-xs font-medium tracking-wider text-muted-foreground uppercase">
                                                 Email Address
                                             </span>
-                                            <span className="font-semibold text-foreground text-sm mt-0.5 block break-all">
+                                            <span className="mt-0.5 block text-sm font-semibold break-all text-foreground">
                                                 {selectedInquiry.email}
                                             </span>
                                             <a
                                                 href={`mailto:${selectedInquiry.email}?subject=Re: ${encodeURIComponent(selectedInquiry.subject)}`}
-                                                className="mt-2 inline-flex items-center gap-1.5 rounded-md border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary hover:bg-primary/20 transition-colors"
+                                                className="mt-2 inline-flex items-center gap-1.5 rounded-md border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary transition-colors hover:bg-primary/20"
                                                 target="_blank"
                                                 rel="noreferrer"
                                             >
@@ -517,10 +567,10 @@ export default function InquiriesIndex({
 
                                         {selectedInquiry.ip_address && (
                                             <div>
-                                                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider block">
+                                                <span className="block text-xs font-medium tracking-wider text-muted-foreground uppercase">
                                                     IP Address
                                                 </span>
-                                                <span className="text-xs font-mono text-muted-foreground mt-0.5 block">
+                                                <span className="mt-0.5 block font-mono text-xs text-muted-foreground">
                                                     {selectedInquiry.ip_address}
                                                 </span>
                                             </div>
@@ -531,28 +581,41 @@ export default function InquiriesIndex({
 
                             {/* Inquiry Message */}
                             <div>
-                                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                <Label className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                                     Message
                                 </Label>
-                                <div className="mt-1.5 whitespace-pre-wrap rounded-lg border border-border bg-background p-4 text-sm text-foreground leading-relaxed">
+                                <div className="mt-1.5 rounded-lg border border-border bg-background p-4 text-sm leading-relaxed whitespace-pre-wrap text-foreground">
                                     {selectedInquiry.message}
                                 </div>
                             </div>
 
                             {/* Status Update Form */}
-                            <form onSubmit={handleSaveStatus} className="flex flex-col gap-3 pt-2">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <form
+                                onSubmit={handleSaveStatus}
+                                className="flex flex-col gap-3 pt-2"
+                            >
+                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                     <div>
-                                        <Label htmlFor="statusSelect" className="text-xs font-medium">
+                                        <Label
+                                            htmlFor="statusSelect"
+                                            className="text-xs font-medium"
+                                        >
                                             Update Status
                                         </Label>
                                         <Select
                                             value={statusToUpdate}
-                                            onValueChange={(val: 'pending' | 'in_progress' | 'resolved' | 'spam') =>
-                                                setStatusToUpdate(val)
-                                            }
+                                            onValueChange={(
+                                                val:
+                                                    | 'pending'
+                                                    | 'in_progress'
+                                                    | 'resolved'
+                                                    | 'spam',
+                                            ) => setStatusToUpdate(val)}
                                         >
-                                            <SelectTrigger id="statusSelect" className="mt-1.5 w-full">
+                                            <SelectTrigger
+                                                id="statusSelect"
+                                                className="mt-1.5 w-full"
+                                            >
                                                 <SelectValue placeholder="Select status" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -577,7 +640,9 @@ export default function InquiriesIndex({
                                                 <SelectItem value="spam">
                                                     <span className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400">
                                                         <Archive className="size-3.5" />
-                                                        <span>Spam / Archived</span>
+                                                        <span>
+                                                            Spam / Archived
+                                                        </span>
                                                     </span>
                                                 </SelectItem>
                                             </SelectContent>
@@ -586,23 +651,39 @@ export default function InquiriesIndex({
 
                                     {selectedInquiry.resolved_by && (
                                         <div>
-                                            <span className="text-xs font-medium text-muted-foreground block">Resolution Details</span>
-                                            <span className="text-xs text-foreground mt-2 block">
-                                                By {selectedInquiry.resolved_by.name} ({selectedInquiry.resolved_at_formatted})
+                                            <span className="block text-xs font-medium text-muted-foreground">
+                                                Resolution Details
+                                            </span>
+                                            <span className="mt-2 block text-xs text-foreground">
+                                                By{' '}
+                                                {
+                                                    selectedInquiry.resolved_by
+                                                        .name
+                                                }{' '}
+                                                (
+                                                {
+                                                    selectedInquiry.resolved_at_formatted
+                                                }
+                                                )
                                             </span>
                                         </div>
                                     )}
                                 </div>
 
                                 <div>
-                                    <Label htmlFor="adminNotes" className="text-xs font-medium">
+                                    <Label
+                                        htmlFor="adminNotes"
+                                        className="text-xs font-medium"
+                                    >
                                         Internal Admin Notes (Optional)
                                     </Label>
                                     <Textarea
                                         id="adminNotes"
                                         placeholder="Add notes about actions taken, phone calls, or resident contact details..."
                                         value={adminNotes}
-                                        onChange={(e) => setAdminNotes(e.target.value)}
+                                        onChange={(e) =>
+                                            setAdminNotes(e.target.value)
+                                        }
                                         rows={3}
                                         className="mt-1.5 text-sm"
                                     />
@@ -617,11 +698,10 @@ export default function InquiriesIndex({
                                     >
                                         Close
                                     </Button>
-                                    <Button
-                                        type="submit"
-                                        disabled={isUpdating}
-                                    >
-                                        {isUpdating ? 'Saving...' : 'Save Updates'}
+                                    <Button type="submit" disabled={isUpdating}>
+                                        {isUpdating
+                                            ? 'Saving...'
+                                            : 'Save Updates'}
                                     </Button>
                                 </DialogFooter>
                             </form>
@@ -643,7 +723,8 @@ export default function InquiriesIndex({
                             <span className="font-semibold text-foreground">
                                 {deleteTarget?.name}
                             </span>{' '}
-                            regarding &quot;{deleteTarget?.subject}&quot;? This record will be permanently removed.
+                            regarding &quot;{deleteTarget?.subject}&quot;? This
+                            record will be permanently removed.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="gap-2">
