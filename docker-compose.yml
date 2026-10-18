@@ -1,0 +1,45 @@
+services:
+  app:
+    image: e-gov-lallana:latest
+    # build: . # Uncomment only if building locally from source code
+    container_name: egov_app
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8080}:80"
+    env_file:
+      - .env
+    environment:
+      PORT: "80"
+      DB_CONNECTION: "pgsql"
+      DB_HOST: "db"
+      DB_PORT: "5432"
+      DB_DATABASE: "${DB_DATABASE:-egov_lallana}"
+      DB_USERNAME: "${DB_USERNAME:-egov_user}"
+      DB_PASSWORD: "${DB_PASSWORD:-secretpassword}"
+      AUTO_MIGRATE: "${AUTO_MIGRATE:-true}"
+      RUN_QUEUE_WORKER: "${RUN_QUEUE_WORKER:-true}"
+    volumes:
+      - app_storage:/var/www/html/storage/app/public
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    container_name: egov_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "${DB_DATABASE:-egov_lallana}"
+      POSTGRES_USER: "${DB_USERNAME:-egov_user}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD:-secretpassword}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-egov_user} -d ${DB_DATABASE:-egov_lallana}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  app_storage:
+  postgres_data:
