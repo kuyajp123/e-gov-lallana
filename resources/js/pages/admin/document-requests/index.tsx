@@ -14,15 +14,15 @@ import {
     XCircle,
 } from 'lucide-react';
 import { useState } from 'react';
-import { DocumentRequestDrawer } from '@/features/admin/document-requests/components/document-request-drawer';
 import type { AdminDocumentRequestItem } from '@/features/admin/document-requests/components/document-request-drawer';
-import { DocumentRequestFilters } from '@/features/admin/document-requests/components/document-request-filters';
+import { DocumentRequestDrawer } from '@/features/admin/document-requests/components/document-request-drawer';
 import type {
     DocumentTypeOption,
     StatusCounts,
 } from '@/features/admin/document-requests/components/document-request-filters';
-import { StatusTransitionModal } from '@/features/admin/document-requests/components/status-transition-modal';
+import { DocumentRequestFilters } from '@/features/admin/document-requests/components/document-request-filters';
 import type { TransitionActionType } from '@/features/admin/document-requests/components/status-transition-modal';
+import { StatusTransitionModal } from '@/features/admin/document-requests/components/status-transition-modal';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import {
@@ -67,8 +67,8 @@ interface AdminDocumentIndexProps {
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Admin Console', href: '/admin' },
-    { title: 'Document Queue', href: '/admin/document-requests' },
+    { title: 'Admin Dashboard', href: '/admin' },
+    { title: 'Document Requests', href: '/admin/document-requests' },
 ];
 
 export default function AdminDocumentIndex({
@@ -115,7 +115,7 @@ export default function AdminDocumentIndex({
 
     return (
         <>
-            <Head title="Document Requests Queue - Barangay Admin" />
+            <Head title="Document Requests - Barangay Admin" />
 
             <div className="flex flex-1 flex-col gap-6 p-4 md:p-8">
                 {/* Header Title Section */}
@@ -123,14 +123,8 @@ export default function AdminDocumentIndex({
                     <div>
                         <div className="flex items-center gap-2.5">
                             <h1 className="text-2xl font-bold tracking-tight text-foreground">
-                                Document Requests Queue
+                                Document Requests
                             </h1>
-                            <Badge
-                                variant="outline"
-                                className="font-mono text-xs font-semibold"
-                            >
-                                {requests.total} total
-                            </Badge>
                         </div>
                         <p className="mt-0.5 text-xs text-muted-foreground">
                             Manage citizen document requests, verify
@@ -148,7 +142,7 @@ export default function AdminDocumentIndex({
                         >
                             <Link href="/admin">
                                 <Building2 className="size-3.5" />
-                                Admin Console
+                                Admin Dashboard
                             </Link>
                         </Button>
                     </div>
@@ -447,7 +441,6 @@ export default function AdminDocumentIndex({
                                                                 >
                                                                     <Eye className="mr-2 size-3.5" />
                                                                     Quick Review
-                                                                    Drawer
                                                                 </DropdownMenuItem>
                                                                 <DropdownMenuItem
                                                                     asChild
@@ -657,7 +650,7 @@ export default function AdminDocumentIndex({
                 )}
             </div>
 
-            {/* Slide-over Inspection Drawer */}
+            {/* Inspection Modal */}
             <DocumentRequestDrawer
                 isOpen={isDrawerOpen}
                 onClose={() => setIsDrawerOpen(false)}

@@ -26,7 +26,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('throttle:6,1')
         ->name('user-password.update');
 
-    Route::inertia('settings/appearance', 'settings/appearance')->name('appearance.edit');
+    Route::get('settings/language', function () {
+        return inertia('settings/language', [
+            'currentLocale' => app()->getLocale(),
+        ]);
+    })->name('language.edit');
+
+    Route::redirect('settings/appearance', '/settings/language')->name('appearance.edit');
 
     Route::get('settings/notifications', [NotificationPreferenceController::class, 'edit'])
         ->name('notifications.preferences.edit');

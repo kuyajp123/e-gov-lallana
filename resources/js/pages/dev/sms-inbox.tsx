@@ -63,7 +63,7 @@ interface DevSmsInboxProps {
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Admin Console', href: '/admin' },
+    { title: 'Admin Dashboard', href: '/admin' },
     { title: 'Developer Diagnostics', href: '/dev/sms' },
 ];
 
@@ -212,7 +212,7 @@ export default function DevSmsInbox({
 
     return (
         <>
-            <Head title="Developer Diagnostics & SMS Simulator | Admin Console" />
+            <Head title="Developer Diagnostics & SMS Simulator | Admin Dashboard" />
 
             <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-4 md:p-6">
                 {/* Page Header */}

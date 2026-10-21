@@ -10,6 +10,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/shared/components/ui/card';
+import { useTranslation } from '@/shared/hooks/use-translation';
 
 export interface DocumentTypeItem {
     id: number;
@@ -31,11 +32,13 @@ export function DocumentTypeCard({
     documentType,
     isHouseholdVerified,
 }: DocumentTypeCardProps) {
+    const { t } = useTranslation();
+
     return (
-        <Card className="flex flex-col justify-between rounded-2xl border-border transition-all hover:shadow-sm">
+        <Card className="flex flex-col justify-between rounded-none border border-border bg-card shadow-none transition-all">
             <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-3">
-                    <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <div className="flex size-10 items-center justify-center rounded-none bg-primary/10 text-primary">
                         <FileText className="size-5" />
                     </div>
                     <Badge
@@ -44,7 +47,7 @@ export function DocumentTypeCard({
                                 ? 'secondary'
                                 : 'outline'
                         }
-                        className={`text-xs font-bold ${
+                        className={`rounded-none text-xs font-bold shadow-none ${
                             documentType.fee_cents === 0
                                 ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
                                 : 'border-primary/30 text-primary'
@@ -66,9 +69,12 @@ export function DocumentTypeCard({
             <CardContent className="space-y-3 pt-0">
                 {documentType.requirements &&
                     documentType.requirements.length > 0 && (
-                        <div className="rounded-xl bg-muted/40 p-3">
+                        <div className="rounded-none bg-muted/40 p-3">
                             <p className="text-[11px] font-semibold text-muted-foreground">
-                                Required Documents:
+                                {t(
+                                    'documents.required_documents',
+                                    'Required Documents:',
+                                )}
                             </p>
                             <ul className="mt-1.5 space-y-1">
                                 {documentType.requirements.map((req, idx) => (
@@ -87,9 +93,18 @@ export function DocumentTypeCard({
 
             <CardFooter className="pt-2">
                 {isHouseholdVerified ? (
-                    <Button asChild className="w-full" size="sm">
+                    <Button
+                        asChild
+                        className="w-full rounded-none shadow-none"
+                        size="sm"
+                    >
                         <Link href={`/documents/create/${documentType.slug}`}>
-                            <span>Request Document</span>
+                            <span>
+                                {t(
+                                    'documents.request_document',
+                                    'Request Document',
+                                )}
+                            </span>
                             <ArrowRight className="ml-1.5 size-3.5" />
                         </Link>
                     </Button>
@@ -97,11 +112,14 @@ export function DocumentTypeCard({
                     <Button
                         variant="secondary"
                         disabled
-                        className="w-full text-xs"
+                        className="w-full rounded-none text-xs shadow-none"
                         size="sm"
                     >
                         <Lock className="mr-1.5 size-3.5" />
-                        Verified Household Required
+                        {t(
+                            'documents.verification_required',
+                            'Verified Household Required',
+                        )}
                     </Button>
                 )}
             </CardFooter>

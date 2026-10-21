@@ -18,8 +18,8 @@ import {
     XCircle,
 } from 'lucide-react';
 import { useState } from 'react';
-import { StatusTransitionModal } from '@/features/admin/document-requests/components/status-transition-modal';
 import type { TransitionActionType } from '@/features/admin/document-requests/components/status-transition-modal';
+import { StatusTransitionModal } from '@/features/admin/document-requests/components/status-transition-modal';
 import { Button } from '@/shared/components/ui/button';
 import {
     Card,
@@ -698,7 +698,7 @@ export default function AdminDocumentShow({
 
 AdminDocumentShow.layout = {
     breadcrumbs: [
-        { title: 'Admin Console', href: '/admin' },
-        { title: 'Document Queue', href: '/admin/document-requests' },
+        { title: 'Admin Dashboard', href: '/admin' },
+        { title: 'Document Requests', href: '/admin/document-requests' },
     ],
 };

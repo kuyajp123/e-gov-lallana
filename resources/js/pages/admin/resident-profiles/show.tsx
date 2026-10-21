@@ -625,7 +625,7 @@ export default function AdminResidentShow({
 
 AdminResidentShow.layout = {
     breadcrumbs: [
-        { title: 'Admin Console', href: '/admin' },
+        { title: 'Admin Dashboard', href: '/admin' },
         { title: 'Resident Registry', href: '/admin/resident-profiles' },
     ],
 };

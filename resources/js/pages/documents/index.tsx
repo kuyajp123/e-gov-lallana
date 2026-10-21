@@ -17,6 +17,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/shared/components/ui/card';
+import { useTranslation } from '@/shared/hooks/use-translation';
 import type { BreadcrumbItem } from '@/shared/types';
 
 interface DocumentRequestItem {
@@ -65,50 +66,61 @@ export default function DocumentIndex({
     requests,
     isHouseholdVerified = false,
 }: DocumentIndexProps) {
+    const { t } = useTranslation();
     const userRequests = requests?.data || [];
 
     return (
         <>
-            <Head title="Document Requests & Services" />
+            <Head
+                title={t('documents.title', 'Document Requests & Services')}
+            />
 
             <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 p-4 md:p-8">
                 {/* Header Banner */}
                 <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight text-foreground">
-                            Barangay Document Services
+                            {t('documents.title', 'Barangay Document Services')}
                         </h1>
                         <p className="text-sm text-muted-foreground">
-                            Request official barangay clearances, certificates,
-                            and indigency documents online.
+                            {t(
+                                'documents.subtitle',
+                                'Request official barangay clearances, certificates, and indigency documents online.',
+                            )}
                         </p>
                     </div>
                 </div>
 
                 {/* Verification Notice Banner if Unverified */}
                 {!isHouseholdVerified && (
-                    <Alert className="rounded-2xl border-amber-500/40 bg-amber-500/10 text-amber-900 dark:text-amber-200">
-                        <Lock className="size-5 text-amber-600 dark:text-amber-400" />
+                    <Alert className="rounded-none border-amber-500/40 bg-amber-500/10 text-amber-900 shadow-none">
+                        <Lock className="size-5 text-amber-600" />
                         <div className="flex w-full flex-col justify-between gap-3 sm:flex-row sm:items-center">
                             <div>
-                                <AlertTitle className="font-semibold text-amber-950 dark:text-amber-100">
-                                    Household Verification Required
+                                <AlertTitle className="font-semibold text-amber-950">
+                                    {t(
+                                        'documents.household_verification_required',
+                                        'Household Verification Required',
+                                    )}
                                 </AlertTitle>
-                                <AlertDescription className="mt-1 text-xs text-amber-800 dark:text-amber-300">
-                                    To maintain official barangay record
-                                    integrity, you must belong to an approved
-                                    and verified household before submitting
-                                    document requests.
+                                <AlertDescription className="mt-1 text-xs text-amber-800">
+                                    {t(
+                                        'documents.household_verification_desc',
+                                        'To maintain official barangay record integrity, you must belong to an approved and verified household before submitting document requests.',
+                                    )}
                                 </AlertDescription>
                             </div>
                             <Button
                                 asChild
                                 size="sm"
                                 variant="outline"
-                                className="shrink-0 border-amber-600/30 bg-background text-foreground hover:bg-muted"
+                                className="shrink-0 rounded-none border-amber-600/30 bg-background text-foreground shadow-none hover:bg-muted"
                             >
                                 <Link href="/household">
-                                    Check Household Status →
+                                    {t(
+                                        'documents.check_household_status',
+                                        'Check Household Status →',
+                                    )}
                                 </Link>
                             </Button>
                         </div>
@@ -120,10 +132,16 @@ export default function DocumentIndex({
                     <div className="flex items-center justify-between">
                         <div>
                             <h2 className="text-base font-bold tracking-tight text-foreground">
-                                Available Document Types
+                                {t(
+                                    'documents.available_types',
+                                    'Available Document Types',
+                                )}
                             </h2>
                             <p className="text-xs text-muted-foreground">
-                                Select a document to start a new request.
+                                {t(
+                                    'documents.available_types_desc',
+                                    'Select a document to start a new request.',
+                                )}
                             </p>
                         </div>
                     </div>
@@ -140,18 +158,23 @@ export default function DocumentIndex({
                 </div>
 
                 {/* My Requests History Table */}
-                <Card className="rounded-2xl border-border">
+                <Card className="rounded-none border-border shadow-none">
                     <CardHeader className="pb-4">
                         <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
                             <div>
                                 <CardTitle className="flex items-center gap-2 text-base font-bold">
                                     <FileText className="size-4 text-primary" />
-                                    My Document Requests ({requests?.total || 0}
-                                    )
+                                    {t(
+                                        'documents.my_requests',
+                                        'My Document Requests',
+                                    )}{' '}
+                                    ({requests?.total || 0})
                                 </CardTitle>
                                 <CardDescription className="text-xs">
-                                    Track the real-time processing and pickup
-                                    status of your submitted requests.
+                                    {t(
+                                        'documents.my_requests_description',
+                                        'Track the real-time processing and pickup status of your submitted requests.',
+                                    )}
                                 </CardDescription>
                             </div>
                         </div>
@@ -163,25 +186,43 @@ export default function DocumentIndex({
                                     <thead>
                                         <tr className="border-b border-border/60 text-muted-foreground">
                                             <th className="py-3 font-semibold">
-                                                Reference Code
+                                                {t(
+                                                    'documents.reference_code',
+                                                    'Reference Code',
+                                                )}
                                             </th>
                                             <th className="py-3 font-semibold">
-                                                Document Type
+                                                {t(
+                                                    'documents.document_type',
+                                                    'Document Type',
+                                                )}
                                             </th>
                                             <th className="py-3 font-semibold">
-                                                Status
+                                                {t(
+                                                    'documents.status',
+                                                    'Status',
+                                                )}
                                             </th>
                                             <th className="py-3 font-semibold">
-                                                Fee
+                                                {t('documents.fee', 'Fee')}
                                             </th>
                                             <th className="py-3 font-semibold">
-                                                Payment
+                                                {t(
+                                                    'documents.payment',
+                                                    'Payment',
+                                                )}
                                             </th>
                                             <th className="py-3 font-semibold">
-                                                Submitted
+                                                {t(
+                                                    'documents.submitted',
+                                                    'Submitted',
+                                                )}
                                             </th>
                                             <th className="py-3 text-right font-semibold">
-                                                Action
+                                                {t(
+                                                    'documents.action',
+                                                    'Action',
+                                                )}
                                             </th>
                                         </tr>
                                     </thead>
@@ -216,7 +257,7 @@ export default function DocumentIndex({
                                                 <td className="py-3">
                                                     <Badge
                                                         variant="outline"
-                                                        className="text-[10px] capitalize"
+                                                        className="rounded-none text-[10px] capitalize shadow-none"
                                                     >
                                                         {req.payment_label}
                                                     </Badge>
@@ -240,12 +281,15 @@ export default function DocumentIndex({
                                                         asChild
                                                         variant="outline"
                                                         size="sm"
-                                                        className="h-7 text-xs"
+                                                        className="h-7 rounded-none text-xs shadow-none"
                                                     >
                                                         <Link
                                                             href={`/documents/${req.id}`}
                                                         >
-                                                            View Details
+                                                            {t(
+                                                                'documents.view_details',
+                                                                'View Details',
+                                                            )}
                                                         </Link>
                                                     </Button>
                                                 </td>
@@ -269,7 +313,7 @@ export default function DocumentIndex({
                                                             : 'outline'
                                                     }
                                                     size="sm"
-                                                    className="h-7 text-xs"
+                                                    className="h-7 rounded-none text-xs shadow-none"
                                                 >
                                                     {link.url ? (
                                                         <Link
@@ -291,14 +335,19 @@ export default function DocumentIndex({
                                     )}
                             </div>
                         ) : (
-                            <div className="rounded-xl border border-dashed border-border/80 p-8 text-center">
+                            <div className="rounded-none border border-dashed border-border/80 p-8 text-center">
                                 <FileText className="mx-auto size-8 text-muted-foreground/50" />
                                 <p className="mt-2 text-xs font-semibold text-foreground">
-                                    No document requests yet
+                                    {t(
+                                        'documents.no_requests',
+                                        'No document requests yet',
+                                    )}
                                 </p>
                                 <p className="mt-1 text-xs text-muted-foreground">
-                                    Select any available document type above to
-                                    submit your first request.
+                                    {t(
+                                        'documents.no_requests_desc',
+                                        'Select any available document type above to submit your first request.',
+                                    )}
                                 </p>
                             </div>
                         )}

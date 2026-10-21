@@ -17,6 +17,7 @@ import {
     CardTitle,
 } from '@/shared/components/ui/card';
 import { Spinner } from '@/shared/components/ui/spinner';
+import { useTranslation } from '@/shared/hooks/use-translation';
 
 export interface PendingHouseholdInvitation {
     id: number;
@@ -39,6 +40,7 @@ interface HouseholdInvitationCardProps {
 export function HouseholdInvitationCard({
     invitation,
 }: HouseholdInvitationCardProps) {
+    const { t } = useTranslation();
     const [actionLoading, setActionLoading] = useState<
         'accept' | 'reject' | null
     >(null);
@@ -58,7 +60,10 @@ export function HouseholdInvitationCard({
     const handleReject = () => {
         if (
             !confirm(
-                'Are you sure you want to decline this household invitation?',
+                t(
+                    'household.decline_confirm',
+                    'Are you sure you want to decline this household invitation?',
+                ),
             )
         ) {
             return;
@@ -89,36 +94,41 @@ export function HouseholdInvitationCard({
         : 'FH';
 
     return (
-        <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-card to-card shadow-sm">
+        <Card className="rounded-none border border-border bg-card shadow-none">
             <CardHeader className="pb-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
-                        <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                        <div className="flex size-9 items-center justify-center rounded-none bg-primary/10 text-primary">
                             <Home className="size-5" />
                         </div>
                         <div>
                             <CardTitle className="text-base font-semibold">
-                                Household Membership Invitation
+                                {t(
+                                    'household.invitation_title',
+                                    'Household Membership Invitation',
+                                )}
                             </CardTitle>
                             <CardDescription className="text-xs">
-                                You have been invited to join this registered
-                                household
+                                {t(
+                                    'household.invitation_desc',
+                                    'You have been invited to join this registered household',
+                                )}
                             </CardDescription>
                         </div>
                     </div>
                     <Badge
                         variant="outline"
-                        className="border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                        className="rounded-none border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400"
                     >
-                        Action Required
+                        {t('household.action_required', 'Action Required')}
                     </Badge>
                 </div>
             </CardHeader>
 
             <CardContent className="space-y-4 text-sm">
-                <div className="grid gap-3 rounded-xl border border-border/70 bg-card/60 p-3 sm:grid-cols-2">
+                <div className="grid gap-3 rounded-none border border-border bg-card p-3 sm:grid-cols-2">
                     <div className="flex items-center gap-3">
-                        <Avatar className="size-10 border border-border">
+                        <Avatar className="size-10 rounded-none border border-border">
                             {invitation.household?.family_head_avatar && (
                                 <AvatarImage
                                     src={
@@ -127,13 +137,16 @@ export function HouseholdInvitationCard({
                                     alt={invitation.household.family_head_name}
                                 />
                             )}
-                            <AvatarFallback className="text-xs font-semibold">
+                            <AvatarFallback className="rounded-none text-xs font-semibold">
                                 {initials}
                             </AvatarFallback>
                         </Avatar>
                         <div>
                             <p className="text-xs text-muted-foreground">
-                                Family Head
+                                {t(
+                                    'household.family_head_label',
+                                    'Family Head',
+                                )}
                             </p>
                             <p className="font-medium text-foreground">
                                 {invitation.household?.family_head_name ??
@@ -145,7 +158,7 @@ export function HouseholdInvitationCard({
                     <div className="flex items-center gap-2 text-xs text-muted-foreground sm:justify-end">
                         <Badge
                             variant="secondary"
-                            className="font-mono text-xs"
+                            className="rounded-none font-mono text-xs"
                         >
                             {invitation.household?.household_code ??
                                 'HH-UNKNOWN'}
@@ -163,50 +176,51 @@ export function HouseholdInvitationCard({
                     <div className="flex items-center gap-2 text-xs text-muted-foreground sm:col-span-2">
                         <User className="size-3.5 shrink-0 text-primary" />
                         <span>
-                            Your designated role:{' '}
-                            <strong className="font-semibold text-foreground">
-                                {relationshipFormatted}
-                            </strong>
+                            {t(
+                                'household.designated_role',
+                                'Your designated role: :role',
+                                { role: relationshipFormatted },
+                            )}
                         </span>
                     </div>
                 </div>
 
                 <p className="text-xs text-muted-foreground">
-                    Accepting this invitation links your portal account to this
-                    household. You will be able to access verified household
-                    e-services and request barangay documents under this
-                    household address.
+                    {t(
+                        'household.invitation_info',
+                        'Accepting this invitation links your portal account to this household. You will be able to access verified household e-services and request barangay documents under this household address.',
+                    )}
                 </p>
             </CardContent>
 
-            <CardFooter className="flex justify-end gap-2 border-t border-border/60 pt-3">
+            <CardFooter className="flex justify-end gap-2 border-t border-border pt-3">
                 <Button
                     variant="outline"
                     size="sm"
                     onClick={handleReject}
                     disabled={actionLoading !== null}
-                    className="gap-1.5 text-muted-foreground hover:text-destructive"
+                    className="gap-1.5 rounded-none text-muted-foreground shadow-none hover:text-destructive"
                 >
                     {actionLoading === 'reject' ? (
                         <Spinner className="size-3.5" />
                     ) : (
                         <X className="size-3.5" />
                     )}
-                    Decline
+                    {t('household.decline', 'Decline')}
                 </Button>
 
                 <Button
                     size="sm"
                     onClick={handleAccept}
                     disabled={actionLoading !== null}
-                    className="gap-1.5"
+                    className="gap-1.5 rounded-none shadow-none"
                 >
                     {actionLoading === 'accept' ? (
                         <Spinner className="size-3.5" />
                     ) : (
                         <Check className="size-3.5" />
                     )}
-                    Accept Invitation
+                    {t('household.accept_invitation', 'Accept Invitation')}
                 </Button>
             </CardFooter>
         </Card>

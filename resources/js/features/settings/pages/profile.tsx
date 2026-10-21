@@ -1,6 +1,6 @@
 import { Form, Head, usePage } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
-import { AlertCircle, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Loader2, ShieldAlert } from 'lucide-react';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import { ProfileForm } from '@/features/resident/components/profile-form';
 import type { ResidentProfileData } from '@/features/resident/components/profile-form';
@@ -26,6 +26,7 @@ import {
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { Separator } from '@/shared/components/ui/separator';
+import { useTranslation } from '@/shared/hooks/use-translation';
 import { cn } from '@/shared/lib/utils';
 import type { Auth } from '@/shared/types';
 
@@ -43,6 +44,7 @@ export default function Profile({
     profile?: ResidentProfileData | null;
 }) {
     const { auth } = usePage<PageProps>().props;
+    const { t } = useTranslation();
 
     const nameParts = (auth.user.name || '').trim().split(' ');
     const defaultFirstName = profile?.first_name || nameParts[0] || '';
@@ -74,17 +76,23 @@ export default function Profile({
 
     return (
         <>
-            <Head title="Profile settings" />
+            <Head title={t('settings.nav_profile', 'Profile')} />
 
-            <h1 className="sr-only">Profile settings</h1>
+            <h1 className="sr-only">{t('settings.nav_profile', 'Profile')}</h1>
 
             <div className="space-y-8">
                 {/* Account Details */}
                 <div className="space-y-6">
                     <Heading
                         variant="small"
-                        title="Account Information"
-                        description="Update your account name, email address, and mobile phone number"
+                        title={t(
+                            'settings.account_info',
+                            'Account Information',
+                        )}
+                        description={t(
+                            'settings.account_info_desc',
+                            'Update your account name, email address, and mobile phone number',
+                        )}
                     />
 
                     <Form
@@ -99,17 +107,23 @@ export default function Profile({
                                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                                     <div className="grid gap-2">
                                         <Label htmlFor="first_name">
-                                            First name
+                                            {t(
+                                                'settings.first_name',
+                                                'First name',
+                                            )}
                                         </Label>
 
                                         <Input
                                             id="first_name"
-                                            className="mt-1 block w-full"
+                                            className="mt-1 block w-full rounded-none"
                                             defaultValue={defaultFirstName}
                                             name="first_name"
                                             required
                                             autoComplete="given-name"
-                                            placeholder="First name"
+                                            placeholder={t(
+                                                'settings.first_name',
+                                                'First name',
+                                            )}
                                         />
 
                                         <InputError
@@ -120,16 +134,22 @@ export default function Profile({
 
                                     <div className="grid gap-2">
                                         <Label htmlFor="middle_name">
-                                            Middle name
+                                            {t(
+                                                'settings.middle_name',
+                                                'Middle name',
+                                            )}
                                         </Label>
 
                                         <Input
                                             id="middle_name"
-                                            className="mt-1 block w-full"
+                                            className="mt-1 block w-full rounded-none"
                                             defaultValue={defaultMiddleName}
                                             name="middle_name"
                                             autoComplete="additional-name"
-                                            placeholder="Middle name (optional)"
+                                            placeholder={t(
+                                                'settings.middle_name',
+                                                'Middle name',
+                                            )}
                                         />
 
                                         <InputError
@@ -140,17 +160,23 @@ export default function Profile({
 
                                     <div className="grid gap-2">
                                         <Label htmlFor="last_name">
-                                            Last name
+                                            {t(
+                                                'settings.last_name',
+                                                'Last name',
+                                            )}
                                         </Label>
 
                                         <Input
                                             id="last_name"
-                                            className="mt-1 block w-full"
+                                            className="mt-1 block w-full rounded-none"
                                             defaultValue={defaultLastName}
                                             name="last_name"
                                             required
                                             autoComplete="family-name"
-                                            placeholder="Last name"
+                                            placeholder={t(
+                                                'settings.last_name',
+                                                'Last name',
+                                            )}
                                         />
 
                                         <InputError
@@ -160,15 +186,17 @@ export default function Profile({
                                     </div>
 
                                     <div className="grid gap-2">
-                                        <Label htmlFor="suffix">Suffix</Label>
+                                        <Label htmlFor="suffix">
+                                            {t('settings.suffix', 'Suffix')}
+                                        </Label>
 
                                         <Input
                                             id="suffix"
-                                            className="mt-1 block w-full"
+                                            className="mt-1 block w-full rounded-none"
                                             defaultValue={defaultSuffix}
                                             name="suffix"
                                             autoComplete="honorific-suffix"
-                                            placeholder="Jr., Sr., III (optional)"
+                                            placeholder="Jr., Sr., III"
                                         />
 
                                         <InputError
@@ -179,17 +207,22 @@ export default function Profile({
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="email">Email address</Label>
+                                    <Label htmlFor="email">
+                                        {t('settings.email', 'Email address')}
+                                    </Label>
 
                                     <Input
                                         id="email"
                                         type="email"
-                                        className="mt-1 block w-full"
+                                        className="mt-1 block w-full rounded-none"
                                         defaultValue={auth.user.email}
                                         name="email"
                                         required
                                         autoComplete="username"
-                                        placeholder="Email address"
+                                        placeholder={t(
+                                            'settings.email',
+                                            'Email address',
+                                        )}
                                     />
 
                                     <InputError
@@ -200,19 +233,22 @@ export default function Profile({
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="phone_number">
-                                        Mobile phone number
+                                        {t(
+                                            'settings.phone_number',
+                                            'Mobile phone number',
+                                        )}
                                     </Label>
 
                                     <Input
                                         id="phone_number"
                                         type="tel"
-                                        className="mt-1 block w-full"
+                                        className="mt-1 block w-full rounded-none"
                                         defaultValue={
                                             auth.user.phone_number ?? ''
                                         }
                                         name="phone_number"
                                         autoComplete="tel"
-                                        placeholder="e.g. 09171234567 or +639171234567"
+                                        placeholder="09171234567"
                                     />
 
                                     <InputError
@@ -252,8 +288,12 @@ export default function Profile({
                                     <Button
                                         disabled={processing}
                                         data-test="update-profile-button"
+                                        className="rounded-none shadow-none"
                                     >
-                                        Save
+                                        {processing && (
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        )}
+                                        {t('settings.save_account', 'Save')}
                                     </Button>
                                 </div>
                             </>
@@ -268,13 +308,19 @@ export default function Profile({
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <Heading
                             variant="small"
-                            title="Resident Profile & KYC"
-                            description="Official demographic information and identity verification for Barangay e-services"
+                            title={t(
+                                'settings.kyc_profile_title',
+                                'Resident Profile & KYC',
+                            )}
+                            description={t(
+                                'settings.kyc_profile_desc',
+                                'Official demographic information and identity verification for Barangay e-services',
+                            )}
                         />
                         <Badge
                             variant={isKycComplete ? 'default' : 'secondary'}
                             className={cn(
-                                'w-fit text-xs font-semibold',
+                                'w-fit rounded-none text-xs font-semibold',
                                 isKycComplete
                                     ? 'bg-emerald-600 text-white hover:bg-emerald-700'
                                     : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300',
@@ -283,41 +329,54 @@ export default function Profile({
                             {isKycComplete ? (
                                 <span className="flex items-center gap-1">
                                     <CheckCircle2 className="size-3.5" />
-                                    KYC Complete
+                                    {t(
+                                        'settings.kyc_verified_badge',
+                                        'KYC Complete',
+                                    )}
                                 </span>
                             ) : (
                                 <span className="flex items-center gap-1">
                                     <AlertCircle className="size-3.5" />
-                                    KYC Incomplete
+                                    {t(
+                                        'settings.kyc_incomplete_badge',
+                                        'KYC Incomplete',
+                                    )}
                                 </span>
                             )}
                         </Badge>
                     </div>
 
                     {!isKycComplete && (
-                        <Alert className="border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-200">
+                        <Alert className="rounded-none border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-200">
                             <ShieldAlert className="size-4 text-amber-600 dark:text-amber-400" />
                             <AlertTitle className="font-semibold">
-                                Complete Profile & Government ID Required
+                                {t(
+                                    'settings.kyc_alert_title',
+                                    'Complete Profile & Government ID Required',
+                                )}
                             </AlertTitle>
                             <AlertDescription className="text-xs">
-                                Please fill in your resident demographic
-                                information and upload a valid government-issued
-                                ID below. Both a completed profile (with
-                                Government ID) and a verified household are
-                                required to request official barangay documents.
+                                {t(
+                                    'settings.kyc_alert_desc',
+                                    'Please fill in your resident demographic information and upload a valid government-issued ID below. Both a completed profile (with Government ID) and a verified household are required to request official barangay documents.',
+                                )}
                             </AlertDescription>
                         </Alert>
                     )}
 
-                    <Card className="rounded-xl border-border">
+                    <Card className="rounded-none border-border shadow-none">
                         <CardHeader className="pb-4">
                             <CardTitle className="text-base font-semibold">
-                                Resident Information Form
+                                {t(
+                                    'settings.resident_info_form',
+                                    'Resident Information Form',
+                                )}
                             </CardTitle>
                             <CardDescription>
-                                Official records are stored securely and
-                                verified by Barangay administrators.
+                                {t(
+                                    'settings.resident_info_form_desc',
+                                    'Official records are stored securely and verified by Barangay administrators.',
+                                )}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>

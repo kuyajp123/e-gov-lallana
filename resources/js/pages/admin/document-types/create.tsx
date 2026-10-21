@@ -1,8 +1,8 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft, Check, Plus, X } from 'lucide-react';
 import React, { useState } from 'react';
-import { FormSchemaBuilder } from '@/features/admin/document-types/components/form-schema-builder';
 import type { FormSchemaField } from '@/features/admin/document-types/components/form-schema-builder';
+import { FormSchemaBuilder } from '@/features/admin/document-types/components/form-schema-builder';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import {
@@ -83,7 +83,7 @@ export default function DocumentTypeCreate() {
 
     return (
         <>
-            <Head title="Create Document Type | Admin Console" />
+            <Head title="Create Document Type | Admin Dashboard" />
 
             <div className="mx-auto w-full max-w-5xl space-y-6 p-4 md:p-6">
                 {/* Header */}

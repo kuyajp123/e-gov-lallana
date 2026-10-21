@@ -5,22 +5,28 @@ import PasswordInput from '@/shared/components/password-input';
 import { Button } from '@/shared/components/ui/button';
 import { Label } from '@/shared/components/ui/label';
 import { Spinner } from '@/shared/components/ui/spinner';
+import { useTranslation } from '@/shared/hooks/use-translation';
 
 export default function ConfirmPassword() {
+    const { t } = useTranslation();
+
     return (
         <>
-            <Head title="Confirm password" />
+            <Head title={t('auth.confirm_password', 'Confirm password')} />
 
             <Form {...store.form()} resetOnSuccess={['password']}>
                 {({ processing, errors }) => (
                     <div className="space-y-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password">
+                                {t('auth.password', 'Password')}
+                            </Label>
                             <PasswordInput
                                 id="password"
                                 name="password"
-                                placeholder="Password"
+                                placeholder={t('auth.password', 'Password')}
                                 autoComplete="current-password"
+                                className="rounded-none"
                                 autoFocus
                             />
 
@@ -29,12 +35,12 @@ export default function ConfirmPassword() {
 
                         <div className="flex items-center">
                             <Button
-                                className="w-full"
+                                className="w-full rounded-none shadow-none"
                                 disabled={processing}
                                 data-test="confirm-password-button"
                             >
-                                {processing && <Spinner />}
-                                Confirm password
+                                {processing && <Spinner className="mr-2" />}
+                                {t('auth.confirm_password', 'Confirm password')}
                             </Button>
                         </div>
                     </div>

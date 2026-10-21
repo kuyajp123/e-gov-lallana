@@ -10,11 +10,11 @@ import {
     X,
 } from 'lucide-react';
 import { useState } from 'react';
+import type { AdminResidentProfileItem } from '@/features/admin/resident-profiles/components/resident-profile-drawer';
 import {
     AdminRoleBadge,
     ResidentProfileDrawer,
 } from '@/features/admin/resident-profiles/components/resident-profile-drawer';
-import type { AdminResidentProfileItem } from '@/features/admin/resident-profiles/components/resident-profile-drawer';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import {
@@ -67,7 +67,7 @@ interface AdminResidentIndexProps {
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Admin Console', href: '/admin' },
+    { title: 'Admin Dashboard', href: '/admin' },
     { title: 'Resident Registry', href: '/admin/resident-profiles' },
 ];
 
@@ -175,7 +175,7 @@ export default function AdminResidentIndex({
                         >
                             <Link href="/admin">
                                 <Building2 className="size-3.5" />
-                                Admin Console
+                                Admin Dashboard
                             </Link>
                         </Button>
                     </div>
@@ -621,7 +621,7 @@ export default function AdminResidentIndex({
                 )}
             </div>
 
-            {/* Slide-over Inspection Drawer */}
+            {/* Inspection Modal */}
             <ResidentProfileDrawer
                 isOpen={isDrawerOpen}
                 onClose={() => setIsDrawerOpen(false)}

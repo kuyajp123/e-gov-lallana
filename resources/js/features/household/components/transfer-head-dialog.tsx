@@ -20,6 +20,7 @@ import {
     SelectValue,
 } from '@/shared/components/ui/select';
 import { Spinner } from '@/shared/components/ui/spinner';
+import { useTranslation } from '@/shared/hooks/use-translation';
 
 interface MemberOption {
     id: number;
@@ -36,6 +37,7 @@ interface TransferHeadDialogProps {
 }
 
 export function TransferHeadDialog({ members }: TransferHeadDialogProps) {
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
 
     // Sort eligible members by succession priority:
@@ -125,15 +127,20 @@ export function TransferHeadDialog({ members }: TransferHeadDialogProps) {
                 <Button
                     size="sm"
                     variant="outline"
-                    className="gap-1.5 text-muted-foreground hover:text-foreground"
+                    className="gap-1.5 rounded-none text-muted-foreground shadow-none hover:text-foreground"
                 >
                     <ArrowRightLeft className="size-3.5" />
-                    Transfer Head Authority
+                    {t('household.transfer_head', 'Transfer Head Authority')}
                 </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md rounded-2xl">
+            <DialogContent className="max-w-md rounded-none shadow-none">
                 <DialogHeader>
-                    <DialogTitle>Transfer Family Head Authority</DialogTitle>
+                    <DialogTitle>
+                        {t(
+                            'household.transfer_head',
+                            'Transfer Family Head Authority',
+                        )}
+                    </DialogTitle>
                     <DialogDescription>
                         Designate another registered household member as the
                         primary Family Head.
@@ -141,7 +148,7 @@ export function TransferHeadDialog({ members }: TransferHeadDialogProps) {
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="space-y-4 pt-2">
-                    <Alert className="rounded-xl border-amber-500/30 bg-amber-500/10 text-amber-900 dark:text-amber-200">
+                    <Alert className="rounded-none border-amber-500/30 bg-amber-500/10 text-amber-900 dark:text-amber-200">
                         <ShieldAlert className="size-4 text-amber-600 dark:text-amber-400" />
                         <AlertDescription className="space-y-1 text-xs">
                             <p>
@@ -155,7 +162,10 @@ export function TransferHeadDialog({ members }: TransferHeadDialogProps) {
 
                     <div className="space-y-2">
                         <Label htmlFor="new_head">
-                            Select New Family Head{' '}
+                            {t(
+                                'household.designated_head',
+                                'Select New Family Head',
+                            )}{' '}
                             <span className="text-destructive">*</span>
                         </Label>
                         <Select
@@ -164,10 +174,13 @@ export function TransferHeadDialog({ members }: TransferHeadDialogProps) {
                                 setData('new_family_head_member_id', val)
                             }
                         >
-                            <SelectTrigger id="new_head">
+                            <SelectTrigger
+                                id="new_head"
+                                className="rounded-none"
+                            >
                                 <SelectValue placeholder="Choose a household member" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="rounded-none">
                                 {eligibleMembers.map((member) => {
                                     const isSpouse =
                                         member.is_spouse ??
@@ -181,6 +194,7 @@ export function TransferHeadDialog({ members }: TransferHeadDialogProps) {
                                         <SelectItem
                                             key={member.id}
                                             value={member.id.toString()}
+                                            className="rounded-none"
                                         >
                                             <div className="flex items-center gap-2">
                                                 <span>
@@ -191,13 +205,13 @@ export function TransferHeadDialog({ members }: TransferHeadDialogProps) {
                                                     )
                                                 </span>
                                                 {isSpouse && (
-                                                    <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800 dark:bg-amber-950 dark:text-amber-300">
+                                                    <span className="rounded-none bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800 dark:bg-amber-950 dark:text-amber-300">
                                                         Priority: Spouse
                                                     </span>
                                                 )}
                                                 {!isSpouse &&
                                                     isVerifiedAdult && (
-                                                        <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                                                        <span className="rounded-none bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
                                                             Priority: Verified
                                                             Adult
                                                         </span>
@@ -219,13 +233,15 @@ export function TransferHeadDialog({ members }: TransferHeadDialogProps) {
                         <Button
                             type="button"
                             variant="outline"
+                            className="rounded-none shadow-none"
                             onClick={() => setOpen(false)}
                         >
-                            Cancel
+                            {t('common.cancel', 'Cancel')}
                         </Button>
                         <Button
                             type="submit"
                             variant="destructive"
+                            className="rounded-none shadow-none"
                             disabled={
                                 processing || !data.new_family_head_member_id
                             }
@@ -233,10 +249,15 @@ export function TransferHeadDialog({ members }: TransferHeadDialogProps) {
                             {processing ? (
                                 <div className="flex items-center gap-1.5">
                                     <Spinner className="size-4" />
-                                    <span>Transferring...</span>
+                                    <span>
+                                        {t(
+                                            'common.please_wait',
+                                            'Transferring...',
+                                        )}
+                                    </span>
                                 </div>
                             ) : (
-                                'Confirm Transfer'
+                                t('common.submit', 'Confirm Transfer')
                             )}
                         </Button>
                     </div>

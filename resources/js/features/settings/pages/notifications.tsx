@@ -24,6 +24,7 @@ import {
 } from '@/shared/components/ui/card';
 import { Checkbox } from '@/shared/components/ui/checkbox';
 import { Label } from '@/shared/components/ui/label';
+import { useTranslation } from '@/shared/hooks/use-translation';
 import type {
     BreadcrumbItem,
     NotificationPreferenceType,
@@ -46,6 +47,7 @@ export default function NotificationsSettings({
     hasPhoneNumber,
     phoneNumber,
 }: Props) {
+    const { t } = useTranslation();
     const { data, setData, patch, processing, recentlySuccessful, errors } =
         useForm({
             preferred_channel: preference.preferred_channel || 'email',
@@ -100,25 +102,38 @@ export default function NotificationsSettings({
 
     return (
         <>
-            <Head title="Notification settings" />
+            <Head
+                title={t(
+                    'settings.notifications_title',
+                    'Notification Preferences',
+                )}
+            />
 
-            <h1 className="sr-only">Notification settings</h1>
+            <h1 className="sr-only">
+                {t('settings.notifications_title', 'Notification Preferences')}
+            </h1>
 
             <div className="max-w-2xl space-y-6">
                 <Heading
                     variant="small"
-                    title="Notification Preferences"
-                    description="Choose how and when you want to receive alerts and official updates."
+                    title={t(
+                        'settings.notifications_title',
+                        'Notification Preferences',
+                    )}
+                    description={t(
+                        'settings.notifications_subtitle',
+                        'Choose how and when you want to receive alerts and official updates.',
+                    )}
                 />
 
                 <form onSubmit={submit} className="space-y-6">
                     {/* Channel Selection */}
-                    <Card>
+                    <Card className="rounded-none border border-border bg-card shadow-none">
                         <CardHeader className="pb-3">
-                            <CardTitle className="text-base">
+                            <CardTitle className="text-base font-bold">
                                 Primary Notification Channel
                             </CardTitle>
-                            <CardDescription>
+                            <CardDescription className="text-xs">
                                 Select your preferred delivery method for
                                 notifications and alerts.
                             </CardDescription>
@@ -142,7 +157,7 @@ export default function NotificationsSettings({
                                                 );
                                             }
                                         }}
-                                        className={`flex cursor-pointer items-start gap-3.5 rounded-lg border p-3.5 transition-all ${
+                                        className={`flex cursor-pointer items-start gap-3.5 rounded-none border p-3.5 shadow-none transition-all ${
                                             isSelected
                                                 ? 'border-primary bg-primary/[0.03] ring-1 ring-primary dark:bg-primary/[0.08]'
                                                 : isDisabled
@@ -150,7 +165,7 @@ export default function NotificationsSettings({
                                                   : 'hover:border-muted-foreground/40 hover:bg-muted/30'
                                         }`}
                                     >
-                                        <div className="mt-0.5 shrink-0 rounded-full bg-muted p-2">
+                                        <div className="mt-0.5 shrink-0 rounded-none bg-muted p-2">
                                             <Icon className="size-4 text-foreground" />
                                         </div>
                                         <div className="min-w-0 flex-1 space-y-0.5">
@@ -180,7 +195,7 @@ export default function NotificationsSettings({
                             {!hasPhoneNumber && (
                                 <Alert
                                     variant="default"
-                                    className="border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300"
+                                    className="rounded-none border-amber-500/30 bg-amber-500/10 text-amber-800 shadow-none dark:text-amber-300"
                                 >
                                     <ShieldAlert className="size-4 text-amber-600 dark:text-amber-400" />
                                     <AlertTitle className="text-xs font-semibold">
@@ -208,12 +223,12 @@ export default function NotificationsSettings({
                     </Card>
 
                     {/* Topic Toggles */}
-                    <Card>
+                    <Card className="rounded-none border border-border bg-card shadow-none">
                         <CardHeader className="pb-3">
-                            <CardTitle className="text-base">
+                            <CardTitle className="text-base font-bold">
                                 Notification Topics
                             </CardTitle>
-                            <CardDescription>
+                            <CardDescription className="text-xs">
                                 Choose which services and updates send you
                                 alerts.
                             </CardDescription>
@@ -229,6 +244,7 @@ export default function NotificationsSettings({
                                             Boolean(checked),
                                         )
                                     }
+                                    className="rounded-none"
                                 />
                                 <div className="space-y-0.5 leading-none">
                                     <Label
@@ -254,6 +270,7 @@ export default function NotificationsSettings({
                                             Boolean(checked),
                                         )
                                     }
+                                    className="rounded-none"
                                 />
                                 <div className="space-y-0.5 leading-none">
                                     <Label
@@ -279,6 +296,7 @@ export default function NotificationsSettings({
                                             Boolean(checked),
                                         )
                                     }
+                                    className="rounded-none"
                                 />
                                 <div className="space-y-0.5 leading-none">
                                     <Label
@@ -297,13 +315,26 @@ export default function NotificationsSettings({
                     </Card>
 
                     <div className="flex items-center gap-4">
-                        <Button type="submit" disabled={processing}>
-                            {processing ? 'Saving...' : 'Save Preferences'}
+                        <Button
+                            type="submit"
+                            disabled={processing}
+                            loading={processing}
+                            className="rounded-none shadow-none"
+                        >
+                            {processing
+                                ? t('common.loading', 'Saving...')
+                                : t(
+                                      'settings.save_account',
+                                      'Save Preferences',
+                                  )}
                         </Button>
 
                         {recentlySuccessful && (
                             <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                                Preferences saved successfully.
+                                {t(
+                                    'settings.saved_feedback',
+                                    'Preferences saved successfully.',
+                                )}
                             </span>
                         )}
                     </div>

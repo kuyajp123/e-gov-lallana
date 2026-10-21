@@ -9,6 +9,7 @@ import {
     DropdownMenuSeparator,
 } from '@/shared/components/ui/dropdown-menu';
 import { useMobileNavigation } from '@/shared/hooks/use-mobile-navigation';
+import { useTranslation } from '@/shared/hooks/use-translation';
 import type { User } from '@/shared/types';
 
 type Props = {
@@ -17,6 +18,7 @@ type Props = {
 
 export function UserMenuContent({ user }: Props) {
     const cleanup = useMobileNavigation();
+    const { t } = useTranslation();
 
     const handleLogout = () => {
         cleanup();
@@ -52,7 +54,7 @@ export function UserMenuContent({ user }: Props) {
                             onClick={cleanup}
                         >
                             <LayoutDashboard className="mr-2 size-4" />
-                            Admin Dashboard
+                            {t('nav.admin_panel', 'Admin Dashboard')}
                         </a>
                     </DropdownMenuItem>
                 )}
@@ -64,7 +66,7 @@ export function UserMenuContent({ user }: Props) {
                         onClick={cleanup}
                     >
                         <Settings className="mr-2 size-4" />
-                        Settings
+                        {t('nav.settings', 'Settings')}
                     </Link>
                 </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -78,7 +80,7 @@ export function UserMenuContent({ user }: Props) {
                     data-test="logout-button"
                 >
                     <LogOut className="mr-2 size-4" />
-                    Log out
+                    {t('nav.logout', 'Log out')}
                 </Link>
             </DropdownMenuItem>
         </>

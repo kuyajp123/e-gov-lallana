@@ -50,6 +50,18 @@ class HandleInertiaRequests extends Middleware
             ],
             'turnstileSiteKey' => (string) (config('services.turnstile.site_key') ?: '1x00000000000000000000AA'),
             'locale' => app()->getLocale(),
+            'translations' => [
+                'common' => trans('common'),
+                'nav' => trans('nav'),
+                'dashboard' => trans('dashboard'),
+                'documents' => trans('documents'),
+                'household' => trans('household'),
+                'profile' => trans('profile'),
+                'settings' => trans('settings'),
+                'auth' => trans('auth'),
+                'notifications' => trans('notifications'),
+                'announcements' => trans('announcements'),
+            ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'isDevEnvironment' => app()->environment(['local', 'staging', 'testing']),
         ];

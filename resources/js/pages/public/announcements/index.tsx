@@ -12,6 +12,7 @@ import React, { useState } from 'react';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
+import { useTranslation } from '@/shared/hooks/use-translation';
 
 interface AnnouncementItem {
     id: number;
@@ -56,6 +57,7 @@ export default function PublicAnnouncementsIndex({
     const { auth } = usePage<{
         auth: { user?: { name: string } };
     }>().props;
+    const { t } = useTranslation();
 
     const [search, setSearch] = useState(filters.search || '');
     const [selectedCategory, setSelectedCategory] = useState(
@@ -103,31 +105,31 @@ export default function PublicAnnouncementsIndex({
                 return (
                     <Badge
                         variant="destructive"
-                        className="gap-1 text-xs font-semibold capitalize"
+                        className="gap-1 rounded-none text-xs font-semibold capitalize shadow-none"
                     >
                         <AlertTriangle className="h-3 w-3" />
-                        Emergency
+                        {t('announcements.category_emergency', 'Emergency')}
                     </Badge>
                 );
             case 'event':
                 return (
-                    <span className="inline-flex items-center gap-1 rounded-md border border-indigo-500/20 bg-indigo-500/10 px-2 py-0.5 text-xs font-medium text-indigo-600 capitalize dark:text-indigo-400">
+                    <span className="inline-flex items-center gap-1 rounded-none border border-indigo-500/20 bg-indigo-500/10 px-2 py-0.5 text-xs font-medium text-indigo-600 capitalize dark:text-indigo-400">
                         <Calendar className="h-3 w-3" />
-                        Event
+                        {t('announcements.category_event', 'Event')}
                     </span>
                 );
             case 'meeting':
                 return (
-                    <span className="inline-flex items-center gap-1 rounded-md border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-600 capitalize dark:text-amber-400">
+                    <span className="inline-flex items-center gap-1 rounded-none border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-600 capitalize dark:text-amber-400">
                         <Users className="h-3 w-3" />
-                        Meeting
+                        {t('announcements.category_meeting', 'Meeting')}
                     </span>
                 );
             default:
                 return (
-                    <span className="inline-flex items-center gap-1 rounded-md border border-violet-500/20 bg-violet-500/10 px-2 py-0.5 text-xs font-medium text-violet-700 capitalize dark:text-violet-300">
+                    <span className="inline-flex items-center gap-1 rounded-none border border-violet-500/20 bg-violet-500/10 px-2 py-0.5 text-xs font-medium text-violet-700 capitalize dark:text-violet-300">
                         <Megaphone className="h-3 w-3" />
-                        Advisory
+                        {t('announcements.category_advisory', 'Advisory')}
                     </span>
                 );
         }
@@ -137,45 +139,16 @@ export default function PublicAnnouncementsIndex({
         <div className="min-h-screen bg-background font-sans text-foreground selection:bg-violet-600 selection:text-white">
             <Head title="Official Announcements & Public Advisories — Barangay Lallana" />
 
-            {/* Emergency Hotline Alert Strip */}
-            <div className="border-b border-violet-200/50 bg-violet-50/70 px-4 py-2 text-xs text-violet-950 dark:border-violet-900/40 dark:bg-violet-950/40 dark:text-violet-200">
-                <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 text-[11px] sm:text-xs">
-                    <div className="flex items-center gap-2">
-                        <span className="inline-flex size-2 animate-pulse rounded-full bg-emerald-500" />
-                        <span className="font-semibold tracking-wide text-violet-800 uppercase dark:text-violet-300">
-                            Barangay Hall Active Desk:
-                        </span>
-                        <span className="font-mono font-medium">
-                            (046) 419-0000
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-4 text-muted-foreground">
-                        <span className="hidden sm:inline">
-                            Trece Martires PNP:{' '}
-                            <strong className="font-mono font-semibold text-foreground">
-                                0998-598-5606
-                            </strong>
-                        </span>
-                        <span>
-                            BFP Fire:{' '}
-                            <strong className="font-mono font-semibold text-foreground">
-                                (046) 419-0352
-                            </strong>
-                        </span>
-                    </div>
-                </div>
-            </div>
-
             {/* Sticky Navigation Header */}
             <div className="sticky top-3 z-50 px-4 sm:px-6 lg:px-8">
-                <header className="mx-auto max-w-6xl rounded-2xl border border-border/80 bg-background/85 px-4 shadow-sm backdrop-blur-xl transition-all sm:px-6 dark:bg-card/85">
+                <header className="mx-auto max-w-6xl rounded-none border border-border/80 bg-background/85 px-4 shadow-none backdrop-blur-xl transition-all sm:px-6 dark:bg-card/85">
                     <div className="flex h-16 items-center justify-between gap-4">
                         {/* Logo & Municipal Identity */}
                         <Link
                             href="/"
                             className="group flex items-center gap-3"
                         >
-                            <div className="relative flex size-10 items-center justify-center rounded-xl bg-violet-600/10 p-1 ring-1 ring-violet-600/20 transition-transform group-hover:scale-105 dark:bg-violet-400/10 dark:ring-violet-400/20">
+                            <div className="relative flex size-10 items-center justify-center rounded-none bg-violet-600/10 p-1 ring-1 ring-violet-600/20 transition-transform group-hover:scale-105 dark:bg-violet-400/10 dark:ring-violet-400/20">
                                 <img
                                     src="/lallana-icon.png"
                                     alt="Barangay Lallana Official Seal"
@@ -196,25 +169,25 @@ export default function PublicAnnouncementsIndex({
                         <nav className="hidden items-center gap-1 text-xs font-medium md:flex">
                             <Link
                                 href="/"
-                                className="rounded-lg px-3 py-1.5 text-muted-foreground transition-colors hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/50 dark:hover:text-violet-300"
+                                className="rounded-none px-3 py-1.5 text-muted-foreground transition-colors hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/50 dark:hover:text-violet-300"
                             >
                                 Home
                             </Link>
                             <Link
                                 href="/announcements"
-                                className="rounded-lg bg-violet-50 px-3 py-1.5 font-semibold text-violet-700 dark:bg-violet-950/50 dark:text-violet-300"
+                                className="rounded-none bg-violet-50 px-3 py-1.5 font-semibold text-violet-700 dark:bg-violet-950/50 dark:text-violet-300"
                             >
-                                Announcements
+                                {t('nav.announcements', 'Announcements')}
                             </Link>
                             <a
                                 href="/#services"
-                                className="rounded-lg px-3 py-1.5 text-muted-foreground transition-colors hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/50 dark:hover:text-violet-300"
+                                className="rounded-none px-3 py-1.5 text-muted-foreground transition-colors hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/50 dark:hover:text-violet-300"
                             >
                                 Services
                             </a>
                             <a
                                 href="/#contact"
-                                className="rounded-lg px-3 py-1.5 text-muted-foreground transition-colors hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/50 dark:hover:text-violet-300"
+                                className="rounded-none px-3 py-1.5 text-muted-foreground transition-colors hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/50 dark:hover:text-violet-300"
                             >
                                 Contact
                             </a>
@@ -226,9 +199,12 @@ export default function PublicAnnouncementsIndex({
                                 <Link href="/dashboard">
                                     <Button
                                         size="sm"
-                                        className="h-9 cursor-pointer rounded-xl bg-violet-600 px-4 text-xs font-semibold text-white shadow-xs hover:bg-violet-700"
+                                        className="h-9 cursor-pointer rounded-none bg-violet-600 px-4 text-xs font-semibold text-white shadow-none hover:bg-violet-700"
                                     >
-                                        Resident Dashboard
+                                        {t(
+                                            'nav.dashboard',
+                                            'Resident Dashboard',
+                                        )}
                                     </Button>
                                 </Link>
                             ) : (
@@ -237,17 +213,17 @@ export default function PublicAnnouncementsIndex({
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            className="h-8 rounded-lg px-3 text-xs font-medium text-foreground hover:bg-muted"
+                                            className="h-8 rounded-none px-3 text-xs font-medium text-foreground shadow-none hover:bg-muted"
                                         >
-                                            Sign In
+                                            {t('auth.sign_in', 'Sign In')}
                                         </Button>
                                     </Link>
                                     <Link href="/register">
                                         <Button
                                             size="sm"
-                                            className="h-8 cursor-pointer rounded-xl bg-violet-600 px-3.5 text-xs font-semibold text-white shadow-xs hover:bg-violet-700"
+                                            className="h-8 cursor-pointer rounded-none bg-violet-600 px-3.5 text-xs font-semibold text-white shadow-none hover:bg-violet-700"
                                         >
-                                            Register
+                                            {t('auth.register_now', 'Register')}
                                         </Button>
                                     </Link>
                                 </div>
@@ -261,17 +237,21 @@ export default function PublicAnnouncementsIndex({
             <section className="relative overflow-hidden pt-12 pb-8 md:pt-16 md:pb-12">
                 <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                     <div className="mx-auto max-w-3xl text-center">
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-violet-50/80 px-3 py-1 text-xs font-semibold text-violet-800 dark:border-violet-800/60 dark:bg-violet-950/50 dark:text-violet-300">
+                        <span className="inline-flex items-center gap-1.5 rounded-none border border-violet-200 bg-violet-50/80 px-3 py-1 text-xs font-semibold text-violet-800 shadow-none dark:border-violet-800/60 dark:bg-violet-950/50 dark:text-violet-300">
                             <Megaphone className="h-3.5 w-3.5" />
                             Official Barangay Bulletins
                         </span>
                         <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl md:text-5xl">
-                            Announcements & Public Advisories
+                            {t(
+                                'announcements.title',
+                                'Announcements & Public Advisories',
+                            )}
                         </h1>
                         <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
-                            Stay informed on community events, health
-                            advisories, civic sessions, and emergency notices
-                            from the Barangay Council of Lallana.
+                            {t(
+                                'announcements.subtitle',
+                                'Stay informed on community events, health advisories, civic sessions, and emergency notices from the Barangay Council of Lallana.',
+                            )}
                         </p>
                     </div>
 
@@ -284,10 +264,13 @@ export default function PublicAnnouncementsIndex({
                             <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 type="search"
-                                placeholder="Search advisories, events, or keywords..."
+                                placeholder={t(
+                                    'announcements.search_placeholder',
+                                    'Search advisories, events, or keywords...',
+                                )}
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="h-12 rounded-2xl border-border/80 bg-card pr-12 pl-12 text-sm shadow-xs"
+                                className="h-12 rounded-none border-border/80 bg-card pr-12 pl-12 text-sm shadow-none"
                             />
                             {search && (
                                 <button
@@ -320,13 +303,14 @@ export default function PublicAnnouncementsIndex({
                             <button
                                 type="button"
                                 onClick={() => handleCategoryClick('all')}
-                                className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                                className={`rounded-none px-3.5 py-1.5 text-xs font-semibold shadow-none transition-all ${
                                     selectedCategory === 'all'
-                                        ? 'bg-violet-600 text-white shadow-xs'
+                                        ? 'bg-violet-600 text-white'
                                         : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
                                 }`}
                             >
-                                All Bulletins ({counts.all})
+                                {t('announcements.category_all', 'All')} (
+                                {counts.all})
                             </button>
                             {categories.map((cat) => {
                                 const catCount =
@@ -337,9 +321,9 @@ export default function PublicAnnouncementsIndex({
                                         key={cat}
                                         type="button"
                                         onClick={() => handleCategoryClick(cat)}
-                                        className={`rounded-full px-3.5 py-1.5 text-xs font-semibold capitalize transition-all ${
+                                        className={`rounded-none px-3.5 py-1.5 text-xs font-semibold capitalize shadow-none transition-all ${
                                             selectedCategory === cat
-                                                ? 'bg-violet-600 text-white shadow-xs'
+                                                ? 'bg-violet-600 text-white'
                                                 : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
                                         }`}
                                     >
@@ -347,13 +331,12 @@ export default function PublicAnnouncementsIndex({
                                     </button>
                                 );
                             })}
-
                             {(search || selectedCategory !== 'all') && (
                                 <Button
                                     variant="ghost"
                                     size="sm"
                                     onClick={handleClearFilters}
-                                    className="h-7 text-xs text-muted-foreground hover:text-foreground"
+                                    className="h-7 rounded-none text-xs text-muted-foreground shadow-none hover:text-foreground"
                                 >
                                     <X className="mr-1 h-3 w-3" />
                                     Clear filters
@@ -367,16 +350,22 @@ export default function PublicAnnouncementsIndex({
             {/* Articles Grid */}
             <main className="mx-auto max-w-6xl px-4 pb-24 sm:px-6 lg:px-8">
                 {announcements.data.length === 0 ? (
-                    <div className="mx-auto max-w-md rounded-2xl border border-border/80 bg-card p-12 text-center shadow-xs">
-                        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
+                    <div className="mx-auto max-w-md rounded-none border border-border/80 bg-card p-12 text-center shadow-none">
+                        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-none bg-muted text-muted-foreground">
                             <Megaphone className="h-7 w-7" />
                         </div>
                         <h3 className="mt-4 text-base font-bold text-foreground">
-                            No announcements found
+                            {t(
+                                'announcements.no_announcements',
+                                'No announcements found',
+                            )}
                         </h3>
                         <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                             {search || selectedCategory !== 'all'
-                                ? 'No articles match your search or filter criteria. Try adjusting your query.'
+                                ? t(
+                                      'announcements.no_announcements_desc',
+                                      'No articles match your search or filter criteria. Try adjusting your query.',
+                                  )
                                 : 'There are currently no active public announcements published.'}
                         </p>
                         {(search || selectedCategory !== 'all') && (
@@ -384,9 +373,12 @@ export default function PublicAnnouncementsIndex({
                                 variant="outline"
                                 size="sm"
                                 onClick={handleClearFilters}
-                                className="mt-4 text-xs"
+                                className="mt-4 rounded-none text-xs shadow-none"
                             >
-                                View All Announcements
+                                {t(
+                                    'announcements.back_to_list',
+                                    'View All Announcements',
+                                )}
                             </Button>
                         )}
                     </div>
@@ -396,7 +388,7 @@ export default function PublicAnnouncementsIndex({
                             <Link
                                 key={item.id}
                                 href={`/announcements/${item.slug}`}
-                                className="group flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-card shadow-2xs transition-all hover:border-violet-300 hover:shadow-md dark:hover:border-violet-700"
+                                className="group flex flex-col overflow-hidden rounded-none border border-border/70 bg-card shadow-none transition-all hover:border-violet-300 dark:hover:border-violet-700"
                             >
                                 {/* Banner / Thumbnail */}
                                 {item.banner_url ? (
@@ -437,10 +429,14 @@ export default function PublicAnnouncementsIndex({
 
                                     <div className="flex items-center justify-between border-t border-border/70 pt-3 text-xs">
                                         <span className="text-2xs max-w-[150px] truncate text-muted-foreground">
-                                            By {item.author_name}
+                                            {t('announcements.author', 'By')}{' '}
+                                            {item.author_name}
                                         </span>
                                         <span className="flex items-center font-semibold text-violet-700 transition-transform group-hover:translate-x-0.5 dark:text-violet-400">
-                                            Read Article
+                                            {t(
+                                                'announcements.read_more',
+                                                'Read Article',
+                                            )}
                                             <ChevronRight className="ml-1 h-3.5 w-3.5" />
                                         </span>
                                     </div>
@@ -460,7 +456,7 @@ export default function PublicAnnouncementsIndex({
                                 disabled={!link.url}
                                 variant={link.active ? 'default' : 'outline'}
                                 size="sm"
-                                className="h-9 rounded-xl px-3.5 text-xs"
+                                className="h-9 rounded-none px-3.5 text-xs shadow-none"
                             >
                                 {link.url ? (
                                     <Link

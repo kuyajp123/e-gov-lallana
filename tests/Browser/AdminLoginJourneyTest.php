@@ -10,6 +10,6 @@ test('admin can access the admin panel in browser', function () {
     $page = $this->actingAs($user)->visit('/admin');
 
     $page->assertPathIs('/admin')
-        ->assertSee('Admin Console')
+        ->assertSee('Admin Dashboard')
         ->assertNoJavaScriptErrors();
 });

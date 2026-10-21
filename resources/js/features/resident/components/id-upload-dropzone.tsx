@@ -1,6 +1,7 @@
 import { FileText, Image as ImageIcon, UploadCloud, X } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import { Button } from '@/shared/components/ui/button';
+import { useTranslation } from '@/shared/hooks/use-translation';
 
 interface IdUploadDropzoneProps {
     onFileSelect: (file: File | null) => void;
@@ -16,6 +17,7 @@ export function IdUploadDropzone({
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const { t } = useTranslation();
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] || null;
@@ -55,22 +57,28 @@ export function IdUploadDropzone({
             {!selectedFile && !currentFileUrl ? (
                 <div
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border/80 bg-muted/30 p-6 text-center transition-colors hover:border-primary/50 hover:bg-muted/60"
+                    className="flex cursor-pointer flex-col items-center justify-center rounded-none border border-dashed border-border/80 bg-muted/30 p-6 text-center transition-colors hover:border-primary/50 hover:bg-muted/60"
                 >
-                    <div className="mb-3 rounded-full bg-primary/10 p-3 text-primary">
+                    <div className="mb-3 rounded-none bg-primary/10 p-3 text-primary">
                         <UploadCloud className="size-6" />
                     </div>
                     <p className="text-sm font-medium text-foreground">
-                        Click to upload or drag & drop Government ID
+                        {t(
+                            'profile.upload_id_prompt',
+                            'Click to upload or drag & drop Government ID',
+                        )}
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground">
-                        Accepted formats: JPG, PNG, WebP, PDF (Max 5MB)
+                        {t(
+                            'profile.upload_id_formats',
+                            'Accepted formats: JPG, PNG, WebP, PDF (Max 5MB)',
+                        )}
                     </p>
                 </div>
             ) : (
-                <div className="relative flex items-center justify-between rounded-xl border border-border bg-card p-4">
+                <div className="relative flex items-center justify-between rounded-none border border-border bg-card p-4">
                     <div className="flex items-center gap-3">
-                        <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                        <div className="flex size-10 items-center justify-center rounded-none bg-primary/10 text-primary">
                             {selectedFile?.type.includes('pdf') ? (
                                 <FileText className="size-5" />
                             ) : (
@@ -79,7 +87,11 @@ export function IdUploadDropzone({
                         </div>
                         <div className="max-w-[200px] sm:max-w-xs">
                             <p className="truncate text-sm font-medium text-foreground">
-                                {selectedFile?.name || 'Attached Government ID'}
+                                {selectedFile?.name ||
+                                    t(
+                                        'profile.attached_id',
+                                        'Attached Government ID',
+                                    )}
                             </p>
                             {selectedFile && (
                                 <p className="text-xs text-muted-foreground">
@@ -96,7 +108,10 @@ export function IdUploadDropzone({
                                     rel="noreferrer"
                                     className="text-xs font-medium text-primary hover:underline"
                                 >
-                                    View Uploaded Document
+                                    {t(
+                                        'profile.view_uploaded',
+                                        'View Uploaded Document',
+                                    )}
                                 </a>
                             )}
                         </div>
@@ -107,9 +122,10 @@ export function IdUploadDropzone({
                             type="button"
                             variant="outline"
                             size="sm"
+                            className="rounded-none shadow-none"
                             onClick={() => fileInputRef.current?.click()}
                         >
-                            Replace
+                            {t('profile.replace_id', 'Replace')}
                         </Button>
                         {selectedFile && (
                             <Button
@@ -117,7 +133,7 @@ export function IdUploadDropzone({
                                 variant="ghost"
                                 size="sm"
                                 onClick={handleRemove}
-                                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                className="rounded-none text-destructive hover:bg-destructive/10 hover:text-destructive"
                             >
                                 <X className="size-4" />
                             </Button>
@@ -127,7 +143,7 @@ export function IdUploadDropzone({
             )}
 
             {previewUrl && (
-                <div className="mt-2 overflow-hidden rounded-lg border border-border">
+                <div className="mt-2 overflow-hidden rounded-none border border-border">
                     <img
                         src={previewUrl}
                         alt="ID Preview"

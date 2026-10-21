@@ -25,6 +25,7 @@ import {
 } from '@/shared/components/ui/select';
 import { Spinner } from '@/shared/components/ui/spinner';
 import { Textarea } from '@/shared/components/ui/textarea';
+import { useTranslation } from '@/shared/hooks/use-translation';
 
 interface HouseholdWizardProps {
     profile: ResidentProfileData | null;
@@ -35,6 +36,7 @@ export function HouseholdWizard({
     profile,
     purokOptions,
 }: HouseholdWizardProps) {
+    const { t } = useTranslation();
     const { auth } = usePage().props;
     const user = auth.user;
 
@@ -116,15 +118,34 @@ export function HouseholdWizard({
             {/* Step Indicators */}
             <div className="grid grid-cols-4 gap-2">
                 {[
-                    { num: 1, label: 'Address', icon: MapPin },
-                    { num: 2, label: 'Family Head', icon: User },
-                    { num: 3, label: 'Verification', icon: ShieldCheck },
-                    { num: 4, label: 'Review', icon: CheckCircle2 },
+                    {
+                        num: 1,
+                        label: t('household.address', 'Address'),
+                        icon: MapPin,
+                    },
+                    {
+                        num: 2,
+                        label: t('household.family_head', 'Family Head'),
+                        icon: User,
+                    },
+                    {
+                        num: 3,
+                        label: t(
+                            'household.verification_status',
+                            'Verification',
+                        ),
+                        icon: ShieldCheck,
+                    },
+                    {
+                        num: 4,
+                        label: t('common.details', 'Review'),
+                        icon: CheckCircle2,
+                    },
                 ].map(({ num, label, icon: Icon }) => (
                     <div
                         key={num}
                         onClick={() => num < step && setStep(num as any)}
-                        className={`flex flex-col items-center justify-center rounded-xl p-3 text-center transition-all ${
+                        className={`flex flex-col items-center justify-center rounded-none p-3 text-center transition-all ${
                             step === num
                                 ? 'border-2 border-primary bg-primary/10 font-semibold text-primary'
                                 : step > num
@@ -146,7 +167,7 @@ export function HouseholdWizard({
             {/* Step 1: Address & Location */}
             {step === 1 && (
                 <div className="space-y-6">
-                    <div className="space-y-4 rounded-xl border border-border bg-card p-6">
+                    <div className="space-y-4 rounded-none border border-border bg-card p-6">
                         <div className="flex items-center gap-2 font-semibold text-primary">
                             <Home className="size-5" />
                             <h3>Household Location in Barangay Lallana</h3>
@@ -247,11 +268,16 @@ export function HouseholdWizard({
             {/* Step 2: Family Head Summary */}
             {step === 2 && (
                 <div className="space-y-6">
-                    <Card className="rounded-xl border-border">
+                    <Card className="rounded-none border-border shadow-none">
                         <CardContent className="space-y-4 p-6">
                             <div className="flex items-center gap-2 font-semibold text-primary">
                                 <User className="size-5" />
-                                <h3>Designated Family Head</h3>
+                                <h3>
+                                    {t(
+                                        'household.designated_head',
+                                        'Designated Family Head',
+                                    )}
+                                </h3>
                             </div>
                             <p className="text-xs text-muted-foreground">
                                 As the creator of this household registration,
@@ -260,7 +286,7 @@ export function HouseholdWizard({
                                 manage members and transfer authority.
                             </p>
 
-                            <div className="grid gap-3 rounded-lg bg-muted/40 p-4 text-sm sm:grid-cols-2">
+                            <div className="grid gap-3 rounded-none bg-muted/40 p-4 text-sm sm:grid-cols-2">
                                 <div>
                                     <span className="block text-xs text-muted-foreground">
                                         Full Name
@@ -306,10 +332,15 @@ export function HouseholdWizard({
                             type="button"
                             variant="outline"
                             onClick={() => setStep(1)}
+                            className="rounded-none shadow-none"
                         >
-                            ← Back
+                            ← {t('common.back', 'Back')}
                         </Button>
-                        <Button type="button" onClick={() => setStep(3)}>
+                        <Button
+                            type="button"
+                            onClick={() => setStep(3)}
+                            className="rounded-none shadow-none"
+                        >
                             Next: Contact Verification →
                         </Button>
                     </div>
@@ -319,7 +350,7 @@ export function HouseholdWizard({
             {/* Step 3: Contact Verification (OTP) */}
             {step === 3 && (
                 <div className="space-y-6">
-                    <Card className="rounded-xl border-border">
+                    <Card className="rounded-none border-border shadow-none">
                         <CardContent className="space-y-6 p-6">
                             <div className="flex items-center gap-2 font-semibold text-primary">
                                 <KeyRound className="size-5" />
@@ -337,7 +368,7 @@ export function HouseholdWizard({
                                     onClick={() =>
                                         !otpSent && setChannel('sms')
                                     }
-                                    className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 transition-all ${
+                                    className={`flex cursor-pointer items-center justify-between rounded-none border p-4 transition-all ${
                                         channel === 'sms'
                                             ? 'border-primary bg-primary/5 text-primary'
                                             : 'border-border bg-card text-foreground hover:border-border/80'
@@ -353,7 +384,7 @@ export function HouseholdWizard({
                                         </p>
                                     </div>
                                     <div
-                                        className={`size-4 rounded-full border ${channel === 'sms' ? 'border-primary bg-primary' : 'border-muted-foreground'}`}
+                                        className={`size-4 rounded-none border ${channel === 'sms' ? 'border-primary bg-primary' : 'border-muted-foreground'}`}
                                     />
                                 </div>
 
@@ -361,7 +392,7 @@ export function HouseholdWizard({
                                     onClick={() =>
                                         !otpSent && setChannel('email')
                                     }
-                                    className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 transition-all ${
+                                    className={`flex cursor-pointer items-center justify-between rounded-none border p-4 transition-all ${
                                         channel === 'email'
                                             ? 'border-primary bg-primary/5 text-primary'
                                             : 'border-border bg-card text-foreground hover:border-border/80'
@@ -376,7 +407,7 @@ export function HouseholdWizard({
                                         </p>
                                     </div>
                                     <div
-                                        className={`size-4 rounded-full border ${channel === 'email' ? 'border-primary bg-primary' : 'border-muted-foreground'}`}
+                                        className={`size-4 rounded-none border ${channel === 'email' ? 'border-primary bg-primary' : 'border-muted-foreground'}`}
                                     />
                                 </div>
                             </div>
@@ -404,7 +435,7 @@ export function HouseholdWizard({
                             </div>
 
                             {otpMessage && (
-                                <Alert className="rounded-xl border-primary/20 bg-primary/5 text-foreground">
+                                <Alert className="rounded-none border-primary/20 bg-primary/5 text-foreground">
                                     <AlertDescription className="text-xs">
                                         {otpMessage}
                                     </AlertDescription>
@@ -433,7 +464,7 @@ export function HouseholdWizard({
                                         }
                                         placeholder="123456"
                                         maxLength={6}
-                                        className="text-center text-lg font-bold tracking-widest"
+                                        className="rounded-none text-center text-lg font-bold tracking-widest"
                                         required
                                     />
                                     {errors.otp_code && (
@@ -451,13 +482,15 @@ export function HouseholdWizard({
                             type="button"
                             variant="outline"
                             onClick={() => setStep(2)}
+                            className="rounded-none shadow-none"
                         >
-                            ← Back
+                            ← {t('common.back', 'Back')}
                         </Button>
                         <Button
                             type="button"
                             onClick={() => setStep(4)}
                             disabled={!otpSent || data.otp_code.length !== 6}
+                            className="rounded-none shadow-none"
                         >
                             Next: Final Review →
                         </Button>
@@ -468,17 +501,20 @@ export function HouseholdWizard({
             {/* Step 4: Final Review & Submission */}
             {step === 4 && (
                 <div className="space-y-6">
-                    <Card className="rounded-xl border-border">
+                    <Card className="rounded-none border-border shadow-none">
                         <CardContent className="space-y-4 p-6">
                             <div className="flex items-center gap-2 font-semibold text-primary">
                                 <CheckCircle2 className="size-5" />
                                 <h3>Review Registration Summary</h3>
                             </div>
 
-                            <div className="space-y-3 rounded-lg bg-muted/40 p-4 text-sm">
+                            <div className="space-y-3 rounded-none bg-muted/40 p-4 text-sm">
                                 <div className="flex justify-between border-b border-border/50 pb-2">
                                     <span className="text-muted-foreground">
-                                        Family Head
+                                        {t(
+                                            'household.family_head',
+                                            'Family Head',
+                                        )}
                                     </span>
                                     <span className="font-semibold">
                                         {profile
@@ -488,7 +524,10 @@ export function HouseholdWizard({
                                 </div>
                                 <div className="flex justify-between border-b border-border/50 pb-2">
                                     <span className="text-muted-foreground">
-                                        Purok / Sitio
+                                        {t(
+                                            'household.purok_sitio',
+                                            'Purok / Sitio',
+                                        )}
                                     </span>
                                     <span className="font-semibold">
                                         {data.purok_sitio}
@@ -496,7 +535,10 @@ export function HouseholdWizard({
                                 </div>
                                 <div className="flex justify-between border-b border-border/50 pb-2">
                                     <span className="text-muted-foreground">
-                                        Street Address
+                                        {t(
+                                            'household.address',
+                                            'Street Address',
+                                        )}
                                     </span>
                                     <span className="font-semibold">
                                         {data.address}
@@ -537,21 +579,27 @@ export function HouseholdWizard({
                             type="button"
                             variant="outline"
                             onClick={() => setStep(3)}
+                            className="rounded-none shadow-none"
                         >
-                            ← Back
+                            ← {t('common.back', 'Back')}
                         </Button>
                         <Button
                             type="submit"
                             disabled={processing}
-                            className="min-w-44"
+                            className="min-w-44 rounded-none shadow-none"
                         >
                             {processing ? (
                                 <div className="flex items-center gap-2">
                                     <Spinner className="size-4" />
-                                    <span>Submitting...</span>
+                                    <span>
+                                        {t(
+                                            'common.please_wait',
+                                            'Submitting...',
+                                        )}
+                                    </span>
                                 </div>
                             ) : (
-                                'Submit Registration'
+                                t('common.submit', 'Submit Registration')
                             )}
                         </Button>
                     </div>

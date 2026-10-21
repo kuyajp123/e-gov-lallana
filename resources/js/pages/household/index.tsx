@@ -17,6 +17,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/shared/components/ui/card';
+import { useTranslation } from '@/shared/hooks/use-translation';
 import type { BreadcrumbItem } from '@/shared/types';
 
 interface HouseholdData {
@@ -60,9 +61,11 @@ export default function HouseholdIndex({
     pending_invitation,
     isFamilyHead,
 }: HouseholdIndexProps) {
+    const { t } = useTranslation();
+
     return (
         <>
-            <Head title="My Household" />
+            <Head title={t('household.title', 'My Household')} />
 
             <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 p-4 md:p-8">
                 {!household ? (
@@ -74,25 +77,34 @@ export default function HouseholdIndex({
                         )}
 
                         {/* Empty State: Not Registered */}
-                        <Card className="rounded-2xl border-border p-8 text-center">
-                            <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                        <Card className="rounded-none border border-border bg-card p-8 text-center shadow-none">
+                            <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-none bg-primary/10 text-primary">
                                 <Home className="size-7" />
                             </div>
                             <CardTitle className="text-xl font-bold">
-                                No Household Registered
+                                {t(
+                                    'household.no_household_registered',
+                                    'No Household Registered',
+                                )}
                             </CardTitle>
                             <CardDescription className="mt-2 text-sm">
-                                You are not yet registered under an official
-                                Barangay Lallana household record. Establish
-                                your family household as Family Head to unlock
-                                clearance issuance, certifications, and
-                                household management.
+                                {t(
+                                    'household.no_household_desc',
+                                    'You are not yet registered under an official Barangay Lallana household record. Establish your family household as Family Head to unlock clearance issuance, certifications, and household management.',
+                                )}
                             </CardDescription>
                             <div className="mt-6 flex justify-center">
-                                <Button asChild size="lg" className="gap-2">
+                                <Button
+                                    asChild
+                                    size="lg"
+                                    className="gap-2 rounded-none shadow-none"
+                                >
                                     <Link href="/household/register">
                                         <Plus className="size-4" />
-                                        Register New Household
+                                        {t(
+                                            'household.register_new_btn',
+                                            'Register New Household',
+                                        )}
                                     </Link>
                                 </Button>
                             </div>
@@ -110,13 +122,17 @@ export default function HouseholdIndex({
                         />
 
                         {/* Household Summary Card */}
-                        <Card className="rounded-2xl border-border">
+                        <Card className="rounded-none border border-border bg-card shadow-none">
                             <CardHeader className="pb-4">
                                 <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
                                     <div>
                                         <CardTitle className="flex items-center gap-2 text-lg font-bold">
                                             <Home className="size-5 text-primary" />
-                                            Household {household.household_code}
+                                            {t(
+                                                'household.household_code',
+                                                'Household',
+                                            )}{' '}
+                                            {household.household_code}
                                         </CardTitle>
                                         <CardDescription className="mt-1 flex items-center gap-1.5 text-xs">
                                             <MapPin className="size-3.5 text-muted-foreground" />
@@ -132,17 +148,20 @@ export default function HouseholdIndex({
                                                 ? 'default'
                                                 : 'outline'
                                         }
-                                        className="self-start capitalize sm:self-auto"
+                                        className="self-start rounded-none capitalize shadow-none sm:self-auto"
                                     >
                                         {household.status}
                                     </Badge>
                                 </div>
                             </CardHeader>
                             <CardContent className="space-y-4 pt-0">
-                                <div className="grid gap-3 rounded-xl bg-muted/40 p-4 text-xs sm:grid-cols-3">
+                                <div className="grid gap-3 rounded-none bg-muted/40 p-4 text-xs sm:grid-cols-3">
                                     <div>
                                         <span className="block text-muted-foreground">
-                                            Designated Family Head
+                                            {t(
+                                                'household.designated_head',
+                                                'Designated Family Head',
+                                            )}
                                         </span>
                                         <span className="text-sm font-semibold text-foreground">
                                             {household.family_head.name}
@@ -150,7 +169,10 @@ export default function HouseholdIndex({
                                     </div>
                                     <div>
                                         <span className="block text-muted-foreground">
-                                            Submitted On
+                                            {t(
+                                                'household.submitted_on',
+                                                'Submitted On',
+                                            )}
                                         </span>
                                         <span className="font-semibold text-foreground">
                                             {household.submitted_at
@@ -162,7 +184,10 @@ export default function HouseholdIndex({
                                     </div>
                                     <div>
                                         <span className="block text-muted-foreground">
-                                            Total Family Members
+                                            {t(
+                                                'household.total_members',
+                                                'Total Family Members',
+                                            )}
                                         </span>
                                         <span className="text-sm font-semibold text-foreground">
                                             {household.members.length}
@@ -173,18 +198,23 @@ export default function HouseholdIndex({
                         </Card>
 
                         {/* Family Members Section */}
-                        <Card className="rounded-2xl border-border">
+                        <Card className="rounded-none border border-border bg-card shadow-none">
                             <CardHeader className="pb-4">
                                 <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
                                     <div>
                                         <CardTitle className="flex items-center gap-2 text-base font-bold">
                                             <Users className="size-5 text-primary" />
-                                            Household Members (
-                                            {household.members.length})
+                                            {t(
+                                                'household.members_list_title',
+                                                'Household Members',
+                                            )}{' '}
+                                            ({household.members.length})
                                         </CardTitle>
                                         <CardDescription className="text-xs">
-                                            Registered family members and
-                                            dependents under this household.
+                                            {t(
+                                                'household.members_list_desc',
+                                                'Registered family members and dependents under this household.',
+                                            )}
                                         </CardDescription>
                                     </div>
 
@@ -212,16 +242,34 @@ export default function HouseholdIndex({
                         {household.status !== 'verified' && (
                             <div className="grid gap-4 pt-2 md:grid-cols-2">
                                 <LockedModuleCard
-                                    title="Barangay Document Requests"
-                                    description="Request official Barangay Clearance, Barangay Certificate, and Certificate of Indigency."
+                                    title={t(
+                                        'household.locked_docs_title',
+                                        'Barangay Document Requests',
+                                    )}
+                                    description={t(
+                                        'household.locked_docs_desc',
+                                        'Request official Barangay Clearance, Barangay Certificate, and Certificate of Indigency.',
+                                    )}
                                     icon={<FileText className="size-6" />}
-                                    reason="Requires verified household status."
+                                    reason={t(
+                                        'household.locked_docs_reason',
+                                        'Requires verified household status.',
+                                    )}
                                 />
                                 <LockedModuleCard
-                                    title="Add Family Members"
-                                    description="Add immediate family members and dependents to this household record."
+                                    title={t(
+                                        'household.locked_member_title',
+                                        'Add Family Members',
+                                    )}
+                                    description={t(
+                                        'household.locked_member_desc',
+                                        'Add immediate family members and dependents to this household record.',
+                                    )}
                                     icon={<UserCheck className="size-6" />}
-                                    reason="Available after initial household approval."
+                                    reason={t(
+                                        'household.locked_member_reason',
+                                        'Available after initial household approval.',
+                                    )}
                                 />
                             </div>
                         )}

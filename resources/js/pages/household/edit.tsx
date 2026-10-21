@@ -25,6 +25,7 @@ import {
 } from '@/shared/components/ui/select';
 import { Spinner } from '@/shared/components/ui/spinner';
 import { Textarea } from '@/shared/components/ui/textarea';
+import { useTranslation } from '@/shared/hooks/use-translation';
 import type { BreadcrumbItem } from '@/shared/types';
 
 interface EditHouseholdProps {
@@ -50,6 +51,7 @@ export default function HouseholdEdit({
     household,
     purokOptions,
 }: EditHouseholdProps) {
+    const { t } = useTranslation();
     const { data, setData, put, processing, errors } = useForm({
         purok_sitio: household.purok_sitio,
         address: household.address,
@@ -63,14 +65,22 @@ export default function HouseholdEdit({
 
     return (
         <>
-            <Head title="Edit & Resubmit Household" />
+            <Head
+                title={t(
+                    'household.edit_and_resubmit',
+                    'Edit & Resubmit Household',
+                )}
+            />
 
             <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 p-4 md:p-8">
                 {household.verification_notes && (
-                    <Alert className="rounded-2xl border-amber-500/40 bg-amber-500/10 text-amber-950 dark:text-amber-100">
+                    <Alert className="rounded-none border border-amber-500/40 bg-amber-500/10 text-amber-950 dark:text-amber-100">
                         <AlertCircle className="size-5 text-amber-600 dark:text-amber-400" />
                         <AlertTitle className="font-semibold">
-                            Review Remarks from Barangay Administration
+                            {t(
+                                'household.returned_review_remarks',
+                                'Review Remarks from Barangay Administration',
+                            )}
                         </AlertTitle>
                         <AlertDescription className="mt-1 text-xs text-amber-800 dark:text-amber-300">
                             {household.verification_notes}
@@ -78,15 +88,20 @@ export default function HouseholdEdit({
                     </Alert>
                 )}
 
-                <Card className="rounded-2xl border-border">
+                <Card className="rounded-none border border-border bg-card shadow-none">
                     <CardHeader className="pb-4">
                         <CardTitle className="text-xl font-bold">
-                            Update Household Details —{' '}
-                            {household.household_code}
+                            {t(
+                                'household.edit_household',
+                                'Update Household Details',
+                            )}{' '}
+                            — {household.household_code}
                         </CardTitle>
                         <CardDescription>
-                            Please correct the requested information and
-                            resubmit for administrative verification.
+                            {t(
+                                'household.returned_default_remark',
+                                'Please correct the requested information and resubmit for administrative verification.',
+                            )}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -94,7 +109,10 @@ export default function HouseholdEdit({
                             <div className="grid gap-4 sm:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="purok_sitio">
-                                        Purok / Sitio{' '}
+                                        {t(
+                                            'household.purok_sitio',
+                                            'Purok / Sitio',
+                                        )}{' '}
                                         <span className="text-destructive">
                                             *
                                         </span>
@@ -105,14 +123,18 @@ export default function HouseholdEdit({
                                             setData('purok_sitio', val)
                                         }
                                     >
-                                        <SelectTrigger id="purok_sitio">
+                                        <SelectTrigger
+                                            id="purok_sitio"
+                                            className="rounded-none"
+                                        >
                                             <SelectValue placeholder="Select Purok / Sitio" />
                                         </SelectTrigger>
-                                        <SelectContent>
+                                        <SelectContent className="rounded-none">
                                             {purokOptions.map((purok) => (
                                                 <SelectItem
                                                     key={purok}
                                                     value={purok}
+                                                    className="rounded-none"
                                                 >
                                                     {purok}
                                                 </SelectItem>
@@ -128,7 +150,10 @@ export default function HouseholdEdit({
 
                                 <div className="space-y-2 sm:col-span-2">
                                     <Label htmlFor="address">
-                                        Street Address / House No.{' '}
+                                        {t(
+                                            'household.address',
+                                            'Street Address / House No.',
+                                        )}{' '}
                                         <span className="text-destructive">
                                             *
                                         </span>
@@ -139,6 +164,7 @@ export default function HouseholdEdit({
                                         onChange={(e) =>
                                             setData('address', e.target.value)
                                         }
+                                        className="rounded-none"
                                         required
                                     />
                                     {errors.address && (
@@ -158,6 +184,7 @@ export default function HouseholdEdit({
                                         onChange={(e) =>
                                             setData('notes', e.target.value)
                                         }
+                                        className="rounded-none shadow-none"
                                         rows={3}
                                     />
                                     {errors.notes && (
@@ -172,15 +199,23 @@ export default function HouseholdEdit({
                                 <Button
                                     type="submit"
                                     disabled={processing}
-                                    className="min-w-44"
+                                    className="min-w-44 rounded-none shadow-none"
                                 >
                                     {processing ? (
                                         <div className="flex items-center gap-2">
                                             <Spinner className="size-4" />
-                                            <span>Resubmitting...</span>
+                                            <span>
+                                                {t(
+                                                    'household.resubmitting',
+                                                    'Resubmitting...',
+                                                )}
+                                            </span>
                                         </div>
                                     ) : (
-                                        'Resubmit for Verification'
+                                        t(
+                                            'household.resubmit_btn',
+                                            'Resubmit for Verification',
+                                        )
                                     )}
                                 </Button>
                             </div>

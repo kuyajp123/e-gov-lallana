@@ -1,43 +1,44 @@
 import { Link, usePage } from '@inertiajs/react';
 import type { PropsWithChildren } from 'react';
-import { edit as editAppearance } from '@/routes/appearance';
 import { edit } from '@/routes/profile';
 import { edit as editSecurity } from '@/routes/security';
 import Heading from '@/shared/components/heading';
 import { Button } from '@/shared/components/ui/button';
 import { Separator } from '@/shared/components/ui/separator';
 import { useCurrentUrl } from '@/shared/hooks/use-current-url';
+import { useTranslation } from '@/shared/hooks/use-translation';
 import { cn, toUrl } from '@/shared/lib/utils';
 import type { NavItem } from '@/shared/types';
 
-const baseNavItems: NavItem[] = [
-    {
-        title: 'Profile',
-        href: edit(),
-        icon: null,
-    },
-    {
-        title: 'Security',
-        href: editSecurity(),
-        icon: null,
-    },
-    {
-        title: 'Appearance',
-        href: editAppearance(),
-        icon: null,
-    },
-    {
-        title: 'Notifications',
-        href: '/settings/notifications',
-        icon: null,
-    },
-];
-
 export default function SettingsLayout({ children }: PropsWithChildren) {
+    const { t } = useTranslation();
     const { isCurrentOrParentUrl } = useCurrentUrl();
     const { auth } = usePage<{
         auth: { user?: { can_access_admin?: boolean } };
     }>().props;
+
+    const baseNavItems: NavItem[] = [
+        {
+            title: t('settings.nav_profile', 'Profile'),
+            href: edit(),
+            icon: null,
+        },
+        {
+            title: t('settings.nav_security', 'Security'),
+            href: editSecurity(),
+            icon: null,
+        },
+        {
+            title: t('settings.nav_language', 'Language'),
+            href: '/settings/language',
+            icon: null,
+        },
+        {
+            title: t('settings.nav_notifications', 'Notifications'),
+            href: '/settings/notifications',
+            icon: null,
+        },
+    ];
 
     const navItems: NavItem[] = [
         ...baseNavItems,
@@ -55,8 +56,11 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
     return (
         <div className="px-4 py-6">
             <Heading
-                title="Settings"
-                description="Manage your profile and account settings"
+                title={t('settings.title', 'Settings')}
+                description={t(
+                    'settings.subtitle',
+                    'Manage your profile and account settings',
+                )}
             />
 
             <div className="flex flex-col lg:flex-row lg:space-x-12">

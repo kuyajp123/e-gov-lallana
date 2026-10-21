@@ -19,6 +19,7 @@ import {
     SelectValue,
 } from '@/shared/components/ui/select';
 import { Spinner } from '@/shared/components/ui/spinner';
+import { useTranslation } from '@/shared/hooks/use-translation';
 import { cn } from '@/shared/lib/utils';
 
 export interface ResidentProfileData {
@@ -58,6 +59,7 @@ interface ProfileFormProps {
 }
 
 export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
+    const { t } = useTranslation();
     const nameParts = (user?.name || '').trim().split(' ');
     const defaultFirstName = profile?.first_name || nameParts[0] || '';
     const defaultLastName =
@@ -745,16 +747,16 @@ export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
                 <Button
                     type="submit"
                     disabled={processing}
-                    className="min-w-40"
+                    className="min-w-40 rounded-none shadow-none"
                     data-test="save-profile-button"
                 >
                     {processing ? (
                         <div className="flex items-center gap-2">
                             <Spinner className="size-4" />
-                            <span>Saving...</span>
+                            <span>{t('common.saving', 'Saving...')}</span>
                         </div>
                     ) : (
-                        'Save Resident Profile'
+                        t('profile.save_profile', 'Save Resident Profile')
                     )}
                 </Button>
             </div>

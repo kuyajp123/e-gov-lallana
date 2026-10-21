@@ -5,6 +5,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/shared/components/ui/card';
+import { useTranslation } from '@/shared/hooks/use-translation';
 import { StatusBadge } from './status-badge';
 
 interface RequestSummaryCardProps {
@@ -32,15 +33,16 @@ export function RequestSummaryCard({
     submittedAt,
     submittedAtFormatted,
 }: RequestSummaryCardProps) {
+    const { t } = useTranslation();
     const displayDate = submittedAtFormatted || submittedAt || '—';
 
     return (
-        <Card className="rounded-2xl border-border">
+        <Card className="rounded-none border border-border bg-card shadow-none">
             <CardHeader className="pb-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
                         <span className="text-[11px] font-semibold text-muted-foreground">
-                            Reference Code
+                            {t('documents.reference_code', 'Reference Code')}
                         </span>
                         <CardTitle className="text-lg font-bold tracking-tight text-primary">
                             {referenceCode}
@@ -51,7 +53,10 @@ export function RequestSummaryCard({
                             status={currentStatus}
                             label={statusLabel}
                         />
-                        <Badge variant="outline" className="text-xs capitalize">
+                        <Badge
+                            variant="outline"
+                            className="rounded-none text-xs capitalize shadow-none"
+                        >
                             {paymentLabel || paymentStatus}
                         </Badge>
                     </div>
@@ -59,25 +64,25 @@ export function RequestSummaryCard({
             </CardHeader>
             <CardContent className="space-y-3 pt-0">
                 <div className="grid gap-3 sm:grid-cols-3">
-                    <div className="rounded-xl bg-muted/40 p-3">
+                    <div className="rounded-none bg-muted/40 p-3">
                         <span className="text-[11px] font-semibold text-muted-foreground">
-                            Document Type
+                            {t('documents.document_type', 'Document Type')}
                         </span>
                         <p className="mt-0.5 text-xs font-bold text-foreground">
                             {documentName}
                         </p>
                     </div>
-                    <div className="rounded-xl bg-muted/40 p-3">
+                    <div className="rounded-none bg-muted/40 p-3">
                         <span className="text-[11px] font-semibold text-muted-foreground">
-                            Processing Fee
+                            {t('documents.processing_fee', 'Processing Fee')}
                         </span>
                         <p className="mt-0.5 text-xs font-bold text-foreground">
                             {feeFormatted}
                         </p>
                     </div>
-                    <div className="rounded-xl bg-muted/40 p-3">
+                    <div className="rounded-none bg-muted/40 p-3">
                         <span className="text-[11px] font-semibold text-muted-foreground">
-                            Date Submitted
+                            {t('documents.date_submitted', 'Date Submitted')}
                         </span>
                         <p className="mt-0.5 text-xs font-bold text-foreground">
                             {displayDate}
@@ -86,9 +91,10 @@ export function RequestSummaryCard({
                 </div>
 
                 {purpose && (
-                    <div className="rounded-xl border border-border/50 bg-background p-3 text-xs">
+                    <div className="rounded-none border border-border/50 bg-background p-3 text-xs">
                         <span className="font-semibold text-muted-foreground">
-                            Stated Purpose:{' '}
+                            {t('documents.stated_purpose', 'Stated Purpose')}
+                            :{' '}
                         </span>
                         <span className="text-foreground">{purpose}</span>
                     </div>

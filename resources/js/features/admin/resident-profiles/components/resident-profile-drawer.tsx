@@ -3,11 +3,12 @@ import { ArrowRight, Mail, Phone } from 'lucide-react';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetTitle,
-} from '@/shared/components/ui/sheet';
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@/shared/components/ui/dialog';
 import { cn } from '@/shared/lib/utils';
 
 export interface AdminResidentProfileItem {
@@ -54,7 +55,7 @@ export function AdminRoleBadge({
             <Badge
                 variant="secondary"
                 className={cn(
-                    'border-purple-500/30 bg-purple-500/10 font-semibold text-purple-600 dark:text-purple-400',
+                    'rounded-none border border-purple-500/30 bg-purple-500/10 font-semibold text-purple-600 dark:text-purple-400',
                     className,
                 )}
             >
@@ -68,7 +69,7 @@ export function AdminRoleBadge({
             <Badge
                 variant="secondary"
                 className={cn(
-                    'border-primary/30 bg-primary/10 font-semibold text-primary',
+                    'rounded-none border border-primary/30 bg-primary/10 font-semibold text-primary',
                     className,
                 )}
             >
@@ -82,7 +83,7 @@ export function AdminRoleBadge({
             <Badge
                 variant="secondary"
                 className={cn(
-                    'border-sky-500/30 bg-sky-500/10 font-semibold text-sky-600 dark:text-sky-400',
+                    'rounded-none border border-sky-500/30 bg-sky-500/10 font-semibold text-sky-600 dark:text-sky-400',
                     className,
                 )}
             >
@@ -94,35 +95,40 @@ export function AdminRoleBadge({
     return null;
 }
 
-interface ResidentProfileDrawerProps {
+export interface ResidentProfileModalProps {
     isOpen: boolean;
     onClose: () => void;
     resident: AdminResidentProfileItem | null;
 }
 
-export function ResidentProfileDrawer({
+export type ResidentProfileDrawerProps = ResidentProfileModalProps;
+
+export function ResidentProfileModal({
     isOpen,
     onClose,
     resident,
-}: ResidentProfileDrawerProps) {
+}: ResidentProfileModalProps) {
     if (!resident) {
         return null;
     }
 
     return (
-        <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <SheetContent className="flex w-full flex-col overflow-y-auto p-0 sm:max-w-xl">
+        <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+            <DialogContent className="flex max-h-[88vh] w-full max-w-2xl flex-col overflow-y-auto rounded-none border border-border bg-card p-0 shadow-none sm:max-w-3xl">
                 {/* Header */}
-                <div className="border-b border-border/70 bg-muted/20 p-6">
+                <DialogHeader className="border-b border-border bg-muted/20 p-6 pr-12 text-left">
                     <div className="flex items-center justify-between gap-2">
-                        <Badge variant="outline" className="text-xs">
+                        <Badge
+                            variant="outline"
+                            className="rounded-none border border-border text-xs"
+                        >
                             {resident.residency_status}
                         </Badge>
                         <div className="flex items-center gap-1">
                             {resident.is_voter && (
                                 <Badge
                                     variant="outline"
-                                    className="border-emerald-500/30 text-[10px] text-emerald-700 dark:text-emerald-400"
+                                    className="rounded-none border-emerald-500/30 text-[10px] text-emerald-700 dark:text-emerald-400"
                                 >
                                     Voter
                                 </Badge>
@@ -130,7 +136,7 @@ export function ResidentProfileDrawer({
                             {resident.senior_citizen_status && (
                                 <Badge
                                     variant="outline"
-                                    className="border-amber-500/30 text-[10px] text-amber-700 dark:text-amber-400"
+                                    className="rounded-none border-amber-500/30 text-[10px] text-amber-700 dark:text-amber-400"
                                 >
                                     Senior
                                 </Badge>
@@ -138,7 +144,7 @@ export function ResidentProfileDrawer({
                             {resident.pwd_status && (
                                 <Badge
                                     variant="outline"
-                                    className="border-indigo-500/30 text-[10px] text-indigo-700 dark:text-indigo-400"
+                                    className="rounded-none border-indigo-500/30 text-[10px] text-indigo-700 dark:text-indigo-400"
                                 >
                                     PWD
                                 </Badge>
@@ -146,15 +152,15 @@ export function ResidentProfileDrawer({
                             {resident.solo_parent_status && (
                                 <Badge
                                     variant="outline"
-                                    className="border-rose-500/30 text-[10px] text-rose-700 dark:text-rose-400"
+                                    className="rounded-none border-rose-500/30 text-[10px] text-rose-700 dark:text-rose-400"
                                 >
                                     Solo Parent
                                 </Badge>
                             )}
                         </div>
                     </div>
-                    <SheetTitle className="mt-3 flex flex-wrap items-center gap-2.5 text-xl font-bold tracking-tight text-foreground">
-                        <div className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+                    <DialogTitle className="mt-3 flex flex-wrap items-center gap-2.5 text-xl font-bold tracking-tight text-foreground">
+                        <div className="flex size-9 items-center justify-center rounded-none border border-border bg-primary/10 text-sm font-bold text-primary">
                             {resident.first_name.charAt(0)}
                         </div>
                         <span>{resident.full_name}</span>
@@ -164,8 +170,8 @@ export function ResidentProfileDrawer({
                             isSuperAdmin={resident.is_super_admin}
                             className="px-2 py-0.5 text-xs font-semibold"
                         />
-                    </SheetTitle>
-                    <SheetDescription className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+                    </DialogTitle>
+                    <DialogDescription className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
                         <Mail className="size-3.5" />
                         {resident.email}
                         {resident.phone_number && (
@@ -175,13 +181,13 @@ export function ResidentProfileDrawer({
                                 {resident.phone_number}
                             </>
                         )}
-                    </SheetDescription>
-                </div>
+                    </DialogDescription>
+                </DialogHeader>
 
                 {/* Body Content */}
                 <div className="flex-1 space-y-6 p-6">
                     {/* Demographics Grid */}
-                    <div className="space-y-3 rounded-xl border border-border/60 bg-card p-4 shadow-sm">
+                    <div className="space-y-3 rounded-none border border-border bg-card p-4">
                         <h4 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                             Personal & Demographic Details
                         </h4>
@@ -232,7 +238,7 @@ export function ResidentProfileDrawer({
                     </div>
 
                     {/* Sectoral Classification Details */}
-                    <div className="space-y-3 rounded-xl border border-border/60 bg-card p-4 shadow-sm">
+                    <div className="space-y-3 rounded-none border border-border bg-card p-4">
                         <h4 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                             Special Sector Affiliations
                         </h4>
@@ -277,7 +283,7 @@ export function ResidentProfileDrawer({
                     </div>
 
                     {/* Registration Date */}
-                    <div className="rounded-xl border border-border/60 bg-card p-4 shadow-sm">
+                    <div className="rounded-none border border-border bg-card p-4">
                         <span className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
                             Registry Registration Date
                         </span>
@@ -288,23 +294,29 @@ export function ResidentProfileDrawer({
                 </div>
 
                 {/* Footer link to full details */}
-                <div className="flex items-center justify-between border-t border-border/70 bg-muted/10 p-4">
+                <div className="flex items-center justify-between border-t border-border bg-muted/10 p-4">
                     <Button
                         variant="ghost"
                         size="sm"
                         onClick={onClose}
-                        className="text-xs"
+                        className="rounded-none text-xs"
                     >
-                        Close Drawer
+                        Close
                     </Button>
-                    <Button asChild size="sm" className="gap-1.5 text-xs">
+                    <Button
+                        asChild
+                        size="sm"
+                        className="gap-1.5 rounded-none text-xs"
+                    >
                         <Link href={`/admin/resident-profiles/${resident.id}`}>
                             View Full Civil Dossier
                             <ArrowRight className="size-3.5" />
                         </Link>
                     </Button>
                 </div>
-            </SheetContent>
-        </Sheet>
+            </DialogContent>
+        </Dialog>
     );
 }
+
+export const ResidentProfileDrawer = ResidentProfileModal;

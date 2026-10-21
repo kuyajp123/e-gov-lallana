@@ -13,7 +13,7 @@ import {
     Trash2,
     X,
 } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent } from '@/shared/components/ui/card';
@@ -136,7 +136,7 @@ export default function DocumentTypesIndex({
 
     return (
         <>
-            <Head title="Document Services Configuration | Admin Console" />
+            <Head title="Document Services Configuration | Admin Dashboard" />
 
             <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-4 md:p-6">
                 {/* Header with Title and Create Action */}

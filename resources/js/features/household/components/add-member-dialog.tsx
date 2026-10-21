@@ -20,8 +20,10 @@ import {
     SelectValue,
 } from '@/shared/components/ui/select';
 import { Spinner } from '@/shared/components/ui/spinner';
+import { useTranslation } from '@/shared/hooks/use-translation';
 
 export function AddMemberDialog() {
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
 
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -52,14 +54,16 @@ export function AddMemberDialog() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button size="sm" className="gap-1.5">
+                <Button size="sm" className="gap-1.5 rounded-none shadow-none">
                     <Plus className="size-4" />
-                    Add Family Member
+                    {t('household.add_member', 'Add Family Member')}
                 </Button>
             </DialogTrigger>
-            <DialogContent className="max-h-[90vh] max-w-xl overflow-y-auto rounded-2xl">
+            <DialogContent className="max-h-[90vh] max-w-xl overflow-y-auto rounded-none shadow-none">
                 <DialogHeader>
-                    <DialogTitle>Add Household Member</DialogTitle>
+                    <DialogTitle>
+                        {t('household.add_member', 'Add Household Member')}
+                    </DialogTitle>
                     <DialogDescription>
                         Register an immediate or extended family member residing
                         in this household. Submitted members will undergo
@@ -71,7 +75,7 @@ export function AddMemberDialog() {
                     <div className="grid gap-3 sm:grid-cols-2">
                         <div className="space-y-1.5">
                             <Label htmlFor="mem_first_name">
-                                First Name{' '}
+                                {t('profile.first_name', 'First Name')}{' '}
                                 <span className="text-destructive">*</span>
                             </Label>
                             <Input
@@ -81,6 +85,7 @@ export function AddMemberDialog() {
                                     setData('first_name', e.target.value)
                                 }
                                 placeholder="e.g. Maria"
+                                className="rounded-none"
                                 required
                             />
                             {errors.first_name && (
@@ -91,7 +96,9 @@ export function AddMemberDialog() {
                         </div>
 
                         <div className="space-y-1.5">
-                            <Label htmlFor="mem_middle_name">Middle Name</Label>
+                            <Label htmlFor="mem_middle_name">
+                                {t('profile.middle_name', 'Middle Name')}
+                            </Label>
                             <Input
                                 id="mem_middle_name"
                                 value={data.middle_name}
@@ -99,6 +106,7 @@ export function AddMemberDialog() {
                                     setData('middle_name', e.target.value)
                                 }
                                 placeholder="e.g. Reyes"
+                                className="rounded-none"
                             />
                             {errors.middle_name && (
                                 <p className="text-xs text-destructive">
@@ -109,7 +117,7 @@ export function AddMemberDialog() {
 
                         <div className="space-y-1.5">
                             <Label htmlFor="mem_last_name">
-                                Last Name{' '}
+                                {t('profile.last_name', 'Last Name')}{' '}
                                 <span className="text-destructive">*</span>
                             </Label>
                             <Input
@@ -119,6 +127,7 @@ export function AddMemberDialog() {
                                     setData('last_name', e.target.value)
                                 }
                                 placeholder="e.g. Santos"
+                                className="rounded-none"
                                 required
                             />
                             {errors.last_name && (
@@ -129,7 +138,9 @@ export function AddMemberDialog() {
                         </div>
 
                         <div className="space-y-1.5">
-                            <Label htmlFor="mem_suffix">Suffix</Label>
+                            <Label htmlFor="mem_suffix">
+                                {t('profile.suffix', 'Suffix')}
+                            </Label>
                             <Input
                                 id="mem_suffix"
                                 value={data.suffix}
@@ -137,12 +148,16 @@ export function AddMemberDialog() {
                                     setData('suffix', e.target.value)
                                 }
                                 placeholder="Jr., III"
+                                className="rounded-none"
                             />
                         </div>
 
                         <div className="space-y-1.5">
                             <Label htmlFor="relationship_to_head">
-                                Relationship to Head{' '}
+                                {t(
+                                    'household.relationship',
+                                    'Relationship to Head',
+                                )}{' '}
                                 <span className="text-destructive">*</span>
                             </Label>
                             <Select
@@ -151,10 +166,13 @@ export function AddMemberDialog() {
                                     setData('relationship_to_head', val)
                                 }
                             >
-                                <SelectTrigger id="relationship_to_head">
+                                <SelectTrigger
+                                    id="relationship_to_head"
+                                    className="rounded-none"
+                                >
                                     <SelectValue placeholder="Select relationship" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="rounded-none">
                                     <SelectItem value="spouse">
                                         Spouse / Partner
                                     </SelectItem>
@@ -181,7 +199,9 @@ export function AddMemberDialog() {
                         </div>
 
                         <div className="space-y-1.5">
-                            <Label htmlFor="mem_birthdate">Birthdate</Label>
+                            <Label htmlFor="mem_birthdate">
+                                {t('profile.birthdate', 'Birthdate')}
+                            </Label>
                             <Input
                                 id="mem_birthdate"
                                 type="date"
@@ -189,6 +209,7 @@ export function AddMemberDialog() {
                                 onChange={(e) =>
                                     setData('birthdate', e.target.value)
                                 }
+                                className="rounded-none"
                             />
                             {errors.birthdate && (
                                 <p className="text-xs text-destructive">
@@ -198,15 +219,20 @@ export function AddMemberDialog() {
                         </div>
 
                         <div className="space-y-1.5">
-                            <Label htmlFor="mem_gender">Sex</Label>
+                            <Label htmlFor="mem_gender">
+                                {t('profile.sex', 'Sex')}
+                            </Label>
                             <Select
                                 value={data.gender}
                                 onValueChange={(val) => setData('gender', val)}
                             >
-                                <SelectTrigger id="mem_gender">
+                                <SelectTrigger
+                                    id="mem_gender"
+                                    className="rounded-none"
+                                >
                                     <SelectValue placeholder="Select sex" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="rounded-none">
                                     <SelectItem value="male">Male</SelectItem>
                                     <SelectItem value="female">
                                         Female
@@ -218,7 +244,7 @@ export function AddMemberDialog() {
 
                         <div className="space-y-1.5">
                             <Label htmlFor="mem_civil_status">
-                                Civil Status
+                                {t('profile.civil_status', 'Civil Status')}
                             </Label>
                             <Select
                                 value={data.civil_status}
@@ -226,10 +252,13 @@ export function AddMemberDialog() {
                                     setData('civil_status', val)
                                 }
                             >
-                                <SelectTrigger id="mem_civil_status">
+                                <SelectTrigger
+                                    id="mem_civil_status"
+                                    className="rounded-none"
+                                >
                                     <SelectValue placeholder="Select civil status" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="rounded-none">
                                     <SelectItem value="single">
                                         Single
                                     </SelectItem>
@@ -247,7 +276,9 @@ export function AddMemberDialog() {
                         </div>
 
                         <div className="space-y-1.5 sm:col-span-2">
-                            <Label htmlFor="mem_occupation">Occupation</Label>
+                            <Label htmlFor="mem_occupation">
+                                {t('household.occupation', 'Occupation')}
+                            </Label>
                             <Input
                                 id="mem_occupation"
                                 value={data.occupation}
@@ -255,6 +286,7 @@ export function AddMemberDialog() {
                                     setData('occupation', e.target.value)
                                 }
                                 placeholder="e.g. Student, Driver, Self-Employed"
+                                className="rounded-none"
                             />
                         </div>
 
@@ -273,6 +305,7 @@ export function AddMemberDialog() {
                                     setData('email', e.target.value)
                                 }
                                 placeholder="e.g. resident@example.com"
+                                className="rounded-none"
                             />
                             <p className="text-[11px] text-muted-foreground">
                                 If provided, an invitation will be sent for the
@@ -290,18 +323,25 @@ export function AddMemberDialog() {
                         <Button
                             type="button"
                             variant="outline"
+                            className="rounded-none shadow-none"
                             onClick={() => setOpen(false)}
                         >
-                            Cancel
+                            {t('common.cancel', 'Cancel')}
                         </Button>
-                        <Button type="submit" disabled={processing}>
+                        <Button
+                            type="submit"
+                            disabled={processing}
+                            className="rounded-none shadow-none"
+                        >
                             {processing ? (
                                 <div className="flex items-center gap-1.5">
                                     <Spinner className="size-4" />
-                                    <span>Saving...</span>
+                                    <span>
+                                        {t('common.saving', 'Saving...')}
+                                    </span>
                                 </div>
                             ) : (
-                                'Add Member'
+                                t('household.add_member', 'Add Member')
                             )}
                         </Button>
                     </div>

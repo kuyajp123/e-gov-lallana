@@ -95,7 +95,7 @@ class PdfGenerationService
         $template = $this->resolveTemplate($request->documentType->slug);
 
         // 5. Generate PDF binary via Spatie PDF
-        $tempPath = tempnam(sys_get_temp_dir(), 'pdf_doc_').'.pdf';
+        $tempPath = @tempnam(sys_get_temp_dir(), 'pdf_doc_').'.pdf';
 
         Pdf::view($template, $viewData)
             ->format('A4')
@@ -230,19 +230,19 @@ class PdfGenerationService
     protected function getDefaultOfficials(): array
     {
         return [
-            'punong_barangay' => 'HON. CRISANTO V. LALLANA',
+            'punong_barangay' => 'HON. CECILIA M. DECILLO',
             'kagawads' => [
-                'Hon. Maria Santos',
-                'Hon. Danilo Reyes',
-                'Hon. Elena Garcia',
-                'Hon. Roberto Cruz',
-                'Hon. Arlene Bautista',
-                'Hon. Fernando Ocampo',
-                'Hon. Grace Villanueva',
+                'Hon. Edrian C. Leachon (Committee & Commission / I Kagawad)',
+                'Hon. Sammy C. Leachon (Committee & Peace / II Kagawad)',
+                'Hon. Edgar M. Martinez (Women & Family / III Kagawad)',
+                'Hon. Teresita M. Siapco (Health / IV Kagawad)',
+                'Hon. Celedonio B. Leachon (Pagawain / V Kagawad)',
+                'Hon. Francis Dennis A. Camerino (Environment & Disaster / VI Kagawad)',
+                'Hon. Larry V. Adelante (Waste & Means / VII Kagawad)',
             ],
-            'sk_chairperson' => 'Hon. Justin Ramos',
-            'secretary' => 'Ana Patricia Diaz',
-            'treasurer' => 'Ramonito Mendoza',
+            'sk_chairperson' => 'Hon. Larah Draize E. Amparo (Sanggunian Kabataan)',
+            'secretary' => 'Barangay Secretary',
+            'treasurer' => 'Barangay Treasurer',
         ];
     }
 }

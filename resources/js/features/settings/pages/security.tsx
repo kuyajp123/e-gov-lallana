@@ -7,26 +7,33 @@ import InputError from '@/shared/components/input-error';
 import PasswordInput from '@/shared/components/password-input';
 import { Button } from '@/shared/components/ui/button';
 import { Label } from '@/shared/components/ui/label';
+import { useTranslation } from '@/shared/hooks/use-translation';
 
 type Props = {
     passwordRules: string;
 };
 
 export default function Security(props: Props) {
+    const { t } = useTranslation();
     const passwordInput = useRef<HTMLInputElement>(null);
     const currentPasswordInput = useRef<HTMLInputElement>(null);
 
     return (
         <>
-            <Head title="Security settings" />
+            <Head title={t('settings.security_title', 'Security settings')} />
 
-            <h1 className="sr-only">Security settings</h1>
+            <h1 className="sr-only">
+                {t('settings.security_title', 'Security settings')}
+            </h1>
 
             <div className="space-y-6">
                 <Heading
                     variant="small"
-                    title="Update password"
-                    description="Ensure your account is using a long, random password to stay secure"
+                    title={t('settings.update_password', 'Update password')}
+                    description={t(
+                        'settings.update_password_desc',
+                        'Ensure your account is using a long, random password to stay secure',
+                    )}
                 />
 
                 <Form
@@ -55,31 +62,42 @@ export default function Security(props: Props) {
                         <>
                             <div className="grid gap-2">
                                 <Label htmlFor="current_password">
-                                    Current password
+                                    {t(
+                                        'settings.current_password',
+                                        'Current password',
+                                    )}
                                 </Label>
 
                                 <PasswordInput
                                     id="current_password"
                                     ref={currentPasswordInput}
                                     name="current_password"
-                                    className="mt-1 block w-full"
+                                    className="mt-1 block w-full rounded-none shadow-none"
                                     autoComplete="current-password"
-                                    placeholder="Current password"
+                                    placeholder={t(
+                                        'settings.current_password',
+                                        'Current password',
+                                    )}
                                 />
 
                                 <InputError message={errors.current_password} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password">New password</Label>
+                                <Label htmlFor="password">
+                                    {t('settings.new_password', 'New password')}
+                                </Label>
 
                                 <PasswordInput
                                     id="password"
                                     ref={passwordInput}
                                     name="password"
-                                    className="mt-1 block w-full"
+                                    className="mt-1 block w-full rounded-none shadow-none"
                                     autoComplete="new-password"
-                                    placeholder="New password"
+                                    placeholder={t(
+                                        'settings.new_password',
+                                        'New password',
+                                    )}
                                     passwordrules={props.passwordRules}
                                 />
 
@@ -88,15 +106,21 @@ export default function Security(props: Props) {
 
                             <div className="grid gap-2">
                                 <Label htmlFor="password_confirmation">
-                                    Confirm password
+                                    {t(
+                                        'settings.confirm_password',
+                                        'Confirm password',
+                                    )}
                                 </Label>
 
                                 <PasswordInput
                                     id="password_confirmation"
                                     name="password_confirmation"
-                                    className="mt-1 block w-full"
+                                    className="mt-1 block w-full rounded-none shadow-none"
                                     autoComplete="new-password"
-                                    placeholder="Confirm password"
+                                    placeholder={t(
+                                        'settings.confirm_password',
+                                        'Confirm password',
+                                    )}
                                     passwordrules={props.passwordRules}
                                 />
 
@@ -108,9 +132,11 @@ export default function Security(props: Props) {
                             <div className="flex items-center gap-4">
                                 <Button
                                     disabled={processing}
+                                    loading={processing}
+                                    className="rounded-none shadow-none"
                                     data-test="update-password-button"
                                 >
-                                    Save
+                                    {t('common.save', 'Save')}
                                 </Button>
                             </div>
                         </>
