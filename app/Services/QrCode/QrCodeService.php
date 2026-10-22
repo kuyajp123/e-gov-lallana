@@ -33,12 +33,16 @@ class QrCodeService
         $token = Str::random(32);
         $securityHash = $this->computeSecurityHash($token, $request->reference_code, $request->user_id);
 
+        $residentName = $request->user ? $request->user->name : ($request->walkin_name ?? 'Walk-in Resident');
+        $docTypeSlug = $request->documentType ? $request->documentType->slug : 'custom-document';
+        $householdId = $request->user?->household()?->id;
+
         return QrIdentifier::create([
             'token' => $token,
             'document_request_id' => $request->id,
             'resident_id' => $request->user_id,
-            'household_id' => $request->user->household()?->id,
-            'document_type' => $request->documentType->slug,
+            'household_id' => $householdId,
+            'document_type' => $docTypeSlug,
             'reference_code' => $request->reference_code,
             'status' => QrStatus::Active,
             'security_hash' => $securityHash,
@@ -46,7 +50,7 @@ class QrCodeService
                 'issued_by' => $issuer->name ?? 'Barangay Staff',
                 'issued_by_id' => $issuer?->id,
                 'issued_at' => now()->toIso8601String(),
-                'resident_name' => $request->user->name,
+                'resident_name' => $residentName,
                 'purpose' => $request->purpose,
             ],
             'expires_at' => now()->addMonths(6),
@@ -119,7 +123,7 @@ class QrCodeService
         }
 
         // Verify cryptographic signature integrity
-        $expectedHash = $this->computeSecurityHash($qr->token, $qr->reference_code, (int) $qr->resident_id);
+        $expectedHash = $this->computeSecurityHash($qr->token, $qr->reference_code, $qr->resident_id !== null ? (int) $qr->resident_id : null);
         if (! hash_equals($qr->security_hash, $expectedHash)) {
             return [
                 'valid' => false,
@@ -149,10 +153,11 @@ class QrCodeService
     /**
      * Compute HMAC-SHA256 signature for tamper-proofing.
      */
-    protected function computeSecurityHash(string $token, string $referenceCode, int $userId): string
+    protected function computeSecurityHash(string $token, string $referenceCode, ?int $userId = null): string
     {
         $appKey = (string) config('app.key');
-        $payload = "{$token}|{$referenceCode}|{$userId}|barangay-lallana";
+        $userIdInt = (int) ($userId ?? 0);
+        $payload = "{$token}|{$referenceCode}|{$userIdInt}|barangay-lallana";
 
         return hash_hmac('sha256', $payload, $appKey);
     }

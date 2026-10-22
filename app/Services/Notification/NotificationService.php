@@ -151,6 +151,55 @@ class NotificationService
     }
 
     /**
+     * Send external alerts (Email / SMS) directly to a walk-in citizen without a registered user account.
+     * Silently skips channels if the corresponding contact detail is not provided.
+     */
+    public function sendWalkinAlert(
+        ?string $email,
+        ?string $phoneNumber,
+        string $recipientName,
+        string $title,
+        string $message,
+        ?string $actionUrl = null
+    ): void {
+        if (! empty($email)) {
+            try {
+                Mail::to($email)->queue(
+                    new DocumentStatusUpdatedMail($recipientName, $title, $message, $actionUrl)
+                );
+            } catch (Throwable $e) {
+                Log::error('Failed to queue walk-in notification email: '.$e->getMessage(), [
+                    'email' => $email,
+                ]);
+            }
+        }
+
+        if (! empty($phoneNumber)) {
+            $smsText = "[Brgy. Lallana] {$title}: {$message}";
+
+            try {
+                $driver = SmsManager::createDriver();
+                $result = $driver->send($phoneNumber, $smsText);
+
+                SmsMessage::create([
+                    'recipient' => $phoneNumber,
+                    'message' => $smsText,
+                    'provider' => config('sms.default', 'fake'),
+                    'message_id' => $result->messageId,
+                    'status' => $result->success ? 'sent' : 'failed',
+                    'error_message' => $result->errorMessage,
+                    'raw_response' => $result->rawResponse,
+                    'sent_at' => $result->success ? Carbon::now() : null,
+                ]);
+            } catch (Throwable $e) {
+                Log::error('Failed to send walk-in notification SMS: '.$e->getMessage(), [
+                    'phone' => $phoneNumber,
+                ]);
+            }
+        }
+    }
+
+    /**
      * Mark a specific notification as read.
      */
     public function markAsRead(User $user, string $notificationId): bool

@@ -32,6 +32,13 @@ import type { TransitionActionType } from './status-transition-modal';
 export interface AdminDocumentRequestItem {
     id: number;
     reference_code: string;
+    is_walkin?: boolean;
+    walkin_name?: string | null;
+    walkin_purok?: string | null;
+    walkin_address?: string | null;
+    walkin_contact_number?: string | null;
+    walkin_email?: string | null;
+    custom_document_title?: string | null;
     current_status: string;
     status_label: string;
     status_color: string;
@@ -46,14 +53,14 @@ export interface AdminDocumentRequestItem {
     submitted_at_formatted: string;
     completed_at?: string | null;
     user: {
-        id: number;
+        id: number | null;
         name: string;
         email: string;
         phone_number?: string | null;
         avatar_url?: string | null;
     };
     document_type: {
-        id: number;
+        id: number | null;
         name: string;
         slug: string;
     };
@@ -128,12 +135,19 @@ export function DocumentRequestModal({
                 {/* Header */}
                 <DialogHeader className="border-b border-border bg-muted/20 p-6 pr-12 text-left">
                     <div className="flex items-center justify-between gap-2">
-                        <Badge
-                            variant="outline"
-                            className="rounded-none border border-border px-2.5 py-1 font-mono text-xs"
-                        >
-                            {request.reference_code}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                            <Badge
+                                variant="outline"
+                                className="rounded-none border border-border px-2.5 py-1 font-mono text-xs"
+                            >
+                                {request.reference_code}
+                            </Badge>
+                            {request.is_walkin && (
+                                <span className="inline-flex items-center rounded-none border border-blue-600 bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700 dark:border-blue-500 dark:bg-blue-950/50 dark:text-blue-300">
+                                    Walk-in
+                                </span>
+                            )}
+                        </div>
                         <div className="flex items-center gap-2">
                             <span
                                 className={`inline-flex items-center rounded-none px-2.5 py-0.5 text-xs font-semibold ${
@@ -290,10 +304,19 @@ export function DocumentRequestModal({
 
                     {/* Applicant Card */}
                     <div className="space-y-3 rounded-none border border-border bg-card p-4">
-                        <h4 className="flex items-center gap-1.5 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                            <User className="size-3.5" />
-                            Applicant Information
-                        </h4>
+                        <div className="flex items-center justify-between">
+                            <h4 className="flex items-center gap-1.5 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                                <User className="size-3.5" />
+                                Applicant Information
+                            </h4>
+                            {request.is_walkin && (
+                                <span className="text-[11px] font-medium text-muted-foreground">
+                                    {request.user.id
+                                        ? 'Registered Walk-in'
+                                        : 'Unregistered Walk-in'}
+                                </span>
+                            )}
+                        </div>
                         <div className="flex items-center gap-3">
                             <div className="flex size-10 items-center justify-center rounded-none border border-border bg-primary/10 text-sm font-bold text-primary">
                                 {request.user.name.charAt(0)}
@@ -303,14 +326,23 @@ export function DocumentRequestModal({
                                     {request.user.name}
                                 </p>
                                 <div className="mt-0.5 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                                    <span className="flex items-center gap-1">
-                                        <Mail className="size-3" />
-                                        {request.user.email}
-                                    </span>
-                                    {request.user.phone_number && (
-                                        <span className="flex items-center gap-1">
-                                            <Phone className="size-3" />
-                                            {request.user.phone_number}
+                                    {request.user.email &&
+                                        request.user.email !== '—' && (
+                                            <span className="flex items-center gap-1">
+                                                <Mail className="size-3" />
+                                                {request.user.email}
+                                            </span>
+                                        )}
+                                    {request.user.phone_number &&
+                                        request.user.phone_number !== '—' && (
+                                            <span className="flex items-center gap-1">
+                                                <Phone className="size-3" />
+                                                {request.user.phone_number}
+                                            </span>
+                                        )}
+                                    {request.walkin_purok && (
+                                        <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                                            • {request.walkin_purok}
                                         </span>
                                     )}
                                 </div>

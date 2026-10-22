@@ -27,6 +27,7 @@ import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { Textarea } from '@/shared/components/ui/textarea';
+import type { Auth } from '@/shared/types/auth';
 
 interface ServiceItem {
     id: number;
@@ -75,9 +76,29 @@ export default function Welcome({
     announcements,
 }: LandingProps) {
     const { auth } = usePage<{
-        auth: { user?: { name: string } };
+        auth: Auth;
     }>().props;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    const isAdmin =
+        auth?.user?.role?.slug === 'admin' ||
+        auth?.user?.role?.slug === 'super_admin' ||
+        auth?.user?.can_access_admin === true;
+
+    const dashboardUrl = isAdmin ? '/admin/overview' : '/dashboard';
+    const dashboardLabel = isAdmin ? 'Admin Dashboard' : 'Resident Dashboard';
+
+    const requestDocumentHref = !auth?.user
+        ? '/login?intent=request'
+        : isAdmin
+          ? '/admin/document-requests'
+          : '/documents';
+
+    const registerHouseholdHref = !auth?.user
+        ? '/register?intent=household'
+        : isAdmin
+          ? '/admin/households'
+          : '/household/register';
 
     // Inquiry Contact Form
     const {
@@ -243,13 +264,13 @@ export default function Welcome({
                                 <ChevronDown className="pointer-events-none absolute top-1/2 right-1.5 size-3.5 -translate-y-1/2 text-muted-foreground" />
                             </div>
 
-                            {auth.user ? (
-                                <Link href="/dashboard">
+                            {auth?.user ? (
+                                <Link href={dashboardUrl}>
                                     <Button
                                         size="sm"
                                         className="h-8 cursor-pointer rounded-none bg-violet-600 px-4 text-xs font-semibold text-white shadow-none hover:bg-violet-700"
                                     >
-                                        Resident Dashboard
+                                        {dashboardLabel}
                                     </Button>
                                 </Link>
                             ) : (
@@ -367,25 +388,39 @@ export default function Welcome({
                                     </select>
                                     <ChevronDown className="pointer-events-none absolute top-1/2 right-1.5 size-3.5 -translate-y-1/2 text-muted-foreground" />
                                 </div>
-                                <div className="flex gap-2">
-                                    <Link href="/login">
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="rounded-none text-xs shadow-none"
-                                        >
-                                            Sign In
-                                        </Button>
-                                    </Link>
-                                    <Link href="/register">
+                                {auth?.user ? (
+                                    <Link
+                                        href={dashboardUrl}
+                                        onClick={() => setMobileMenuOpen(false)}
+                                    >
                                         <Button
                                             size="sm"
-                                            className="rounded-none bg-violet-600 text-xs text-white shadow-none hover:bg-violet-700"
+                                            className="h-8 cursor-pointer rounded-none bg-violet-600 px-3.5 text-xs font-semibold text-white shadow-none hover:bg-violet-700"
                                         >
-                                            Register
+                                            {dashboardLabel}
                                         </Button>
                                     </Link>
-                                </div>
+                                ) : (
+                                    <div className="flex gap-2">
+                                        <Link href="/login">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="rounded-none text-xs shadow-none"
+                                            >
+                                                {t.nav?.login || 'Sign In'}
+                                            </Button>
+                                        </Link>
+                                        <Link href="/register">
+                                            <Button
+                                                size="sm"
+                                                className="rounded-none bg-violet-600 text-xs text-white shadow-none hover:bg-violet-700"
+                                            >
+                                                {t.nav?.register || 'Register'}
+                                            </Button>
+                                        </Link>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}
@@ -429,7 +464,7 @@ export default function Welcome({
                             {/* Solid Sharp CTAs */}
                             <div className="flex flex-col gap-3.5 pt-2 sm:flex-row sm:items-center">
                                 <Link
-                                    href="/login?intent=request"
+                                    href={requestDocumentHref}
                                     className="group w-full sm:w-auto"
                                 >
                                     <Button
@@ -445,7 +480,7 @@ export default function Welcome({
                                 </Link>
 
                                 <Link
-                                    href="/register?intent=household"
+                                    href={registerHouseholdHref}
                                     className="w-full sm:w-auto"
                                 >
                                     <Button
@@ -1005,7 +1040,13 @@ export default function Welcome({
 
                                     <div className="pt-5">
                                         <Link
-                                            href="/login?intent=request"
+                                            href={
+                                                !auth?.user
+                                                    ? '/login?intent=request'
+                                                    : isAdmin
+                                                      ? '/admin/document-requests'
+                                                      : `/documents/create/${service.slug}`
+                                            }
                                             className="block"
                                         >
                                             <Button

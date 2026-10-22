@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\DocumentRequestStatus;
+use App\Enums\PaymentStatus;
 use App\Filament\Widgets\AdminStatsOverviewWidget;
 use App\Filament\Widgets\DemographicsChartWidget;
 use App\Filament\Widgets\DocumentRequestVolumeChartWidget;
@@ -153,4 +154,35 @@ test('document request volume chart widget returns 6-month trends', function () 
     expect($data)->toHaveKey('datasets')
         ->and($data)->toHaveKey('labels')
         ->and(count($data['labels']))->toBe(6);
+});
+
+test('admin dashboard renders successfully when recent document requests include walk-in citizens without user account', function () {
+    $docType = DocumentType::create([
+        'name' => 'Barangay Clearance',
+        'slug' => 'barangay-clearance-test-walkin',
+        'fee_cents' => 5000,
+        'is_active' => true,
+    ]);
+
+    DocumentRequest::create([
+        'reference_code' => 'REQ-WALKIN-1234',
+        'user_id' => null,
+        'document_type_id' => $docType->id,
+        'is_walkin' => true,
+        'walkin_name' => 'Maria Makiling',
+        'walkin_purok' => 'Purok 1',
+        'current_status' => DocumentRequestStatus::Processing,
+        'fee_cents' => 5000,
+        'payment_status' => PaymentStatus::Paid,
+        'purpose' => 'Walkin test',
+        'submitted_at' => now(),
+    ]);
+
+    $response = $this->actingAs($this->admin)->get('/admin');
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('admin/dashboard')
+        ->where('recentDocRequests.0.applicant_name', 'Maria Makiling')
+    );
 });

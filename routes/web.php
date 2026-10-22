@@ -74,6 +74,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Document Requests Management
         Route::prefix('admin/document-requests')->name('admin.document-requests.')->group(function () {
             Route::get('/', [AdminDocumentRequestController::class, 'index'])->name('index');
+            Route::get('/walkin', [AdminDocumentRequestController::class, 'createWalkin'])->name('create-walkin');
+            Route::post('/walkin', [AdminDocumentRequestController::class, 'storeWalkin'])->name('store-walkin');
+            Route::get('/residents/search', [AdminDocumentRequestController::class, 'searchResidents'])->name('residents.search');
             Route::get('/{documentRequest}', [AdminDocumentRequestController::class, 'show'])->name('show')->whereNumber('documentRequest');
             Route::get('/{documentRequest}/pdf', [AdminDocumentRequestController::class, 'downloadPdf'])->name('pdf')->whereNumber('documentRequest');
             Route::patch('/{documentRequest}/status', [AdminDocumentRequestController::class, 'updateStatus'])->name('update-status')->whereNumber('documentRequest');

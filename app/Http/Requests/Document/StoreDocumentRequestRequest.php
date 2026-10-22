@@ -48,12 +48,25 @@ class StoreDocumentRequestRequest extends FormRequest
             $docType = DocumentType::find($this->input('document_type_id'));
             if ($docType && ! empty($docType->form_schema)) {
                 $submitted = $this->input('submitted_data', []);
-                foreach ($docType->form_schema as $field) {
-                    $fieldName = $field['name'] ?? '';
-                    $isRequired = $field['required'] ?? false;
-                    $fieldLabel = $field['label'] ?? $fieldName;
+                if (! is_array($submitted)) {
+                    $submitted = [];
+                }
 
-                    if ($isRequired && (empty($submitted[$fieldName]) && $submitted[$fieldName] !== 0 && $submitted[$fieldName] !== '0')) {
+                foreach ($docType->form_schema as $field) {
+                    $fieldName = (string) ($field['name'] ?? '');
+                    if ($fieldName === '') {
+                        continue;
+                    }
+
+                    $isRequired = (bool) ($field['required'] ?? false);
+                    $fieldLabel = (string) ($field['label'] ?? $fieldName);
+
+                    $val = $submitted[$fieldName] ?? null;
+                    $isEmpty = $val === null
+                        || (is_string($val) && trim($val) === '')
+                        || (is_array($val) && empty($val));
+
+                    if ($isRequired && $isEmpty) {
                         $validator->errors()->add("submitted_data.{$fieldName}", "The {$fieldLabel} field is required.");
                     }
                 }
