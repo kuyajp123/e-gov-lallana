@@ -30,6 +30,7 @@ use App\Http\Middleware\EnsureHouseholdIsVerified;
 use App\Http\Middleware\EnsureProfileIsComplete;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
+use Illuminate\Http\Request;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 
@@ -48,6 +49,31 @@ Route::get('/debug/cookie-test', function () {
 Route::get('/debug/session-test', function () {
     return response('Session test OK');
 });
+
+// Signed route for serving private local storage files (government IDs, verification docs)
+Route::get('/storage/local/{path}', function (Request $request, string $path) {
+    if (! $request->hasValidSignature()) {
+        abort(403, 'Invalid or expired signature.');
+    }
+
+    $cleanPath = ltrim(str_replace(['../', '..\\'], '', $path), '/');
+    $fullPath = storage_path('app/private/'.$cleanPath);
+
+    if (! file_exists($fullPath)) {
+        $fullPath = storage_path('app/'.$cleanPath);
+    }
+
+    if (! file_exists($fullPath)) {
+        abort(404, 'File not found.');
+    }
+
+    $mimeType = mime_content_type($fullPath) ?: 'application/octet-stream';
+
+    return response()->file($fullPath, [
+        'Content-Type' => $mimeType,
+        'Cache-Control' => 'private, max-age=1800',
+    ]);
+})->where('path', '.*')->name('storage.local');
 
 // Public Landing Page & Inquiry Routes
 Route::get('/', LandingPageController::class)->name('home');

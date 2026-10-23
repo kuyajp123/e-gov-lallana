@@ -2,7 +2,7 @@
 
 return [
     'title' => 'Resident Profile',
-    'subtitle' => 'Manage your personal demographic information and KYC verification records.',
+    'subtitle' => 'Manage your personal demographic information and official verification records.',
     'edit_profile' => 'Edit Profile',
     'complete_profile' => 'Complete Profile',
     'profile_incomplete' => 'Profile Incomplete',

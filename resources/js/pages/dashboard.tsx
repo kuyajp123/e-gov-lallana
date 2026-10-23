@@ -189,7 +189,7 @@ export default function Dashboard({
                                 <AlertTitle className="font-semibold">
                                     {t(
                                         'dashboard.kyc_incomplete_title',
-                                        'Resident KYC Profile Incomplete',
+                                        'Resident Profile Incomplete',
                                     )}
                                 </AlertTitle>
                                 <AlertDescription className="mt-1 text-xs text-muted-foreground">
@@ -685,7 +685,7 @@ export default function Dashboard({
                                 <div className="flex items-center gap-2">
                                     <User className="size-4 text-violet-600" />
                                     <h3 className="text-sm font-bold text-foreground">
-                                        Resident KYC Profile
+                                        Resident Profile
                                     </h3>
                                 </div>
                                 <Badge

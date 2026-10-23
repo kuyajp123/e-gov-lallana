@@ -8,8 +8,8 @@ return [
     'profile_settings' => 'Profile Settings',
     'admin_panel_btn' => 'Admin Management Panel',
 
-    // KYC Banner
-    'kyc_incomplete_title' => 'Resident KYC Profile Incomplete',
+    // Profile Banner
+    'kyc_incomplete_title' => 'Resident Profile Incomplete',
     'kyc_incomplete_desc' => 'Please complete your demographic profile and upload a valid government ID to unlock official document requesting and household registration.',
     'complete_profile_btn' => 'Complete Profile',
 

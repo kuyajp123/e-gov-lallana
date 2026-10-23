@@ -1,7 +1,8 @@
-import { useForm } from '@inertiajs/react';
-import { AlertCircle } from 'lucide-react';
+import { Link, useForm } from '@inertiajs/react';
+import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import React from 'react';
 import { IdUploadDropzone } from '@/features/resident/components/id-upload-dropzone';
+import { send } from '@/routes/verification';
 import {
     Alert,
     AlertDescription,
@@ -53,12 +54,25 @@ export interface ResidentProfileData {
 
 interface ProfileFormProps {
     profile?: ResidentProfileData | null;
-    user?: { name: string; email: string };
+    user?: {
+        name?: string;
+        email?: string;
+        phone_number?: string | null;
+        email_verified_at?: string | null;
+    };
     submitUrl: string;
     method?: 'post' | 'put';
+    mustVerifyEmail?: boolean;
+    status?: string;
 }
 
-export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
+export function ProfileForm({
+    profile,
+    user,
+    submitUrl,
+    mustVerifyEmail,
+    status,
+}: ProfileFormProps) {
     const { t } = useTranslation();
     const nameParts = (user?.name || '').trim().split(' ');
     const defaultFirstName = profile?.first_name || nameParts[0] || '';
@@ -71,6 +85,8 @@ export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
         middle_name: profile?.middle_name ?? '',
         last_name: profile?.last_name ?? defaultLastName,
         suffix: profile?.suffix ?? '',
+        email: user?.email ?? '',
+        phone_number: user?.phone_number ?? '',
         birthdate: profile?.birthdate ? profile.birthdate.split('T')[0] : '',
         gender: profile?.gender ?? 'male',
         civil_status: profile?.civil_status ?? 'single',
@@ -147,12 +163,13 @@ export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
 
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <div className="space-y-2 sm:col-span-2">
-                        <Label htmlFor="kyc_first_name">
+                        <Label htmlFor="first_name">
                             First Name{' '}
                             <span className="text-destructive">*</span>
                         </Label>
                         <Input
-                            id="kyc_first_name"
+                            id="first_name"
+                            name="first_name"
                             value={data.first_name}
                             onChange={(e) =>
                                 setData('first_name', e.target.value)
@@ -168,9 +185,10 @@ export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="kyc_middle_name">Middle Name</Label>
+                        <Label htmlFor="middle_name">Middle Name</Label>
                         <Input
-                            id="kyc_middle_name"
+                            id="middle_name"
+                            name="middle_name"
                             value={data.middle_name}
                             onChange={(e) =>
                                 setData('middle_name', e.target.value)
@@ -185,9 +203,10 @@ export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="kyc_suffix">Suffix</Label>
+                        <Label htmlFor="suffix">Suffix</Label>
                         <Input
-                            id="kyc_suffix"
+                            id="suffix"
+                            name="suffix"
                             value={data.suffix}
                             onChange={(e) => setData('suffix', e.target.value)}
                             placeholder="Jr., III, etc."
@@ -200,12 +219,13 @@ export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
                     </div>
 
                     <div className="space-y-2 sm:col-span-2">
-                        <Label htmlFor="kyc_last_name">
+                        <Label htmlFor="last_name">
                             Last Name{' '}
                             <span className="text-destructive">*</span>
                         </Label>
                         <Input
-                            id="kyc_last_name"
+                            id="last_name"
+                            name="last_name"
                             value={data.last_name}
                             onChange={(e) =>
                                 setData('last_name', e.target.value)
@@ -231,6 +251,7 @@ export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
                         </Label>
                         <Input
                             id="birthdate"
+                            name="birthdate"
                             type="date"
                             max={maxBirthdate}
                             value={data.birthdate}
@@ -315,6 +336,7 @@ export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
                         </Label>
                         <Input
                             id="citizenship"
+                            name="citizenship"
                             value={data.citizenship}
                             onChange={(e) =>
                                 setData('citizenship', e.target.value)
@@ -332,6 +354,7 @@ export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
                         <Label htmlFor="religion">Religion</Label>
                         <Input
                             id="religion"
+                            name="religion"
                             value={data.religion}
                             onChange={(e) =>
                                 setData('religion', e.target.value)
@@ -347,11 +370,89 @@ export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
                 </div>
             </div>
 
-            {/* Section 2: Demographics & Work */}
+            {/* Section 2: Contact Information */}
             <div className="space-y-4 border-t border-border pt-6">
                 <div className="border-b border-border pb-2">
                     <h3 className="text-base font-semibold text-foreground">
-                        2. Demographics & Work
+                        2. Contact Information
+                    </h3>
+                    <p className="text-xs text-muted-foreground">
+                        Your registered email and mobile phone number for
+                        account notifications and barangay status updates.
+                    </p>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-2">
+                        <Label htmlFor="email">
+                            Email Address{' '}
+                            <span className="text-destructive">*</span>
+                        </Label>
+                        <Input
+                            id="email"
+                            name="email"
+                            type="email"
+                            value={data.email}
+                            onChange={(e) => setData('email', e.target.value)}
+                            autoComplete="username"
+                            placeholder="email@example.com"
+                            required
+                        />
+                        {errors.email && (
+                            <p className="text-xs text-destructive">
+                                {errors.email}
+                            </p>
+                        )}
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="phone_number">
+                            Mobile Phone Number
+                        </Label>
+                        <Input
+                            id="phone_number"
+                            name="phone_number"
+                            type="tel"
+                            value={data.phone_number}
+                            onChange={(e) =>
+                                setData('phone_number', e.target.value)
+                            }
+                            autoComplete="tel"
+                            placeholder="09171234567"
+                        />
+                        {errors.phone_number && (
+                            <p className="text-xs text-destructive">
+                                {errors.phone_number}
+                            </p>
+                        )}
+                    </div>
+                </div>
+
+                {mustVerifyEmail && user?.email_verified_at === null && (
+                    <div className="rounded-none border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-200">
+                        Your email address is unverified.{' '}
+                        <Link
+                            href={send()}
+                            as="button"
+                            className="font-semibold underline decoration-neutral-400 underline-offset-2 hover:text-foreground"
+                        >
+                            Click here to re-send the verification email.
+                        </Link>
+                        {status === 'verification-link-sent' && (
+                            <div className="mt-1 font-medium text-emerald-600">
+                                A new verification link has been sent to your
+                                email address.
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
+
+            {/* Section 3: Demographics & Work */}
+            <div className="space-y-4 border-t border-border pt-6">
+                <div className="border-b border-border pb-2">
+                    <h3 className="text-base font-semibold text-foreground">
+                        3. Demographics & Work
                     </h3>
                     <p className="text-xs text-muted-foreground">
                         Residency classification, employment, and educational
@@ -519,11 +620,11 @@ export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
                 </div>
             </div>
 
-            {/* Section 3: Special Classifications */}
+            {/* Section 4: Special Classifications */}
             <div className="space-y-4 border-t border-border pt-6">
                 <div className="border-b border-border pb-2">
                     <h3 className="text-base font-semibold text-foreground">
-                        3. Special Classifications
+                        4. Special Classifications
                     </h3>
                     <p className="text-xs text-muted-foreground">
                         Special sector designations for targeted barangay
@@ -715,16 +816,23 @@ export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
                 </div>
             </div>
 
-            {/* Section 4: Government ID */}
+            {/* Section 5: Government ID */}
             <div className="space-y-4 border-t border-border pt-6">
                 <div className="border-b border-border pb-2">
                     <div className="flex items-center justify-between">
                         <h3 className="text-base font-semibold text-foreground">
-                            4. Government-Issued Identification
+                            5. Government-Issued Identification
                         </h3>
-                        <span className="text-xs font-semibold text-destructive">
-                            * Required for Document Requests
-                        </span>
+                        {profile?.government_id_url || data.government_id ? (
+                            <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                                <CheckCircle2 className="size-3.5" />
+                                Valid ID Attached
+                            </span>
+                        ) : (
+                            <span className="text-xs font-medium text-muted-foreground">
+                                * Required for Document Requests
+                            </span>
+                        )}
                     </div>
                     <p className="text-xs text-muted-foreground">
                         Upload a clear photo or scanned copy of a valid
@@ -749,6 +857,7 @@ export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
                     disabled={processing}
                     className="min-w-40 rounded-none shadow-none"
                     data-test="save-profile-button"
+                    id="update-profile-button"
                 >
                     {processing ? (
                         <div className="flex items-center gap-2">
@@ -756,7 +865,7 @@ export function ProfileForm({ profile, user, submitUrl }: ProfileFormProps) {
                             <span>{t('common.saving', 'Saving...')}</span>
                         </div>
                     ) : (
-                        t('profile.save_profile', 'Save Resident Profile')
+                        t('profile.save_profile', 'Save Profile')
                     )}
                 </Button>
             </div>

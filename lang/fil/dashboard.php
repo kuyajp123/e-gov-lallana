@@ -8,8 +8,8 @@ return [
     'profile_settings' => 'Setting ng Profile',
     'admin_panel_btn' => 'Admin Management Panel',
 
-    // KYC Banner
-    'kyc_incomplete_title' => 'Kailangang Kumpletuhin ang KYC Profile',
+    // Profile Banner
+    'kyc_incomplete_title' => 'Kailangang Kumpletuhin ang Profile ng Residente',
     'kyc_incomplete_desc' => 'Mangyaring kumpletuhin ang iyong demographic profile at mag-upload ng valid government ID upang magamit ang paghiling ng dokumento at pagpaparehistro ng sambahayan.',
     'complete_profile_btn' => 'Kumpletuhin ang Profile',
 

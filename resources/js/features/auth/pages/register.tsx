@@ -1,5 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
-import { Check, Info, X } from 'lucide-react';
+import { Check, CheckCircle2, Info, X } from 'lucide-react';
 import React, { useState } from 'react';
 import AuthLayout from '@/app/layouts/auth-layout';
 import { TermsAndPrivacyModal } from '@/features/auth/components/terms-and-privacy-modal';
@@ -978,6 +978,12 @@ export default function Register({ passwordRules }: Props) {
                                     *
                                 </span>
                             </div>
+                            {data.government_id && (
+                                <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                                    <CheckCircle2 className="size-3.5" />
+                                    Valid ID Attached
+                                </span>
+                            )}
                         </div>
                         <CardDescription>
                             Attach a valid government ID or proof of identity

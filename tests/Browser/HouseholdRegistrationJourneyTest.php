@@ -57,8 +57,8 @@ test('resident can view resident profile page in browser', function () {
 
     $page = $this->actingAs($user)->visit('/resident/profile');
 
-    $page->assertSee('Resident Profile & KYC')
-        ->assertSee('KYC Complete')
+    $page->assertSee('Resident Profile')
+        ->assertSee('Profile Complete')
         ->assertValue('#first_name', 'Maria')
         ->assertValue('#last_name', 'Santos')
         ->assertNoJavaScriptErrors();

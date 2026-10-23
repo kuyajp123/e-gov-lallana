@@ -38,7 +38,7 @@ export default function ProfileEdit({ profile }: ProfileEditProps) {
                         <CardTitle className="text-xl font-bold">
                             {t(
                                 'settings.kyc_profile_title',
-                                'Resident Profile & KYC Verification',
+                                'Resident Profile Information',
                             )}
                         </CardTitle>
                         <CardDescription>

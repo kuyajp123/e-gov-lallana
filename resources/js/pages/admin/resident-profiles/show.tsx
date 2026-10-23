@@ -1,11 +1,12 @@
 import { Head, Link } from '@inertiajs/react';
 import {
     ArrowLeft,
-    ExternalLink,
+    Eye,
     FileText,
     Home,
     Trash2,
     Vote,
+    ZoomIn,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Badge } from '@/shared/components/ui/badge';
@@ -17,6 +18,13 @@ import {
     CardHeader,
     CardTitle,
 } from '@/shared/components/ui/card';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@/shared/components/ui/dialog';
 import { DeleteResidentModal } from './components/delete-resident-modal';
 
 interface ResidentProfileDetails {
@@ -88,6 +96,7 @@ export default function AdminResidentShow({
     },
 }: AdminResidentShowProps) {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isIdModalOpen, setIsIdModalOpen] = useState(false);
 
     return (
         <>
@@ -352,18 +361,32 @@ export default function AdminResidentShow({
                             <CardContent className="p-6">
                                 {residentProfile.government_id ? (
                                     <div className="flex flex-col items-start gap-4 sm:flex-row">
-                                        <div className="max-w-sm overflow-hidden rounded-xl border border-border/60 bg-muted/20">
+                                        <div
+                                            onClick={() =>
+                                                setIsIdModalOpen(true)
+                                            }
+                                            className="group relative max-w-sm cursor-pointer overflow-hidden rounded-xl border border-border/60 bg-muted/20 transition-all hover:border-primary/50"
+                                        >
                                             {residentProfile.government_id.mime_type.startsWith(
                                                 'image/',
                                             ) ? (
-                                                <img
-                                                    src={
-                                                        residentProfile
-                                                            .government_id.url
-                                                    }
-                                                    alt="Government ID"
-                                                    className="h-auto max-h-56 w-full object-cover"
-                                                />
+                                                <div className="relative">
+                                                    <img
+                                                        src={
+                                                            residentProfile
+                                                                .government_id
+                                                                .url
+                                                        }
+                                                        alt="Government ID"
+                                                        className="h-auto max-h-56 w-full object-cover transition-transform duration-200 group-hover:scale-[1.02]"
+                                                    />
+                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 backdrop-blur-[1px] transition-opacity duration-200 group-hover:opacity-100">
+                                                        <span className="inline-flex items-center gap-1.5 rounded-none bg-background/95 px-3 py-1.5 text-xs font-semibold text-foreground shadow-sm">
+                                                            <ZoomIn className="size-3.5" />
+                                                            Click for full view
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             ) : (
                                                 <div className="p-8 text-center">
                                                     <FileText className="mx-auto size-10 text-primary" />
@@ -374,38 +397,28 @@ export default function AdminResidentShow({
                                                                 .file_name
                                                         }
                                                     </p>
+                                                    <span className="mt-2 inline-flex items-center gap-1 text-[11px] text-muted-foreground group-hover:text-primary">
+                                                        <Eye className="size-3" />
+                                                        Click to preview
+                                                        document
+                                                    </span>
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="space-y-2">
-                                            <p className="text-xs font-semibold text-foreground">
-                                                {
-                                                    residentProfile
-                                                        .government_id.file_name
-                                                }
-                                            </p>
-                                            <p className="text-[11px] text-muted-foreground">
-                                                Uploaded during citizen KYC
-                                                verification.
-                                            </p>
-                                            <Button
-                                                asChild
-                                                size="sm"
-                                                variant="outline"
-                                                className="gap-1.5 text-xs"
-                                            >
-                                                <a
-                                                    href={
+                                        <div className="space-y-2.5">
+                                            <div>
+                                                <p className="text-xs font-semibold text-foreground">
+                                                    {
                                                         residentProfile
-                                                            .government_id.url
+                                                            .government_id
+                                                            .file_name
                                                     }
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                >
-                                                    <ExternalLink className="size-3.5" />
-                                                    View Original Document
-                                                </a>
-                                            </Button>
+                                                </p>
+                                                <p className="text-[11px] text-muted-foreground">
+                                                    Uploaded during citizen
+                                                    profile verification.
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 ) : (
@@ -618,6 +631,55 @@ export default function AdminResidentShow({
                         residentProfile.active_requests_count ?? 0
                     }
                 />
+            )}
+
+            {/* In-app Full View Dialog Modal for Attached Government ID */}
+            {residentProfile.government_id && (
+                <Dialog open={isIdModalOpen} onOpenChange={setIsIdModalOpen}>
+                    <DialogContent className="max-w-4xl rounded-none p-4 sm:p-6">
+                        <DialogHeader className="border-b border-border pb-3 text-left">
+                            <DialogTitle className="text-base font-bold">
+                                {residentProfile.government_id.file_name ||
+                                    'Government-Issued Identification'}
+                            </DialogTitle>
+                            <DialogDescription className="text-xs">
+                                Resident identity verification document for{' '}
+                                <span className="font-semibold text-foreground">
+                                    {residentProfile.full_name}
+                                </span>
+                            </DialogDescription>
+                        </DialogHeader>
+
+                        <div className="flex max-h-[75vh] w-full items-center justify-center overflow-auto rounded-none border border-border bg-neutral-950/5 p-2 dark:bg-neutral-950/40">
+                            {residentProfile.government_id.mime_type ===
+                            'application/pdf' ? (
+                                <iframe
+                                    src={residentProfile.government_id.url}
+                                    title="Government ID Document Preview"
+                                    className="h-[65vh] w-full rounded-none border-0"
+                                />
+                            ) : (
+                                <img
+                                    src={residentProfile.government_id.url}
+                                    alt={`Government ID of ${residentProfile.full_name}`}
+                                    className="max-h-[70vh] w-auto max-w-full object-contain select-none"
+                                />
+                            )}
+                        </div>
+
+                        <div className="flex items-center justify-end pt-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setIsIdModalOpen(false)}
+                                className="rounded-none shadow-none"
+                            >
+                                Close
+                            </Button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
             )}
         </>
     );

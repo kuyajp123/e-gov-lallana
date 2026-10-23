@@ -2,7 +2,7 @@
 
 return [
     'title' => 'Profile ng Resident',
-    'subtitle' => 'Pamahalaan ang iyong personal na demograpikong impormasyon at mga KYC record.',
+    'subtitle' => 'Pamahalaan ang iyong personal na demograpikong impormasyon at mga opisyal na record.',
     'edit_profile' => 'I-edit ang Profile',
     'complete_profile' => 'Kumpletuhin ang Profile',
     'profile_incomplete' => 'Hindi Kumpleto ang Profile',
