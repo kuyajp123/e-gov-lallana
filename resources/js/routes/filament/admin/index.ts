@@ -1,8 +1,8 @@
-import auth from './auth'
 import pages from './pages'
+import auth from './auth'
 const admin = {
-    auth: Object.assign(auth, auth),
-pages: Object.assign(pages, pages),
+    pages: Object.assign(pages, pages),
+auth: Object.assign(auth, auth),
 }
 
 export default admin

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminAnnouncementController;
+use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminDocumentRequestController;
 use App\Http\Controllers\Admin\AdminDocumentTypeController;
@@ -61,6 +62,14 @@ Route::prefix('announcements')->name('announcements.')->group(function () {
 
 // Public Anti-Fraud Document Verification Portal
 Route::get('/verify/qr/{token}', [PublicDocumentVerificationController::class, 'show'])->name('public.verify.qr');
+
+// Administrative Authentication Portal (Separate from Resident Portal)
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/login', [AdminAuthController::class, 'create'])->name('login');
+    Route::post('/login', [AdminAuthController::class, 'store'])->name('login.store');
+    Route::post('/logout', [AdminAuthController::class, 'destroy'])->name('logout');
+});
+Route::post('/admin/auth/logout', [AdminAuthController::class, 'destroy'])->name('filament.admin.auth.logout');
 
 // Authenticated Application Routes
 Route::middleware(['auth', 'verified'])->group(function () {

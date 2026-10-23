@@ -1,7 +1,8 @@
 import { Head, useForm } from '@inertiajs/react';
-import { Info } from 'lucide-react';
-import React from 'react';
+import { Check, Info, X } from 'lucide-react';
+import React, { useState } from 'react';
 import AuthLayout from '@/app/layouts/auth-layout';
+import { TermsAndPrivacyModal } from '@/features/auth/components/terms-and-privacy-modal';
 import { IdUploadDropzone } from '@/features/resident/components/id-upload-dropzone';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
@@ -33,6 +34,7 @@ import {
 } from '@/shared/components/ui/select';
 import { Spinner } from '@/shared/components/ui/spinner';
 import { useTranslation } from '@/shared/hooks/use-translation';
+import { cn } from '@/shared/lib/utils';
 
 type Props = {
     passwordRules: string;
@@ -69,10 +71,138 @@ export default function Register({ passwordRules }: Props) {
         government_id: null as File | null,
     });
 
+    const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
+    const [hasReadTerms, setHasReadTerms] = useState(false);
+    const [termsModalOpen, setTermsModalOpen] = useState(false);
+    const [termsAccepted, setTermsAccepted] = useState(false);
+    const [termsError, setTermsError] = useState<string | null>(null);
+
+    const hasMinLength = data.password.length >= 8;
+    const hasUppercase = /[A-Z]/.test(data.password);
+    const hasNumber = /[0-9]/.test(data.password);
+    const hasSpecial = /[^A-Za-z0-9]/.test(data.password);
+    const passwordsMatch = Boolean(
+        data.password && data.password === data.password_confirmation,
+    );
+
+    const passwordRequirements = [
+        {
+            id: 'length',
+            label: 'At least 8 characters',
+            met: hasMinLength,
+        },
+        {
+            id: 'uppercase',
+            label: 'At least 1 uppercase letter (A-Z)',
+            met: hasUppercase,
+        },
+        {
+            id: 'number',
+            label: 'At least 1 number (0-9)',
+            met: hasNumber,
+        },
+        {
+            id: 'special',
+            label: 'At least 1 special character (!@#$%...)',
+            met: hasSpecial,
+        },
+        {
+            id: 'match',
+            label: 'Confirm password matches',
+            met: passwordsMatch,
+        },
+    ];
+
+    const strengthScore = [
+        hasMinLength,
+        hasUppercase,
+        hasNumber,
+        hasSpecial,
+    ].filter(Boolean).length;
+
+    const strengthInfo = (() => {
+        if (data.password.length === 0) {
+            return { label: '', textColor: '', barColor: '' };
+        }
+
+        if (strengthScore <= 1) {
+            return {
+                label: 'Weak',
+                textColor: 'text-destructive',
+                barColor: 'bg-destructive',
+            };
+        }
+
+        if (strengthScore === 2) {
+            return {
+                label: 'Fair',
+                textColor: 'text-orange-500 dark:text-orange-400',
+                barColor: 'bg-orange-500',
+            };
+        }
+
+        if (strengthScore === 3) {
+            return {
+                label: 'Good',
+                textColor: 'text-amber-500 dark:text-amber-400',
+                barColor: 'bg-amber-500',
+            };
+        }
+
+        return {
+            label: 'Strong',
+            textColor: 'text-emerald-600 dark:text-emerald-400',
+            barColor: 'bg-emerald-500',
+        };
+    })();
+
+    const clientPasswordError = (() => {
+        if (!hasAttemptedSubmit) {
+            return null;
+        }
+
+        if (strengthScore < 4) {
+            return 'Please satisfy all password requirements before proceeding.';
+        }
+
+        if (!passwordsMatch) {
+            return 'Password and confirm password do not match.';
+        }
+
+        return null;
+    })();
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        setHasAttemptedSubmit(true);
+
+        if (strengthScore < 4 || !passwordsMatch) {
+            return;
+        }
+
+        if (!data.government_id) {
+            return;
+        }
+
+        if (!hasReadTerms || !termsAccepted) {
+            setTermsError(
+                'You must read the article to the bottom and accept the Terms and Conditions and Privacy Policy before creating your account.',
+            );
+
+            if (!hasReadTerms) {
+                setTermsModalOpen(true);
+            }
+
+            return;
+        }
+
+        setTermsError(null);
+
         post(store.url(), {
-            onFinish: () => reset('password', 'password_confirmation'),
+            onFinish: () => {
+                reset('password', 'password_confirmation');
+                setHasAttemptedSubmit(false);
+            },
         });
     };
 
@@ -84,13 +214,14 @@ export default function Register({ passwordRules }: Props) {
                 <Alert className="rounded-none border-blue-200 bg-blue-50 text-blue-900 dark:border-blue-900/50 dark:bg-blue-950/30 dark:text-blue-200">
                     <Info className="size-4 text-blue-600 dark:text-blue-400" />
                     <AlertTitle className="font-semibold">
-                        Optional Resident KYC Details
+                        Resident Registration & Verification
                     </AlertTitle>
                     <AlertDescription className="text-xs">
-                        Only Account Information is required to register.
-                        Demographic and KYC details below are optional during
-                        registration and can be completed later in your Profile
-                        Settings before requesting documents.
+                        Account Information, Personal Details, and Government ID
+                        Verification are required to register your resident
+                        profile. Additional demographics and special sectors
+                        below are optional during registration and can be
+                        completed or updated later in your Profile Settings.
                     </AlertDescription>
                 </Alert>
 
@@ -254,36 +385,121 @@ export default function Register({ passwordRules }: Props) {
                                     placeholder="Confirm password"
                                     passwordrules={passwordRules}
                                 />
+                                {data.password_confirmation && (
+                                    <div className="pt-0.5">
+                                        {passwordsMatch ? (
+                                            <p className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                                                <Check className="size-3.5 stroke-[2.5]" />
+                                                Passwords match
+                                            </p>
+                                        ) : (
+                                            <p className="flex items-center gap-1.5 text-xs font-medium text-destructive">
+                                                <X className="size-3.5 stroke-[2.5]" />
+                                                Passwords do not match
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
                                 <InputError
                                     message={errors.password_confirmation}
                                 />
                             </div>
                         </div>
+
+                        {/* Real-time Password Strength & Requirements */}
+                        <div className="space-y-3 rounded-none border border-border/70 bg-muted/20 p-3.5">
+                            <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
+                                <span className="text-xs font-semibold text-foreground">
+                                    Password Requirements
+                                </span>
+                                {data.password.length > 0 && (
+                                    <div className="flex items-center gap-1.5">
+                                        <span className="text-[11px] text-muted-foreground">
+                                            Strength:
+                                        </span>
+                                        <span
+                                            className={cn(
+                                                'text-xs font-semibold',
+                                                strengthInfo.textColor,
+                                            )}
+                                        >
+                                            {strengthInfo.label}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* 4-Segment Strength Progress Bar */}
+                            <div className="grid grid-cols-4 gap-1.5">
+                                {[1, 2, 3, 4].map((step) => (
+                                    <div
+                                        key={step}
+                                        className={cn(
+                                            'h-1.5 rounded-none transition-all duration-300',
+                                            step <= strengthScore
+                                                ? strengthInfo.barColor
+                                                : 'bg-muted-foreground/20',
+                                        )}
+                                    />
+                                ))}
+                            </div>
+
+                            {/* Requirements Checklist */}
+                            <div className="grid grid-cols-1 gap-2 pt-1 sm:grid-cols-2 lg:grid-cols-3">
+                                {passwordRequirements.map((req) => (
+                                    <div
+                                        key={req.id}
+                                        className={cn(
+                                            'flex items-center gap-2 text-xs transition-colors',
+                                            req.met
+                                                ? 'font-medium text-emerald-700 dark:text-emerald-400'
+                                                : 'text-muted-foreground',
+                                        )}
+                                    >
+                                        {req.met ? (
+                                            <div className="flex size-4 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
+                                                <Check className="size-3 stroke-[3]" />
+                                            </div>
+                                        ) : (
+                                            <div className="flex size-4 shrink-0 items-center justify-center rounded-full bg-muted-foreground/15 text-muted-foreground">
+                                                <div className="size-1.5 rounded-full bg-muted-foreground/60" />
+                                            </div>
+                                        )}
+                                        <span>{req.label}</span>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {clientPasswordError && (
+                                <p className="pt-1 text-xs font-medium text-destructive">
+                                    {clientPasswordError}
+                                </p>
+                            )}
+                        </div>
                     </CardContent>
                 </Card>
 
-                {/* Section 2: Personal Details (Optional KYC) */}
+                {/* Section 2: Personal Details (Required) */}
                 <Card className="rounded-none border-border shadow-none">
                     <CardHeader className="pb-4">
-                        <div className="flex items-center justify-between">
-                            <CardTitle className="text-base font-semibold">
-                                Personal Details
-                            </CardTitle>
-                            <span className="text-xs font-medium text-muted-foreground">
-                                Optional
-                            </span>
-                        </div>
+                        <CardTitle className="text-base font-semibold">
+                            Personal Details
+                        </CardTitle>
                         <CardDescription>
                             Your basic personal and demographic information.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div className="grid gap-2">
-                                <Label htmlFor="birthdate">Date of Birth</Label>
+                                <Label htmlFor="birthdate">
+                                    Date of Birth{' '}
+                                    <span className="text-destructive">*</span>
+                                </Label>
                                 <Input
                                     id="birthdate"
                                     type="date"
+                                    required
                                     value={data.birthdate}
                                     onChange={(e) =>
                                         setData('birthdate', e.target.value)
@@ -293,14 +509,21 @@ export default function Register({ passwordRules }: Props) {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="gender">Gender</Label>
+                                <Label htmlFor="gender">
+                                    Gender{' '}
+                                    <span className="text-destructive">*</span>
+                                </Label>
                                 <Select
                                     value={data.gender}
                                     onValueChange={(value) =>
                                         setData('gender', value)
                                     }
+                                    required
                                 >
-                                    <SelectTrigger id="gender">
+                                    <SelectTrigger
+                                        id="gender"
+                                        className="w-full"
+                                    >
                                         <SelectValue placeholder="Select gender" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -317,18 +540,25 @@ export default function Register({ passwordRules }: Props) {
                                 </Select>
                                 <InputError message={errors.gender} />
                             </div>
+                        </div>
 
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                             <div className="grid gap-2">
                                 <Label htmlFor="civil_status">
-                                    Civil Status
+                                    Civil Status{' '}
+                                    <span className="text-destructive">*</span>
                                 </Label>
                                 <Select
                                     value={data.civil_status}
                                     onValueChange={(value) =>
                                         setData('civil_status', value)
                                     }
+                                    required
                                 >
-                                    <SelectTrigger id="civil_status">
+                                    <SelectTrigger
+                                        id="civil_status"
+                                        className="w-full"
+                                    >
                                         <SelectValue placeholder="Select civil status" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -351,14 +581,16 @@ export default function Register({ passwordRules }: Props) {
                                 </Select>
                                 <InputError message={errors.civil_status} />
                             </div>
-                        </div>
 
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div className="grid gap-2">
-                                <Label htmlFor="citizenship">Citizenship</Label>
+                                <Label htmlFor="citizenship">
+                                    Citizenship{' '}
+                                    <span className="text-destructive">*</span>
+                                </Label>
                                 <Input
                                     id="citizenship"
                                     type="text"
+                                    required
                                     value={data.citizenship}
                                     onChange={(e) =>
                                         setData('citizenship', e.target.value)
@@ -412,7 +644,10 @@ export default function Register({ passwordRules }: Props) {
                                         setData('residency_status', value)
                                     }
                                 >
-                                    <SelectTrigger id="residency_status">
+                                    <SelectTrigger
+                                        id="residency_status"
+                                        className="w-full"
+                                    >
                                         <SelectValue placeholder="Select residency status" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -488,7 +723,10 @@ export default function Register({ passwordRules }: Props) {
                                         setData('employment_status', value)
                                     }
                                 >
-                                    <SelectTrigger id="employment_status">
+                                    <SelectTrigger
+                                        id="employment_status"
+                                        className="w-full"
+                                    >
                                         <SelectValue placeholder="Select employment status" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -524,7 +762,10 @@ export default function Register({ passwordRules }: Props) {
                                         setData('educational_attainment', value)
                                     }
                                 >
-                                    <SelectTrigger id="educational_attainment">
+                                    <SelectTrigger
+                                        id="educational_attainment"
+                                        className="w-full"
+                                    >
                                         <SelectValue placeholder="Select education" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -725,21 +966,24 @@ export default function Register({ passwordRules }: Props) {
                     </CardContent>
                 </Card>
 
-                {/* Section 5: Government ID (Optional KYC during registration) */}
+                {/* Section 5: Government ID Verification (Required) */}
                 <Card className="rounded-none border-border shadow-none">
                     <CardHeader className="pb-4">
                         <div className="flex items-center justify-between">
-                            <CardTitle className="text-base font-semibold">
-                                Government ID Verification
-                            </CardTitle>
-                            <span className="text-xs font-medium text-muted-foreground">
-                                Optional
-                            </span>
+                            <div className="flex items-center gap-1.5">
+                                <CardTitle className="text-base font-semibold">
+                                    Government ID Verification
+                                </CardTitle>
+                                <span className="text-xs font-bold text-rose-500">
+                                    *
+                                </span>
+                            </div>
                         </div>
                         <CardDescription>
-                            Attach a valid government ID (Passport, Driver's
-                            License, PhilSys, UMID, Postal ID, Voter's ID).
-                            Required to request documents.
+                            Attach a valid government ID or proof of identity
+                            (Barangay ID, Latest 2x2 Photo, National ID, Voter's
+                            ID, Driver's License, or Passport). Required for
+                            identity verification.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -747,15 +991,124 @@ export default function Register({ passwordRules }: Props) {
                             onFileSelect={(file) =>
                                 setData('government_id', file)
                             }
-                            error={errors.government_id}
+                            error={
+                                errors.government_id ||
+                                (hasAttemptedSubmit && !data.government_id
+                                    ? 'A valid government ID photo or document is required.'
+                                    : undefined)
+                            }
                         />
+                    </CardContent>
+                </Card>
+
+                {/* Section 6: Terms and Conditions & Privacy Policy (Required) */}
+                <Card
+                    className={cn(
+                        'rounded-none border-border shadow-none transition-colors',
+                        termsError &&
+                            'border-rose-500/50 bg-rose-50/20 dark:bg-rose-950/10',
+                    )}
+                >
+                    <CardHeader className="pb-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                                <CardTitle className="text-base font-semibold">
+                                    Terms of Service & Privacy Policy
+                                </CardTitle>
+                                <span className="text-xs font-bold text-rose-500">
+                                    *
+                                </span>
+                            </div>
+                        </div>
+                        <CardDescription className="text-xs">
+                            In compliance with Republic Act No. 10173 (Data
+                            Privacy Act of 2012) and the Barangay Citizen
+                            Charter.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        {/* Agreement Checkbox Row */}
+                        <div
+                            onClick={() => {
+                                if (!hasReadTerms) {
+                                    setTermsModalOpen(true);
+                                }
+                            }}
+                            className={cn(
+                                'flex items-start space-x-3 rounded-none border p-3.5 transition-colors',
+                                !hasReadTerms
+                                    ? 'cursor-pointer border-dashed border-border bg-muted/10 hover:border-amber-500/50 hover:bg-amber-50/10'
+                                    : 'border-border bg-card',
+                                termsAccepted &&
+                                    'border-emerald-500/40 bg-emerald-50/10',
+                            )}
+                        >
+                            <Checkbox
+                                id="terms_agreement"
+                                disabled={!hasReadTerms}
+                                checked={termsAccepted}
+                                onCheckedChange={(checked) => {
+                                    const isChecked = Boolean(checked);
+                                    setTermsAccepted(isChecked);
+
+                                    if (isChecked) {
+                                        setTermsError(null);
+                                    }
+                                }}
+                                className="mt-0.5 rounded-none"
+                            />
+                            <div className="space-y-1 text-xs leading-normal">
+                                <Label
+                                    htmlFor="terms_agreement"
+                                    className={cn(
+                                        'block leading-relaxed font-medium',
+                                        hasReadTerms
+                                            ? 'cursor-pointer text-foreground'
+                                            : 'cursor-pointer text-muted-foreground',
+                                    )}
+                                >
+                                    I have read, fully understood, and agree to
+                                    the{' '}
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                            setTermsModalOpen(true);
+                                        }}
+                                        className="font-bold text-violet-700 underline underline-offset-2 hover:text-violet-800 dark:text-violet-400"
+                                    >
+                                        Terms of Service
+                                    </button>{' '}
+                                    and{' '}
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                            setTermsModalOpen(true);
+                                        }}
+                                        className="font-bold text-violet-700 underline underline-offset-2 hover:text-violet-800 dark:text-violet-400"
+                                    >
+                                        Privacy Policy
+                                    </button>{' '}
+                                    of Barangay Lallana.
+                                </Label>
+                            </div>
+                        </div>
+
+                        {termsError && (
+                            <p className="text-xs font-semibold text-rose-600 dark:text-rose-400">
+                                {termsError}
+                            </p>
+                        )}
                     </CardContent>
                 </Card>
 
                 <div className="space-y-4 pt-2">
                     <Button
                         type="submit"
-                        disabled={processing}
+                        disabled={processing || !hasReadTerms || !termsAccepted}
                         className="w-full rounded-none shadow-none"
                         size="lg"
                         data-test="register-user-button"
@@ -775,6 +1128,17 @@ export default function Register({ passwordRules }: Props) {
                     </div>
                 </div>
             </form>
+
+            <TermsAndPrivacyModal
+                open={termsModalOpen}
+                onOpenChange={setTermsModalOpen}
+                onAccept={() => {
+                    setHasReadTerms(true);
+                    setTermsAccepted(true);
+                    setTermsError(null);
+                }}
+                hasRead={hasReadTerms}
+            />
         </>
     );
 }
@@ -783,7 +1147,7 @@ Register.layout = (page: React.ReactNode) => (
     <AuthLayout
         title="Create an account"
         description="Enter your details below to register for e-Gov Barangay Lallana"
-        className="max-w-2xl"
+        className="max-w-4xl lg:max-w-5xl"
     >
         {page}
     </AuthLayout>

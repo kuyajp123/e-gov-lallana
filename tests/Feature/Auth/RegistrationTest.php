@@ -7,6 +7,7 @@ use Laravel\Fortify\Features;
 
 beforeEach(function () {
     $this->skipUnlessFortifyHas(Features::registration());
+    Storage::fake('local');
 });
 
 test('registration screen can be rendered', function () {
@@ -16,12 +17,19 @@ test('registration screen can be rendered', function () {
 });
 
 test('new users can register with first and last name', function () {
+    $idFile = UploadedFile::fake()->create('valid_id.png', 500, 'image/png');
+
     $response = $this->post(route('register.store'), [
         'first_name' => 'Juan',
         'middle_name' => 'Santos',
         'last_name' => 'Dela Cruz',
         'suffix' => 'Jr.',
         'email' => 'juan@example.com',
+        'birthdate' => '1990-01-01',
+        'gender' => 'male',
+        'civil_status' => 'single',
+        'citizenship' => 'Filipino',
+        'government_id' => $idFile,
         'password' => 'password',
         'password_confirmation' => 'password',
     ]);
@@ -36,9 +44,16 @@ test('new users can register with first and last name', function () {
 });
 
 test('new users can register with legacy name field for backwards compatibility', function () {
+    $idFile = UploadedFile::fake()->create('valid_id.png', 500, 'image/png');
+
     $response = $this->post(route('register.store'), [
         'name' => 'Test User',
         'email' => 'test@example.com',
+        'birthdate' => '1992-03-15',
+        'gender' => 'other',
+        'civil_status' => 'single',
+        'citizenship' => 'Filipino',
+        'government_id' => $idFile,
         'password' => 'password',
         'password_confirmation' => 'password',
     ]);
@@ -47,8 +62,41 @@ test('new users can register with legacy name field for backwards compatibility'
     $response->assertRedirect(route('dashboard', absolute: false));
 });
 
-test('new users can optionally complete KYC and upload government ID during registration', function () {
-    Storage::fake('local');
+test('registration requires date of birth, gender, civil status, citizenship, and government id', function () {
+    $response = $this->post(route('register.store'), [
+        'first_name' => 'Juan',
+        'last_name' => 'Dela Cruz',
+        'email' => 'incomplete@example.com',
+        'password' => 'password',
+        'password_confirmation' => 'password',
+    ]);
+
+    $response->assertSessionHasErrors([
+        'birthdate',
+        'gender',
+        'civil_status',
+        'citizenship',
+        'government_id',
+    ]);
+});
+
+test('registration strictly requires government id upload', function () {
+    $response = $this->post(route('register.store'), [
+        'first_name' => 'Juan',
+        'last_name' => 'Dela Cruz',
+        'email' => 'noid@example.com',
+        'birthdate' => '1990-01-01',
+        'gender' => 'male',
+        'civil_status' => 'single',
+        'citizenship' => 'Filipino',
+        'password' => 'password',
+        'password_confirmation' => 'password',
+    ]);
+
+    $response->assertSessionHasErrors(['government_id']);
+});
+
+test('new users complete KYC and upload government ID during registration', function () {
     $idFile = UploadedFile::fake()->create('valid_id.png', 500, 'image/png');
 
     $response = $this->post(route('register.store'), [

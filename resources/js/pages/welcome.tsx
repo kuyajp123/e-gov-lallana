@@ -187,7 +187,7 @@ export default function Welcome({
                                 <img
                                     src="/lallana-icon.png"
                                     alt="Barangay Lallana Official Seal"
-                                    className="size-8 object-contain"
+                                    className="size-15 object-contain"
                                 />
                             </div>
                             <div className="flex flex-col">
@@ -1333,12 +1333,6 @@ export default function Welcome({
                                 digital document processing, household
                                 management, and municipal transparency.
                             </p>
-                            <div className="flex items-center gap-2 pt-2 text-[11px]">
-                                <span className="inline-block size-2 bg-emerald-500" />
-                                <span>
-                                    Philippine Standard Time (PST): Active
-                                </span>
-                            </div>
                         </div>
 
                         {/* Col 2: Quick Links */}

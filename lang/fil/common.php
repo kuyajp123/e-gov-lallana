@@ -34,6 +34,5 @@ return [
     'completed' => 'Nakumpleto',
     'cancelled' => 'Kinansela',
     'back_to_home' => 'Bumalik sa Home',
-    'secured_portal' => 'Ligtas na Opisyal na Portal ng Gobyerno',
     'not_available' => 'Wala',
 ];

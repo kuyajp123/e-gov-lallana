@@ -34,6 +34,5 @@ return [
     'completed' => 'Completed',
     'cancelled' => 'Cancelled',
     'back_to_home' => 'Back to Portal Home',
-    'secured_portal' => 'Secured Official Government Portal',
     'not_available' => 'N/A',
 ];

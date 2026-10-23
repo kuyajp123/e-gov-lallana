@@ -65,7 +65,7 @@ export function IdUploadDropzone({
                     <p className="text-sm font-medium text-foreground">
                         {t(
                             'profile.upload_id_prompt',
-                            'Click to upload or drag & drop Government ID',
+                            'Click to upload or drag & drop image',
                         )}
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground">

@@ -25,5 +25,4 @@ return [
     'send_reset_link' => 'Email password reset link',
     'or_return_to' => 'Or, return to',
     'log_in' => 'log in',
-    'secured_portal' => 'Secured Official Government Portal',
 ];

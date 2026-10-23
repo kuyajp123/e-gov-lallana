@@ -25,5 +25,4 @@ return [
     'send_reset_link' => 'Ipadala ang password reset link',
     'or_return_to' => 'O kaya, bumalik sa',
     'log_in' => 'mag-log in',
-    'secured_portal' => 'Ligtas na Opisyal na Portal ng Gobyerno',
 ];

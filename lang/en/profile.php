@@ -30,7 +30,7 @@ return [
     'solo_parent_status' => 'Solo Parent',
     'government_id' => 'Government-Issued ID',
     'id_on_file' => 'Government ID on file',
-    'upload_id_prompt' => 'Click to upload or drag & drop Government ID',
+    'upload_id_prompt' => 'Click to upload or drag & drop image',
     'upload_id_formats' => 'Accepted formats: JPG, PNG, WebP, PDF (Max 5MB)',
     'replace_id' => 'Replace',
     'view_uploaded' => 'View Uploaded Document',

@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { ArrowLeft, ShieldCheck } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { home } from '@/routes';
 import AppLogoIcon from '@/shared/components/app-logo-icon';
 import { useTranslation } from '@/shared/hooks/use-translation';
@@ -40,8 +40,8 @@ export default function AuthSimpleLayout({
                             href={home()}
                             className="group flex flex-col items-center gap-2"
                         >
-                            <div className="flex size-16 items-center justify-center rounded-none border border-violet-600/20 bg-violet-600/10 p-2">
-                                <AppLogoIcon className="size-12 object-contain" />
+                            <div className="flex size-16 items-center justify-center">
+                                <AppLogoIcon className="size-15 object-contain" />
                             </div>
                             <span className="sr-only">Barangay Lallana</span>
                         </Link>
@@ -64,17 +64,6 @@ export default function AuthSimpleLayout({
 
                     {/* Form Content */}
                     <div className="pt-2">{children}</div>
-
-                    {/* Security Notice */}
-                    <div className="flex items-center justify-center gap-1.5 border-t border-border/70 pt-4 text-[11px] text-muted-foreground">
-                        <ShieldCheck className="size-3.5 text-violet-600" />
-                        <span>
-                            {t(
-                                'common.secured_portal',
-                                'Secured Official Government Portal',
-                            )}
-                        </span>
-                    </div>
                 </div>
             </div>
         </div>

@@ -37,8 +37,8 @@ test('authenticated sub admin accessing admin panel receives 200 ok', function (
     $response->assertOk();
 });
 
-test('standalone admin login route is removed and returns 404 not found', function () {
+test('standalone admin login route renders admin login portal', function () {
     $response = $this->get('/admin/login');
 
-    $response->assertNotFound();
+    $response->assertOk();
 });
