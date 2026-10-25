@@ -88,7 +88,7 @@ interface AdminDashboardProps {
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Admin Console',
+        title: 'Admin Dashboard',
         href: '/admin',
     },
 ];
@@ -117,7 +117,7 @@ export default function AdminDashboard({
 
     return (
         <>
-            <Head title="Admin Console — Barangay Lallana" />
+            <Head title="Admin Dashboard — Barangay Lallana" />
 
             <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 p-4 md:p-8">
                 {/* Staff Header & Admin Banner */}
@@ -130,7 +130,7 @@ export default function AdminDashboard({
                             <div className="space-y-1">
                                 <div className="flex flex-wrap items-center gap-2">
                                     <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-                                        Mabuhay, {user.name}!
+                                        Welcome, {user.name}!
                                     </h1>
                                     <Badge
                                         variant="secondary"
@@ -166,7 +166,8 @@ export default function AdminDashboard({
                             >
                                 <a href="/admin/document-requests">
                                     <FileCheck className="mr-1.5 size-3.5" />
-                                    Document Queue ({metrics.activeDocRequests})
+                                    Document Request (
+                                    {metrics.activeDocRequests})
                                 </a>
                             </Button>
                         </div>

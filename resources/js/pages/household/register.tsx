@@ -8,6 +8,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/shared/components/ui/card';
+import { useTranslation } from '@/shared/hooks/use-translation';
 import type { BreadcrumbItem } from '@/shared/types';
 
 interface RegisterProps {
@@ -25,20 +26,26 @@ export default function HouseholdRegister({
     profile,
     purokOptions,
 }: RegisterProps) {
+    const { t } = useTranslation();
+
     return (
         <>
-            <Head title="Register Household" />
+            <Head title={t('household.register_title', 'Register Household')} />
 
             <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 p-4 md:p-8">
-                <Card className="rounded-2xl border-border">
+                <Card className="rounded-none border-border shadow-none">
                     <CardHeader className="pb-4">
                         <CardTitle className="text-xl font-bold">
-                            Barangay Lallana Household Registration
+                            {t(
+                                'household.register_title',
+                                'Barangay Lallana Household Registration',
+                            )}
                         </CardTitle>
                         <CardDescription>
-                            Establish your official family household record to
-                            unlock barangay clearance issuance, certificate
-                            requests, and family member accounts.
+                            {t(
+                                'household.edit_household_desc',
+                                'Establish your official family household record to unlock barangay clearance issuance, certificate requests, and family member accounts.',
+                            )}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>

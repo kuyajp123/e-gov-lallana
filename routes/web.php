@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminAnnouncementController;
+use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminDocumentRequestController;
 use App\Http\Controllers\Admin\AdminDocumentTypeController;
 use App\Http\Controllers\Admin\AdminHouseholdController;
+use App\Http\Controllers\Admin\AdminInquiryController;
 use App\Http\Controllers\Admin\AdminQrScannerController;
 use App\Http\Controllers\Admin\AdminResidentProfileController;
 use App\Http\Controllers\Admin\AdminStaffController;
@@ -28,6 +30,7 @@ use App\Http\Middleware\EnsureHouseholdIsVerified;
 use App\Http\Middleware\EnsureProfileIsComplete;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
+use Illuminate\Http\Request;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 
@@ -47,6 +50,31 @@ Route::get('/debug/session-test', function () {
     return response('Session test OK');
 });
 
+// Signed route for serving private local storage files (government IDs, verification docs)
+Route::get('/storage/local/{path}', function (Request $request, string $path) {
+    if (! $request->hasValidSignature()) {
+        abort(403, 'Invalid or expired signature.');
+    }
+
+    $cleanPath = ltrim(str_replace(['../', '..\\'], '', $path), '/');
+    $fullPath = storage_path('app/private/'.$cleanPath);
+
+    if (! file_exists($fullPath)) {
+        $fullPath = storage_path('app/'.$cleanPath);
+    }
+
+    if (! file_exists($fullPath)) {
+        abort(404, 'File not found.');
+    }
+
+    $mimeType = mime_content_type($fullPath) ?: 'application/octet-stream';
+
+    return response()->file($fullPath, [
+        'Content-Type' => $mimeType,
+        'Cache-Control' => 'private, max-age=1800',
+    ]);
+})->where('path', '.*')->name('storage.local');
+
 // Public Landing Page & Inquiry Routes
 Route::get('/', LandingPageController::class)->name('home');
 Route::post('/inquiry', InquiryController::class)->name('inquiry.submit');
@@ -61,6 +89,14 @@ Route::prefix('announcements')->name('announcements.')->group(function () {
 // Public Anti-Fraud Document Verification Portal
 Route::get('/verify/qr/{token}', [PublicDocumentVerificationController::class, 'show'])->name('public.verify.qr');
 
+// Administrative Authentication Portal (Separate from Resident Portal)
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/login', [AdminAuthController::class, 'create'])->name('login');
+    Route::post('/login', [AdminAuthController::class, 'store'])->name('login.store');
+    Route::post('/logout', [AdminAuthController::class, 'destroy'])->name('logout');
+});
+Route::post('/admin/auth/logout', [AdminAuthController::class, 'destroy'])->name('filament.admin.auth.logout');
+
 // Authenticated Application Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
@@ -73,6 +109,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Document Requests Management
         Route::prefix('admin/document-requests')->name('admin.document-requests.')->group(function () {
             Route::get('/', [AdminDocumentRequestController::class, 'index'])->name('index');
+            Route::get('/walkin', [AdminDocumentRequestController::class, 'createWalkin'])->name('create-walkin');
+            Route::post('/walkin', [AdminDocumentRequestController::class, 'storeWalkin'])->name('store-walkin');
+            Route::get('/residents/search', [AdminDocumentRequestController::class, 'searchResidents'])->name('residents.search');
             Route::get('/{documentRequest}', [AdminDocumentRequestController::class, 'show'])->name('show')->whereNumber('documentRequest');
             Route::get('/{documentRequest}/pdf', [AdminDocumentRequestController::class, 'downloadPdf'])->name('pdf')->whereNumber('documentRequest');
             Route::patch('/{documentRequest}/status', [AdminDocumentRequestController::class, 'updateStatus'])->name('update-status')->whereNumber('documentRequest');
@@ -128,6 +167,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::put('/{announcement}', [AdminAnnouncementController::class, 'update'])->name('update')->whereNumber('announcement');
             Route::patch('/{announcement}/toggle', [AdminAnnouncementController::class, 'togglePublish'])->name('toggle')->whereNumber('announcement');
             Route::delete('/{announcement}', [AdminAnnouncementController::class, 'destroy'])->name('destroy')->whereNumber('announcement');
+        });
+
+        // Citizen Inquiries Management
+        Route::prefix('admin/inquiries')->name('admin.inquiries.')->group(function () {
+            Route::get('/', [AdminInquiryController::class, 'index'])->name('index');
+            Route::get('/{inquiry}', [AdminInquiryController::class, 'show'])->name('show')->whereNumber('inquiry');
+            Route::patch('/{inquiry}/status', [AdminInquiryController::class, 'updateStatus'])->name('update-status')->whereNumber('inquiry');
+            Route::delete('/{inquiry}', [AdminInquiryController::class, 'destroy'])->name('destroy')->whereNumber('inquiry');
         });
 
         // QR Code Staff Scanner & Verification API

@@ -5,8 +5,11 @@ import { send } from '@/routes/verification';
 import TextLink from '@/shared/components/text-link';
 import { Button } from '@/shared/components/ui/button';
 import { Spinner } from '@/shared/components/ui/spinner';
+import { useTranslation } from '@/shared/hooks/use-translation';
 
 export default function VerifyEmail({ status }: { status?: string }) {
+    const { t } = useTranslation();
+
     return (
         <>
             <Head title="Email verification" />
@@ -21,8 +24,12 @@ export default function VerifyEmail({ status }: { status?: string }) {
             <Form {...send.form()} className="space-y-6 text-center">
                 {({ processing }) => (
                     <>
-                        <Button disabled={processing} variant="secondary">
-                            {processing && <Spinner />}
+                        <Button
+                            disabled={processing}
+                            variant="secondary"
+                            className="rounded-none shadow-none"
+                        >
+                            {processing && <Spinner className="mr-2" />}
                             Resend verification email
                         </Button>
 
@@ -30,7 +37,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
                             href={logout()}
                             className="mx-auto block text-sm"
                         >
-                            Log out
+                            {t('nav.logout', 'Log out')}
                         </TextLink>
                     </>
                 )}

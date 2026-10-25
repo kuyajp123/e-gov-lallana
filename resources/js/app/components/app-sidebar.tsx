@@ -7,6 +7,7 @@ import {
     Home,
     LayoutGrid,
     Megaphone,
+    MessageSquare,
     QrCode,
     ShieldCheck,
     Terminal,
@@ -14,77 +15,21 @@ import {
     Users,
 } from 'lucide-react';
 import { NavMain } from '@/app/components/nav-main';
-import { NavUser } from '@/app/components/nav-user';
 import { dashboard } from '@/routes';
 import AppLogo from '@/shared/components/app-logo';
 import {
     Sidebar,
     SidebarContent,
-    SidebarFooter,
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/shared/components/ui/sidebar';
+import { useTranslation } from '@/shared/hooks/use-translation';
 import type { NavItem } from '@/shared/types';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-    {
-        title: 'My Household',
-        href: '/household',
-        icon: Home,
-    },
-    {
-        title: 'Document Requests',
-        href: '/documents',
-        icon: FileText,
-    },
-    {
-        title: 'Announcements',
-        href: '/announcements',
-        icon: Megaphone,
-    },
-];
-
-const adminNavItems: NavItem[] = [
-    {
-        title: 'Admin Console',
-        href: '/admin',
-        icon: ShieldCheck,
-    },
-    {
-        title: 'Document Queue',
-        href: '/admin/document-requests',
-        icon: FileCheck,
-    },
-    {
-        title: 'QR Document Scanner',
-        href: '/admin/qr-scanner',
-        icon: QrCode,
-    },
-    {
-        title: 'Households',
-        href: '/admin/households',
-        icon: Building2,
-    },
-    {
-        title: 'Resident Registry',
-        href: '/admin/resident-profiles',
-        icon: Users,
-    },
-    {
-        title: 'Announcements',
-        href: '/admin/announcements',
-        icon: Megaphone,
-    },
-];
-
 export function AppSidebar() {
+    const { t } = useTranslation();
     const { auth, isDevEnvironment } = usePage<{
         auth: {
             user?: {
@@ -94,6 +39,67 @@ export function AppSidebar() {
         };
         isDevEnvironment?: boolean;
     }>().props;
+
+    const mainNavItems: NavItem[] = [
+        {
+            title: t('nav.dashboard', 'Dashboard'),
+            href: dashboard(),
+            icon: LayoutGrid,
+        },
+        {
+            title: t('nav.household', 'My Household'),
+            href: '/household',
+            icon: Home,
+        },
+        {
+            title: t('nav.documents', 'Document Requests'),
+            href: '/documents',
+            icon: FileText,
+        },
+        {
+            title: t('nav.announcements', 'Announcements'),
+            href: '/announcements',
+            icon: Megaphone,
+        },
+    ];
+
+    const adminNavItems: NavItem[] = [
+        {
+            title: 'Admin Dashboard',
+            href: '/admin',
+            icon: ShieldCheck,
+        },
+        {
+            title: 'Document Request',
+            href: '/admin/document-requests',
+            icon: FileCheck,
+        },
+        {
+            title: 'QR Document Scanner',
+            href: '/admin/qr-scanner',
+            icon: QrCode,
+        },
+        {
+            title: 'Households',
+            href: '/admin/households',
+            icon: Building2,
+        },
+        {
+            title: 'Resident Registry',
+            href: '/admin/resident-profiles',
+            icon: Users,
+        },
+        {
+            title: 'Announcements',
+            href: '/admin/announcements',
+            icon: Megaphone,
+        },
+        {
+            title: 'Citizen Inquiries',
+            href: '/admin/inquiries',
+            icon: MessageSquare,
+        },
+    ];
 
     const isAdminUser = Boolean(
         auth.user?.can_access_admin ??
@@ -155,12 +161,11 @@ export function AppSidebar() {
                 {isAdminUser && (
                     <NavMain label="Administration" items={adminNav} />
                 )}
-                <NavMain label="Resident Portal" items={mainNavItems} />
+                <NavMain
+                    label={t('nav.resident_portal', 'Resident Portal')}
+                    items={mainNavItems}
+                />
             </SidebarContent>
-
-            <SidebarFooter>
-                <NavUser />
-            </SidebarFooter>
         </Sidebar>
     );
 }

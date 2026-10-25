@@ -17,8 +17,8 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property string $reference_code
- * @property int $user_id
- * @property int $document_type_id
+ * @property int|null $user_id
+ * @property int|null $document_type_id
  * @property array<string, mixed>|null $submitted_data
  * @property DocumentRequestStatus $current_status
  * @property int $fee_cents
@@ -28,13 +28,25 @@ use Illuminate\Support\Carbon;
  * @property CancellationReason|null $cancellation_reason
  * @property string|null $cancellation_notes
  * @property int|null $generated_pdf_file_id
+ * @property bool $is_walkin
+ * @property string|null $walkin_name
+ * @property string|null $walkin_purok
+ * @property string|null $walkin_address
+ * @property Carbon|null $walkin_birthdate
+ * @property int|null $walkin_age
+ * @property string|null $walkin_gender
+ * @property string|null $walkin_civil_status
+ * @property string|null $walkin_contact_number
+ * @property string|null $walkin_email
+ * @property string|null $custom_document_title
+ * @property string|null $custom_document_body
  * @property Carbon|null $submitted_at
  * @property Carbon|null $completed_at
  * @property Carbon|null $cancelled_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read User $user
- * @property-read DocumentType $documentType
+ * @property-read User|null $user
+ * @property-read DocumentType|null $documentType
  * @property-read FileRecord|null $generatedPdf
  * @property-read Collection<int, DocumentRequestStatusHistory> $statusHistory
  * @property-read Collection<int, DocumentRequestFile> $files
@@ -58,6 +70,18 @@ class DocumentRequest extends Model
         'submitted_at',
         'completed_at',
         'cancelled_at',
+        'is_walkin',
+        'walkin_name',
+        'walkin_purok',
+        'walkin_address',
+        'walkin_birthdate',
+        'walkin_age',
+        'walkin_gender',
+        'walkin_civil_status',
+        'walkin_contact_number',
+        'walkin_email',
+        'custom_document_title',
+        'custom_document_body',
     ];
 
     protected $casts = [
@@ -66,6 +90,9 @@ class DocumentRequest extends Model
         'payment_status' => PaymentStatus::class,
         'cancellation_reason' => CancellationReason::class,
         'fee_cents' => 'integer',
+        'is_walkin' => 'boolean',
+        'walkin_birthdate' => 'date',
+        'walkin_age' => 'integer',
         'submitted_at' => 'datetime',
         'completed_at' => 'datetime',
         'cancelled_at' => 'datetime',
@@ -189,35 +216,54 @@ class DocumentRequest extends Model
     protected function sendNotificationForTransition(DocumentRequestStatus $status, ?string $remarks = null): void
     {
         $user = $this->user;
-        $docName = $this->documentType->name;
+        $docName = $this->documentType ? $this->documentType->name : ($this->custom_document_title ?? 'Document Certificate');
         $notificationService = app(NotificationService::class);
 
-        if ($status === DocumentRequestStatus::ReadyForPickup) {
+        $type = match ($status) {
+            DocumentRequestStatus::ReadyForPickup => 'document_ready_for_pickup',
+            DocumentRequestStatus::Completed => 'document_completed',
+            DocumentRequestStatus::Returned => 'document_returned',
+            DocumentRequestStatus::Rejected => 'document_rejected',
+            default => null,
+        };
+
+        if (! $type) {
+            return;
+        }
+
+        $title = match ($status) {
+            DocumentRequestStatus::ReadyForPickup => 'Document Ready for Pickup',
+            DocumentRequestStatus::Completed => 'Document Completed',
+            DocumentRequestStatus::Returned => 'Document Returned for Correction',
+            DocumentRequestStatus::Rejected => 'Document Request Rejected',
+        };
+
+        $message = match ($status) {
+            DocumentRequestStatus::ReadyForPickup => "Your {$docName} (Ref: {$this->reference_code}) is now ready for pickup at the Barangay Hall.",
+            DocumentRequestStatus::Completed => "Your {$docName} (Ref: {$this->reference_code}) has been completed and issued.",
+            DocumentRequestStatus::Returned => "Your request (Ref: {$this->reference_code}) was returned for correction".($remarks ? ": {$remarks}" : '.'),
+            DocumentRequestStatus::Rejected => "Your request (Ref: {$this->reference_code}) was rejected".($remarks ? ": {$remarks}" : '.'),
+        };
+
+        $actionUrl = $user ? "/documents/{$this->id}" : null;
+
+        if ($user) {
             $notificationService->send(
                 $user,
-                'document_ready_for_pickup',
-                'Document Ready for Pickup',
-                "Your {$docName} (Ref: {$this->reference_code}) is now ready for pickup at the Barangay Hall.",
-                "/documents/{$this->id}",
+                $type,
+                $title,
+                $message,
+                $actionUrl,
                 $this
             );
-        } elseif ($status === DocumentRequestStatus::Returned) {
-            $notificationService->send(
-                $user,
-                'document_returned',
-                'Document Returned for Correction',
-                "Your request (Ref: {$this->reference_code}) was returned for correction".($remarks ? ": {$remarks}" : '.'),
-                "/documents/{$this->id}",
-                $this
-            );
-        } elseif ($status === DocumentRequestStatus::Rejected) {
-            $notificationService->send(
-                $user,
-                'document_rejected',
-                'Document Request Rejected',
-                "Your request (Ref: {$this->reference_code}) was rejected".($remarks ? ": {$remarks}" : '.'),
-                "/documents/{$this->id}",
-                $this
+        } else {
+            $notificationService->sendWalkinAlert(
+                $this->walkin_email,
+                $this->walkin_contact_number,
+                $this->walkin_name ?? 'Resident',
+                $title,
+                $message,
+                $actionUrl
             );
         }
     }

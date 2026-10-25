@@ -20,6 +20,7 @@ import {
     SelectValue,
 } from '@/shared/components/ui/select';
 import { Textarea } from '@/shared/components/ui/textarea';
+import { useTranslation } from '@/shared/hooks/use-translation';
 
 interface CancellationReasonOption {
     value: string;
@@ -37,6 +38,7 @@ export function CancelRequestDialog({
     referenceCode,
     reasons,
 }: CancelRequestDialogProps) {
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
 
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -60,26 +62,36 @@ export function CancelRequestDialog({
                 <Button
                     variant="outline"
                     size="sm"
-                    className="border-destructive/40 text-destructive hover:bg-destructive/10"
+                    className="rounded-none border-destructive/40 text-destructive shadow-none hover:bg-destructive/10"
                 >
-                    Cancel Request
+                    {t('documents.cancel_request', 'Cancel Request')}
                 </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md rounded-2xl">
+            <DialogContent className="max-w-md rounded-none shadow-none">
                 <form onSubmit={handleSubmit}>
                     <DialogHeader>
-                        <div className="flex size-10 items-center justify-center rounded-xl bg-destructive/10 text-destructive">
+                        <div className="flex size-10 items-center justify-center rounded-none bg-destructive/10 text-destructive">
                             <AlertTriangle className="size-5" />
                         </div>
                         <DialogTitle className="mt-2 text-base font-bold">
-                            Cancel Document Request
+                            {t(
+                                'documents.cancel_request',
+                                'Cancel Document Request',
+                            )}
                         </DialogTitle>
                         <DialogDescription className="text-xs">
-                            Are you sure you want to cancel request{' '}
+                            {t(
+                                'documents.cancel_confirm',
+                                'Are you sure you want to cancel request',
+                            )}{' '}
                             <span className="font-semibold text-foreground">
                                 {referenceCode}
                             </span>
-                            ? This action cannot be undone.
+                            ?{' '}
+                            {t(
+                                'documents.cancel_undone',
+                                'This action cannot be undone.',
+                            )}
                         </DialogDescription>
                     </DialogHeader>
 
@@ -89,7 +101,10 @@ export function CancelRequestDialog({
                                 htmlFor="cancellation_reason"
                                 className="text-xs font-semibold"
                             >
-                                Reason for Cancellation{' '}
+                                {t(
+                                    'documents.cancel_reason',
+                                    'Reason for Cancellation',
+                                )}{' '}
                                 <span className="text-destructive">*</span>
                             </Label>
                             <Select
@@ -100,19 +115,25 @@ export function CancelRequestDialog({
                             >
                                 <SelectTrigger
                                     id="cancellation_reason"
-                                    className={
+                                    className={`rounded-none ${
                                         errors.cancellation_reason
                                             ? 'border-destructive'
                                             : ''
-                                    }
+                                    }`}
                                 >
-                                    <SelectValue placeholder="Select cancellation reason" />
+                                    <SelectValue
+                                        placeholder={t(
+                                            'documents.select_reason',
+                                            'Select cancellation reason',
+                                        )}
+                                    />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="rounded-none">
                                     {reasons.map((r) => (
                                         <SelectItem
                                             key={r.value}
                                             value={r.value}
+                                            className="rounded-none"
                                         >
                                             {r.label}
                                         </SelectItem>
@@ -146,11 +167,11 @@ export function CancelRequestDialog({
                                     }
                                     placeholder="Please explain why you are cancelling this request..."
                                     rows={3}
-                                    className={
+                                    className={`rounded-none shadow-none ${
                                         errors.cancellation_notes
                                             ? 'border-destructive'
                                             : ''
-                                    }
+                                    }`}
                                 />
                                 {errors.cancellation_notes && (
                                     <p className="text-[11px] font-medium text-destructive">
@@ -166,24 +187,29 @@ export function CancelRequestDialog({
                             type="button"
                             variant="outline"
                             size="sm"
+                            className="rounded-none shadow-none"
                             onClick={() => setOpen(false)}
                             disabled={processing}
                         >
-                            Keep Request
+                            {t('common.cancel', 'Keep Request')}
                         </Button>
                         <Button
                             type="submit"
                             variant="destructive"
                             size="sm"
+                            className="rounded-none shadow-none"
                             disabled={processing || !data.cancellation_reason}
                         >
                             {processing ? (
                                 <>
                                     <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                                    Cancelling...
+                                    {t('common.please_wait', 'Cancelling...')}
                                 </>
                             ) : (
-                                'Confirm Cancellation'
+                                t(
+                                    'documents.cancel_request',
+                                    'Confirm Cancellation',
+                                )
                             )}
                         </Button>
                     </DialogFooter>

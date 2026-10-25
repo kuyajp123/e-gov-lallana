@@ -2,7 +2,6 @@
 
 return [
     'hero' => [
-        'badge' => 'Official E-Government Portal',
         'title' => 'Barangay Lallana E-Government Services',
         'subtitle' => 'Convenient, fast, and transparent digital public services for all residents of Barangay Lallana, Trece Martires City, Cavite.',
         'cta_request' => 'Request Document',

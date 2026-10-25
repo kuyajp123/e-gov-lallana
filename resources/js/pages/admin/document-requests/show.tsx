@@ -18,8 +18,8 @@ import {
     XCircle,
 } from 'lucide-react';
 import { useState } from 'react';
-import { StatusTransitionModal } from '@/features/admin/document-requests/components/status-transition-modal';
 import type { TransitionActionType } from '@/features/admin/document-requests/components/status-transition-modal';
+import { StatusTransitionModal } from '@/features/admin/document-requests/components/status-transition-modal';
 import { Button } from '@/shared/components/ui/button';
 import {
     Card,
@@ -63,6 +63,18 @@ interface TimelineEntry {
 interface DocumentRequestDetails {
     id: number;
     reference_code: string;
+    is_walkin?: boolean;
+    walkin_name?: string | null;
+    walkin_purok?: string | null;
+    walkin_address?: string | null;
+    walkin_birthdate?: string | null;
+    walkin_age?: number | null;
+    walkin_gender?: string | null;
+    walkin_civil_status?: string | null;
+    walkin_contact_number?: string | null;
+    walkin_email?: string | null;
+    custom_document_title?: string | null;
+    custom_document_body?: string | null;
     current_status: string;
     status_label: string;
     status_color: string;
@@ -82,7 +94,7 @@ interface DocumentRequestDetails {
     completed_at?: string | null;
     cancelled_at?: string | null;
     user: {
-        id: number;
+        id: number | null;
         name: string;
         email: string;
         phone_number?: string | null;
@@ -91,7 +103,7 @@ interface DocumentRequestDetails {
         address: string;
     };
     document_type: {
-        id: number;
+        id: number | null;
         name: string;
         slug: string;
         description?: string | null;
@@ -182,6 +194,11 @@ export default function AdminDocumentShow({
                                 <span className="font-mono text-sm font-bold text-primary">
                                     {documentRequest.reference_code}
                                 </span>
+                                {documentRequest.is_walkin && (
+                                    <span className="inline-flex items-center rounded-none border border-blue-600 bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700 dark:border-blue-500 dark:bg-blue-950/50 dark:text-blue-300">
+                                        Walk-in
+                                    </span>
+                                )}
                                 <span
                                     className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                                         documentRequest.status_color ===
@@ -348,6 +365,19 @@ export default function AdminDocumentShow({
                                             'No purpose stated.'}
                                     </p>
                                 </div>
+
+                                {documentRequest.custom_document_body && (
+                                    <div className="rounded-none border border-border bg-muted/10 p-3">
+                                        <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                                            Custom Certification Text
+                                        </p>
+                                        <p className="mt-1.5 text-xs leading-relaxed whitespace-pre-line text-foreground">
+                                            {
+                                                documentRequest.custom_document_body
+                                            }
+                                        </p>
+                                    </div>
+                                )}
 
                                 {documentRequest.cancellation_reason && (
                                     <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-4">
@@ -542,10 +572,19 @@ export default function AdminDocumentShow({
                         {/* Resident Card */}
                         <Card className="rounded-2xl border-border/70 shadow-sm">
                             <CardHeader className="border-b border-border/50 bg-muted/20 px-4 py-3.5">
-                                <CardTitle className="flex items-center gap-1.5 text-xs font-semibold tracking-wider text-foreground uppercase">
-                                    <User className="size-3.5 text-primary" />
-                                    Citizen Applicant
-                                </CardTitle>
+                                <div className="flex items-center justify-between">
+                                    <CardTitle className="flex items-center gap-1.5 text-xs font-semibold tracking-wider text-foreground uppercase">
+                                        <User className="size-3.5 text-primary" />
+                                        Citizen Applicant
+                                    </CardTitle>
+                                    {documentRequest.is_walkin && (
+                                        <span className="text-[11px] font-medium text-muted-foreground">
+                                            {documentRequest.user.id
+                                                ? 'Registered Walk-in'
+                                                : 'Unregistered Walk-in'}
+                                        </span>
+                                    )}
+                                </div>
                             </CardHeader>
                             <CardContent className="space-y-3 p-4">
                                 <div className="flex items-center gap-3">
@@ -698,7 +737,7 @@ export default function AdminDocumentShow({
 
 AdminDocumentShow.layout = {
     breadcrumbs: [
-        { title: 'Admin Console', href: '/admin' },
-        { title: 'Document Queue', href: '/admin/document-requests' },
+        { title: 'Admin Dashboard', href: '/admin' },
+        { title: 'Document Requests', href: '/admin/document-requests' },
     ],
 };

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\Inquiry;
 use App\Rules\ValidTurnstile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,6 +21,15 @@ class InquiryController extends Controller
             'cf-turnstile-response' => ['required', new ValidTurnstile],
         ], [
             'cf-turnstile-response.required' => 'Please complete the security bot verification.',
+        ]);
+
+        Inquiry::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'subject' => $validated['subject'],
+            'message' => $validated['message'],
+            'ip_address' => $request->ip(),
+            'status' => 'pending',
         ]);
 
         Log::info('[PublicInquiry] New visitor message received', [

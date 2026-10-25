@@ -110,35 +110,6 @@ export default function PublicAnnouncementShow({
         <div className="min-h-screen bg-background font-sans text-foreground selection:bg-violet-600 selection:text-white">
             <Head title={`${announcement.title} — Barangay Lallana`} />
 
-            {/* Emergency Hotline Alert Strip */}
-            <div className="border-b border-violet-200/50 bg-violet-50/70 px-4 py-2 text-xs text-violet-950 dark:border-violet-900/40 dark:bg-violet-950/40 dark:text-violet-200">
-                <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 text-[11px] sm:text-xs">
-                    <div className="flex items-center gap-2">
-                        <span className="inline-flex size-2 animate-pulse rounded-full bg-emerald-500" />
-                        <span className="font-semibold tracking-wide text-violet-800 uppercase dark:text-violet-300">
-                            Barangay Hall Active Desk:
-                        </span>
-                        <span className="font-mono font-medium">
-                            (046) 419-0000
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-4 text-muted-foreground">
-                        <span className="hidden sm:inline">
-                            Trece Martires PNP:{' '}
-                            <strong className="font-mono font-semibold text-foreground">
-                                0998-598-5606
-                            </strong>
-                        </span>
-                        <span>
-                            BFP Fire:{' '}
-                            <strong className="font-mono font-semibold text-foreground">
-                                (046) 419-0352
-                            </strong>
-                        </span>
-                    </div>
-                </div>
-            </div>
-
             {/* Sticky Navigation Header */}
             <div className="sticky top-3 z-50 px-4 sm:px-6 lg:px-8">
                 <header className="mx-auto max-w-6xl rounded-2xl border border-border/80 bg-background/85 px-4 shadow-sm backdrop-blur-xl transition-all sm:px-6 dark:bg-card/85">

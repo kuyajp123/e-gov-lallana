@@ -16,11 +16,11 @@ export function LockedModuleCard({
     icon,
 }: LockedModuleCardProps) {
     return (
-        <Card className="relative overflow-hidden rounded-2xl border-dashed border-border/80 bg-muted/20 opacity-80 transition-all hover:opacity-90">
+        <Card className="relative overflow-hidden rounded-none border border-dashed border-border/80 bg-muted/20 opacity-80 shadow-none transition-all hover:opacity-90">
             <CardContent className="flex flex-col items-center justify-center p-6 text-center">
-                <div className="relative mb-3 flex size-12 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
+                <div className="relative mb-3 flex size-12 items-center justify-center rounded-none bg-muted text-muted-foreground">
                     {icon}
-                    <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full bg-amber-500 text-white shadow">
+                    <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-none bg-amber-500 text-white shadow-none">
                         <Lock className="size-3" />
                     </div>
                 </div>
@@ -32,7 +32,7 @@ export function LockedModuleCard({
                     {description}
                 </p>
 
-                <div className="mt-4 rounded-lg bg-amber-500/10 px-3 py-1.5 text-xs font-medium text-amber-800 dark:text-amber-300">
+                <div className="mt-4 rounded-none bg-amber-500/10 px-3 py-1.5 text-xs font-medium text-amber-800 dark:text-amber-300">
                     🔒 {reason}
                 </div>
             </CardContent>

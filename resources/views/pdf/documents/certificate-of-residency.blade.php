@@ -38,7 +38,7 @@
             <td style="width: 50%; text-align: center;">
                 <div class="captain-title">Approved & Issued by:</div>
                 <div style="height: 40px;"></div>
-                <div class="captain-name">{{ $officials['punong_barangay'] ?? 'HON. CRISANTO V. LALLANA' }}</div>
+                <div class="captain-name">{{ $officials['punong_barangay'] ?? 'HON. CECILIA M. DECILLO' }}</div>
                 <div class="captain-title" style="font-weight: bold; margin-top: 2px;">Punong Barangay</div>
             </td>
         </tr>

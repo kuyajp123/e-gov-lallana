@@ -1,7 +1,9 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft, Loader2, RotateCcw } from 'lucide-react';
+import { useRef } from 'react';
 import type { DocumentTypeItem } from '@/features/documents/components/document-type-card';
 import { DynamicFormRenderer } from '@/features/documents/components/dynamic-form-renderer';
+import { FileAttachmentsPreview } from '@/features/documents/components/file-attachments-preview';
 import {
     Alert,
     AlertDescription,
@@ -32,6 +34,8 @@ interface DocumentEditProps {
 }
 
 export default function DocumentEdit({ documentRequest }: DocumentEditProps) {
+    const governmentIdInputRef = useRef<HTMLInputElement>(null);
+    const supportingFilesInputRef = useRef<HTMLInputElement>(null);
     const { data, setData, put, processing, errors } = useForm<{
         purpose: string;
         submitted_data: Record<string, any>;
@@ -183,6 +187,7 @@ export default function DocumentEdit({ documentRequest }: DocumentEditProps) {
                                     keep existing)
                                 </Label>
                                 <Input
+                                    ref={governmentIdInputRef}
                                     id="government_id_file"
                                     type="file"
                                     accept="image/jpeg,image/png,application/pdf"
@@ -190,8 +195,21 @@ export default function DocumentEdit({ documentRequest }: DocumentEditProps) {
                                         const file =
                                             e.target.files?.[0] || null;
                                         setData('government_id_file', file);
+
+                                        if (governmentIdInputRef.current) {
+                                            governmentIdInputRef.current.value =
+                                                '';
+                                        }
                                     }}
                                 />
+                                {data.government_id_file && (
+                                    <FileAttachmentsPreview
+                                        files={[data.government_id_file]}
+                                        onRemove={() =>
+                                            setData('government_id_file', null)
+                                        }
+                                    />
+                                )}
                                 {errors.government_id_file && (
                                     <p className="text-[11px] font-medium text-destructive">
                                         {errors.government_id_file}
@@ -207,17 +225,54 @@ export default function DocumentEdit({ documentRequest }: DocumentEditProps) {
                                     Additional Supporting Files
                                 </Label>
                                 <Input
+                                    ref={supportingFilesInputRef}
                                     id="supporting_files"
                                     type="file"
                                     multiple
                                     accept="image/jpeg,image/png,application/pdf"
                                     onChange={(e) => {
-                                        const files = Array.from(
+                                        const newFiles = Array.from(
                                             e.target.files || [],
                                         );
-                                        setData('supporting_files', files);
+
+                                        if (newFiles.length > 0) {
+                                            setData('supporting_files', [
+                                                ...data.supporting_files,
+                                                ...newFiles.filter(
+                                                    (nf) =>
+                                                        !data.supporting_files.some(
+                                                            (ef) =>
+                                                                ef.name ===
+                                                                    nf.name &&
+                                                                ef.size ===
+                                                                    nf.size &&
+                                                                ef.lastModified ===
+                                                                    nf.lastModified,
+                                                        ),
+                                                ),
+                                            ]);
+                                        }
+
+                                        if (supportingFilesInputRef.current) {
+                                            supportingFilesInputRef.current.value =
+                                                '';
+                                        }
                                     }}
                                 />
+                                {data.supporting_files.length > 0 && (
+                                    <FileAttachmentsPreview
+                                        files={data.supporting_files}
+                                        onRemove={(indexToRemove) => {
+                                            setData(
+                                                'supporting_files',
+                                                data.supporting_files.filter(
+                                                    (_, idx) =>
+                                                        idx !== indexToRemove,
+                                                ),
+                                            );
+                                        }}
+                                    />
+                                )}
                             </div>
                         </CardContent>
                     </Card>

@@ -56,7 +56,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Resident\ProfileController::update
- * @see app/Http/Controllers/Resident/ProfileController.php:80
+ * @see app/Http/Controllers/Resident/ProfileController.php:95
  * @route '/resident/profile'
  */
 export const update = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -71,7 +71,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Resident\ProfileController::update
- * @see app/Http/Controllers/Resident/ProfileController.php:80
+ * @see app/Http/Controllers/Resident/ProfileController.php:95
  * @route '/resident/profile'
  */
 update.url = (options?: RouteQueryOptions) => {
@@ -80,7 +80,7 @@ update.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Resident\ProfileController::update
- * @see app/Http/Controllers/Resident/ProfileController.php:80
+ * @see app/Http/Controllers/Resident/ProfileController.php:95
  * @route '/resident/profile'
  */
 update.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -90,7 +90,7 @@ update.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
 
     /**
 * @see \App\Http\Controllers\Resident\ProfileController::update
- * @see app/Http/Controllers/Resident/ProfileController.php:80
+ * @see app/Http/Controllers/Resident/ProfileController.php:95
  * @route '/resident/profile'
  */
     const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -105,7 +105,7 @@ update.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
 
             /**
 * @see \App\Http\Controllers\Resident\ProfileController::update
- * @see app/Http/Controllers/Resident/ProfileController.php:80
+ * @see app/Http/Controllers/Resident/ProfileController.php:95
  * @route '/resident/profile'
  */
         updateForm.put = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

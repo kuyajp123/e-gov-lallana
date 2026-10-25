@@ -26,6 +26,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/shared/components/ui/card';
+import { useTranslation } from '@/shared/hooks/use-translation';
 
 interface AttachedFile {
     id: number;
@@ -79,6 +80,7 @@ export default function DocumentShow({
     documentRequest,
     cancellationReasons = [],
 }: DocumentShowProps) {
+    const { t } = useTranslation();
     const isReadyForPickup =
         documentRequest.current_status === 'ready_for_pickup';
     const isReturned = documentRequest.current_status === 'returned';
@@ -96,7 +98,7 @@ export default function DocumentShow({
                             asChild
                             variant="outline"
                             size="icon"
-                            className="size-9 rounded-xl"
+                            className="size-9 rounded-none shadow-none"
                         >
                             <Link href="/documents">
                                 <ArrowLeft className="size-4" />
@@ -105,7 +107,11 @@ export default function DocumentShow({
                         <div>
                             <div className="flex items-center gap-2">
                                 <h1 className="text-xl font-bold tracking-tight text-foreground">
-                                    Request {documentRequest.reference_code}
+                                    {t(
+                                        'documents.request_details',
+                                        'Request Details',
+                                    )}{' '}
+                                    — {documentRequest.reference_code}
                                 </h1>
                                 <StatusBadge
                                     status={documentRequest.current_status}
@@ -113,7 +119,8 @@ export default function DocumentShow({
                                 />
                             </div>
                             <p className="text-xs text-muted-foreground">
-                                {documentRequest.document_type.name} • Submitted{' '}
+                                {documentRequest.document_type.name} •{' '}
+                                {t('documents.submitted', 'Submitted')}{' '}
                                 {documentRequest.submitted_at
                                     ? new Date(
                                           documentRequest.submitted_at,
@@ -129,13 +136,18 @@ export default function DocumentShow({
                             <Button
                                 asChild
                                 size="sm"
-                                className="gap-1.5 bg-amber-600 hover:bg-amber-700"
+                                className="gap-1.5 rounded-none bg-amber-600 shadow-none hover:bg-amber-700"
                             >
                                 <Link
                                     href={`/documents/${documentRequest.id}/edit`}
                                 >
                                     <RotateCcw className="size-3.5" />
-                                    <span>Correct & Resubmit</span>
+                                    <span>
+                                        {t(
+                                            'household.edit_and_resubmit',
+                                            'Correct & Resubmit',
+                                        )}
+                                    </span>
                                 </Link>
                             </Button>
                         )}
@@ -152,23 +164,20 @@ export default function DocumentShow({
 
                 {/* Ready For Pickup Notification Banner */}
                 {isReadyForPickup && (
-                    <Alert className="rounded-2xl border-emerald-500/50 bg-emerald-500/10 text-emerald-950 dark:text-emerald-100">
+                    <Alert className="rounded-none border-emerald-500/50 bg-emerald-500/10 text-emerald-950 shadow-none dark:text-emerald-100">
                         <Building2 className="size-5 text-emerald-600 dark:text-emerald-400" />
                         <div>
                             <AlertTitle className="font-bold">
-                                Ready for Physical Pickup!
+                                {t(
+                                    'documents.ready_pickup_alert_title',
+                                    'Ready For Physical Pickup!',
+                                )}
                             </AlertTitle>
                             <AlertDescription className="mt-1 text-xs text-emerald-900/90 dark:text-emerald-200">
-                                Your{' '}
-                                <strong>
-                                    {documentRequest.document_type.name}
-                                </strong>{' '}
-                                has been officially prepared, signed, and is
-                                ready for pickup at the Barangay Lallana Hall
-                                during regular office hours (Monday – Friday,
-                                8:00 AM – 5:00 PM). Please present your
-                                reference code and settle the fee (
-                                {documentRequest.formatted_fee}) upon claiming.
+                                {t(
+                                    'documents.ready_pickup_alert_desc',
+                                    'Your document has been processed and signed. Please proceed to the Barangay Lallana Office during operating hours to claim your physical copy.',
+                                )}
                             </AlertDescription>
                         </div>
                     </Alert>
@@ -178,30 +187,41 @@ export default function DocumentShow({
                 {isReturned && (
                     <Alert
                         variant="destructive"
-                        className="rounded-2xl border-amber-500/50 bg-amber-500/10 text-amber-950 dark:text-amber-100"
+                        className="rounded-none border-amber-500/50 bg-amber-500/10 text-amber-950 shadow-none dark:text-amber-100"
                     >
                         <RotateCcw className="size-5 text-amber-600 dark:text-amber-400" />
                         <div className="flex w-full flex-col justify-between gap-3 sm:flex-row sm:items-center">
                             <div>
                                 <AlertTitle className="font-bold">
-                                    Action Required: Returned for Correction
+                                    {t(
+                                        'household.returned_banner_title',
+                                        {
+                                            code: documentRequest.reference_code,
+                                        },
+                                        'Returned for Correction',
+                                    )}
                                 </AlertTitle>
                                 <AlertDescription className="mt-1 text-xs text-amber-900/90 dark:text-amber-200">
-                                    The Barangay Administrator reviewed your
-                                    request and requested changes before it can
-                                    be processed. Click below to review remarks
-                                    and resubmit.
+                                    {documentRequest.admin_notes ||
+                                        t(
+                                            'household.returned_default_remark',
+                                            'Please review and update the required information.',
+                                        )}
                                 </AlertDescription>
                             </div>
                             <Button
                                 asChild
                                 size="sm"
-                                className="shrink-0 bg-amber-600 text-white hover:bg-amber-700"
+                                className="shrink-0 rounded-none bg-amber-600 text-white shadow-none hover:bg-amber-700"
                             >
                                 <Link
                                     href={`/documents/${documentRequest.id}/edit`}
                                 >
-                                    Edit & Resubmit →
+                                    {t(
+                                        'household.edit_and_resubmit',
+                                        'Edit & Resubmit',
+                                    )}{' '}
+                                    →
                                 </Link>
                             </Button>
                         </div>
@@ -210,16 +230,25 @@ export default function DocumentShow({
 
                 {/* Rejection Alert */}
                 {isRejected && (
-                    <Alert variant="destructive" className="rounded-2xl">
+                    <Alert
+                        variant="destructive"
+                        className="rounded-none shadow-none"
+                    >
                         <XCircle className="size-5" />
                         <div>
                             <AlertTitle className="font-bold">
-                                Request Rejected
+                                {t(
+                                    'household.rejected_banner_title',
+                                    { code: documentRequest.reference_code },
+                                    'Request Rejected',
+                                )}
                             </AlertTitle>
                             <AlertDescription className="mt-1 text-xs">
-                                This document request was officially rejected by
-                                the Barangay Administration. See the timeline
-                                below for detailed remarks.
+                                {documentRequest.admin_notes ||
+                                    t(
+                                        'household.rejected_default_reason',
+                                        'This document request was rejected by the Barangay Administration.',
+                                    )}
                             </AlertDescription>
                         </div>
                     </Alert>
@@ -248,10 +277,13 @@ export default function DocumentShow({
                         {documentRequest.submitted_data &&
                             Object.keys(documentRequest.submitted_data).length >
                                 0 && (
-                                <Card className="rounded-2xl border-border">
+                                <Card className="rounded-none border border-border bg-card shadow-none">
                                     <CardHeader className="pb-3">
                                         <CardTitle className="text-base font-bold">
-                                            Submitted Form Details
+                                            {t(
+                                                'documents.request_details',
+                                                'Submitted Form Details',
+                                            )}
                                         </CardTitle>
                                         <CardDescription className="text-xs">
                                             Information supplied specifically
@@ -259,7 +291,7 @@ export default function DocumentShow({
                                         </CardDescription>
                                     </CardHeader>
                                     <CardContent className="pt-0">
-                                        <div className="grid gap-3 rounded-xl bg-muted/40 p-4 sm:grid-cols-2">
+                                        <div className="grid gap-3 rounded-none bg-muted/40 p-4 sm:grid-cols-2">
                                             {Object.entries(
                                                 documentRequest.submitted_data,
                                             ).map(([key, val]) => (
@@ -282,11 +314,14 @@ export default function DocumentShow({
                             )}
 
                         {/* Uploaded Documents & ID */}
-                        <Card className="rounded-2xl border-border">
+                        <Card className="rounded-none border border-border bg-card shadow-none">
                             <CardHeader className="pb-3">
                                 <CardTitle className="text-base font-bold">
-                                    Attached Documents (
-                                    {documentRequest.files.length})
+                                    {t(
+                                        'documents.supporting_files',
+                                        'Attached Documents',
+                                    )}{' '}
+                                    ({documentRequest.files.length})
                                 </CardTitle>
                                 <CardDescription className="text-xs">
                                     Identification and supporting files attached
@@ -299,10 +334,10 @@ export default function DocumentShow({
                                         {documentRequest.files.map((file) => (
                                             <div
                                                 key={file.id}
-                                                className="flex items-center justify-between rounded-xl border border-border/60 bg-muted/20 p-3"
+                                                className="flex items-center justify-between rounded-none border border-border/60 bg-muted/20 p-3"
                                             >
                                                 <div className="flex items-center gap-3">
-                                                    <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                                                    <div className="flex size-9 items-center justify-center rounded-none bg-primary/10 text-primary">
                                                         <FileText className="size-4" />
                                                     </div>
                                                     <div>
@@ -312,7 +347,7 @@ export default function DocumentShow({
                                                         <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
                                                             <Badge
                                                                 variant="outline"
-                                                                className="text-[9px] capitalize"
+                                                                className="rounded-none text-[9px] capitalize shadow-none"
                                                             >
                                                                 {file.file_type.replace(
                                                                     '_',
@@ -335,7 +370,7 @@ export default function DocumentShow({
                                                     asChild
                                                     variant="outline"
                                                     size="sm"
-                                                    className="h-8 gap-1.5 text-xs"
+                                                    className="h-8 gap-1.5 rounded-none text-xs shadow-none"
                                                 >
                                                     <a
                                                         href={file.url}
@@ -343,7 +378,12 @@ export default function DocumentShow({
                                                         rel="noopener noreferrer"
                                                     >
                                                         <ExternalLink className="size-3.5" />
-                                                        <span>View</span>
+                                                        <span>
+                                                            {t(
+                                                                'common.view',
+                                                                'View',
+                                                            )}
+                                                        </span>
                                                     </a>
                                                 </Button>
                                             </div>
@@ -360,10 +400,13 @@ export default function DocumentShow({
 
                     {/* Right Column: Status Timeline & Audit Trail */}
                     <div>
-                        <Card className="rounded-2xl border-border">
+                        <Card className="rounded-none border border-border bg-card shadow-none">
                             <CardHeader className="pb-3">
                                 <CardTitle className="text-base font-bold">
-                                    Status Timeline
+                                    {t(
+                                        'documents.status_timeline',
+                                        'Status Timeline',
+                                    )}
                                 </CardTitle>
                                 <CardDescription className="text-xs">
                                     Chronological activity and staff remarks.

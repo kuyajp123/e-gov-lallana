@@ -65,11 +65,11 @@ export function StatusTimeline({ entries = [] }: StatusTimelineProps) {
 
                     return (
                         <div key={entry.id || index} className="relative">
-                            {/* Circle dot / icon container */}
+                            {/* Square dot / icon container */}
                             <div
-                                className={`absolute -left-[31px] flex size-6 items-center justify-center rounded-full border-2 bg-background ${
+                                className={`absolute -left-[31px] flex size-6 items-center justify-center rounded-none border bg-background ${
                                     isLatest
-                                        ? 'border-primary shadow-sm'
+                                        ? 'border-primary'
                                         : 'border-muted-foreground/30'
                                 }`}
                             >
@@ -102,7 +102,7 @@ export function StatusTimeline({ entries = [] }: StatusTimelineProps) {
                                 </p>
 
                                 {entry.remarks && (
-                                    <div className="mt-1.5 rounded-lg border border-border/50 bg-muted/30 p-2.5 text-xs text-foreground/90">
+                                    <div className="mt-1.5 rounded-none border border-border/50 bg-muted/30 p-2.5 text-xs text-foreground/90">
                                         <span className="font-semibold text-muted-foreground">
                                             Remarks:{' '}
                                         </span>

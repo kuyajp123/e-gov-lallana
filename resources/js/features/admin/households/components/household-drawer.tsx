@@ -16,11 +16,12 @@ import {
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetTitle,
-} from '@/shared/components/ui/sheet';
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@/shared/components/ui/dialog';
 import type { HouseholdActionType } from './household-verification-modal';
 
 export interface AdminHouseholdItem {
@@ -46,7 +47,7 @@ export interface AdminHouseholdItem {
     } | null;
 }
 
-interface HouseholdDrawerProps {
+export interface HouseholdModalProps {
     isOpen: boolean;
     onClose: () => void;
     household: AdminHouseholdItem | null;
@@ -57,13 +58,15 @@ interface HouseholdDrawerProps {
     ) => void;
 }
 
-export function HouseholdDrawer({
+export type HouseholdDrawerProps = HouseholdModalProps;
+
+export function HouseholdModal({
     isOpen,
     onClose,
     household,
     canManageRestrictions,
     onTriggerAction,
-}: HouseholdDrawerProps) {
+}: HouseholdModalProps) {
     if (!household) {
         return null;
     }
@@ -74,44 +77,44 @@ export function HouseholdDrawer({
     const isRestricted = household.status === 'restricted';
 
     return (
-        <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <SheetContent className="flex w-full flex-col overflow-y-auto p-0 sm:max-w-xl">
+        <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+            <DialogContent className="flex max-h-[88vh] w-full max-w-2xl flex-col overflow-y-auto rounded-none border border-border bg-card p-0 shadow-none sm:max-w-3xl">
                 {/* Header */}
-                <div className="border-b border-border/70 bg-muted/20 p-6">
+                <DialogHeader className="border-b border-border bg-muted/20 p-6 pr-12 text-left">
                     <div className="flex items-center justify-between gap-2">
                         <Badge
                             variant="outline"
-                            className="px-2.5 py-1 font-mono text-xs"
+                            className="rounded-none border border-border px-2.5 py-1 font-mono text-xs"
                         >
                             {household.household_code}
                         </Badge>
                         <span
-                            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                            className={`inline-flex items-center rounded-none px-2.5 py-0.5 text-xs font-semibold ${
                                 household.status_color === 'success'
-                                    ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
+                                    ? 'border border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
                                     : household.status_color === 'danger'
-                                      ? 'bg-rose-500/10 text-rose-700 dark:text-rose-400'
+                                      ? 'border border-rose-500/20 bg-rose-500/10 text-rose-700 dark:text-rose-400'
                                       : household.status_color === 'info'
-                                        ? 'bg-sky-500/10 text-sky-700 dark:text-sky-400'
-                                        : 'bg-amber-500/10 text-amber-700 dark:text-amber-400'
+                                        ? 'border border-sky-500/20 bg-sky-500/10 text-sky-700 dark:text-sky-400'
+                                        : 'border border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-400'
                             }`}
                         >
                             {household.status_label}
                         </span>
                     </div>
-                    <SheetTitle className="mt-3 text-xl font-bold tracking-tight text-foreground">
+                    <DialogTitle className="mt-3 text-xl font-bold tracking-tight text-foreground">
                         {household.purok_sitio}
-                    </SheetTitle>
-                    <SheetDescription className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+                    </DialogTitle>
+                    <DialogDescription className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
                         <MapPin className="size-3.5 shrink-0" />
                         {household.address}
-                    </SheetDescription>
-                </div>
+                    </DialogDescription>
+                </DialogHeader>
 
                 {/* Body Content */}
                 <div className="flex-1 space-y-6 p-6">
                     {/* Action Bar */}
-                    <div className="space-y-3 rounded-xl border border-border/60 bg-card p-4 shadow-sm">
+                    <div className="space-y-3 rounded-none border border-border bg-card p-4">
                         <h4 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                             Verification Actions
                         </h4>
@@ -126,7 +129,7 @@ export function HouseholdDrawer({
                                                 household,
                                             )
                                         }
-                                        className="gap-1.5 bg-emerald-600 text-xs text-white hover:bg-emerald-700"
+                                        className="gap-1.5 rounded-none bg-emerald-600 text-xs text-white hover:bg-emerald-700"
                                     >
                                         <CheckCircle2 className="size-3.5" />
                                         Approve & Verify
@@ -137,7 +140,7 @@ export function HouseholdDrawer({
                                         onClick={() =>
                                             onTriggerAction('return', household)
                                         }
-                                        className="gap-1.5 border-amber-500/40 text-xs text-amber-700 dark:text-amber-400"
+                                        className="gap-1.5 rounded-none border-amber-500/40 text-xs text-amber-700 dark:text-amber-400"
                                     >
                                         <Undo2 className="size-3.5" />
                                         Return for Correction
@@ -148,7 +151,7 @@ export function HouseholdDrawer({
                                         onClick={() =>
                                             onTriggerAction('reject', household)
                                         }
-                                        className="gap-1.5 border-rose-500/40 text-xs text-rose-700 dark:text-rose-400"
+                                        className="gap-1.5 rounded-none border-rose-500/40 text-xs text-rose-700 dark:text-rose-400"
                                     >
                                         <XCircle className="size-3.5" />
                                         Reject
@@ -163,7 +166,7 @@ export function HouseholdDrawer({
                                     onClick={() =>
                                         onTriggerAction('restrict', household)
                                     }
-                                    className="gap-1.5 border-rose-500/40 text-xs text-rose-700 dark:text-rose-400"
+                                    className="gap-1.5 rounded-none border-rose-500/40 text-xs text-rose-700 dark:text-rose-400"
                                 >
                                     <ShieldAlert className="size-3.5" />
                                     Place Under Restriction
@@ -180,7 +183,7 @@ export function HouseholdDrawer({
                                                 household,
                                             )
                                         }
-                                        className="gap-1.5 bg-emerald-600 text-xs text-white hover:bg-emerald-700"
+                                        className="gap-1.5 rounded-none bg-emerald-600 text-xs text-white hover:bg-emerald-700"
                                     >
                                         <ShieldCheck className="size-3.5" />
                                         Lift Restriction
@@ -194,7 +197,7 @@ export function HouseholdDrawer({
                                                 household,
                                             )
                                         }
-                                        className="gap-1.5 text-xs"
+                                        className="gap-1.5 rounded-none text-xs"
                                     >
                                         <Archive className="size-3.5" />
                                         Archive
@@ -206,7 +209,7 @@ export function HouseholdDrawer({
                                 asChild
                                 size="sm"
                                 variant="ghost"
-                                className="ml-auto gap-1 text-xs"
+                                className="ml-auto gap-1 rounded-none text-xs"
                             >
                                 <Link
                                     href={`/admin/households/${household.id}`}
@@ -219,14 +222,14 @@ export function HouseholdDrawer({
                     </div>
 
                     {/* Family Head Card */}
-                    <div className="space-y-3 rounded-xl border border-border/60 bg-card p-4 shadow-sm">
+                    <div className="space-y-3 rounded-none border border-border bg-card p-4">
                         <h4 className="flex items-center gap-1.5 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                             <User className="size-3.5" />
                             Head of Household
                         </h4>
                         {household.family_head ? (
                             <div className="flex items-center gap-3">
-                                <div className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+                                <div className="flex size-10 items-center justify-center rounded-none border border-border bg-primary/10 text-sm font-bold text-primary">
                                     {household.family_head.name.charAt(0)}
                                 </div>
                                 <div className="min-w-0 flex-1">
@@ -259,7 +262,7 @@ export function HouseholdDrawer({
 
                     {/* Stats Summary */}
                     <div className="grid grid-cols-2 gap-3">
-                        <div className="rounded-xl border border-border/60 bg-card p-3 shadow-sm">
+                        <div className="rounded-none border border-border bg-card p-3">
                             <p className="text-[11px] font-semibold text-muted-foreground uppercase">
                                 Family Members
                             </p>
@@ -268,7 +271,7 @@ export function HouseholdDrawer({
                                 {household.members_count} residents
                             </p>
                         </div>
-                        <div className="rounded-xl border border-border/60 bg-card p-3 shadow-sm">
+                        <div className="rounded-none border border-border bg-card p-3">
                             <p className="text-[11px] font-semibold text-muted-foreground uppercase">
                                 Submitted Date
                             </p>
@@ -280,7 +283,7 @@ export function HouseholdDrawer({
 
                     {/* Applicant Notes */}
                     {household.notes && (
-                        <div className="space-y-1 rounded-xl border border-border/60 bg-card p-4 shadow-sm">
+                        <div className="space-y-1 rounded-none border border-border bg-card p-4">
                             <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
                                 Applicant / Internal Notes
                             </p>
@@ -292,23 +295,29 @@ export function HouseholdDrawer({
                 </div>
 
                 {/* Footer link to full details */}
-                <div className="flex items-center justify-between border-t border-border/70 bg-muted/10 p-4">
+                <div className="flex items-center justify-between border-t border-border bg-muted/10 p-4">
                     <Button
                         variant="ghost"
                         size="sm"
                         onClick={onClose}
-                        className="text-xs"
+                        className="rounded-none text-xs"
                     >
-                        Close Drawer
+                        Close
                     </Button>
-                    <Button asChild size="sm" className="gap-1.5 text-xs">
+                    <Button
+                        asChild
+                        size="sm"
+                        className="gap-1.5 rounded-none text-xs"
+                    >
                         <Link href={`/admin/households/${household.id}`}>
                             View Full Household Record
                             <ArrowRight className="size-3.5" />
                         </Link>
                     </Button>
                 </div>
-            </SheetContent>
-        </Sheet>
+            </DialogContent>
+        </Dialog>
     );
 }
+
+export const HouseholdDrawer = HouseholdModal;

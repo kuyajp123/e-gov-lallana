@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Resident;
 
+use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreResidentProfileRequest extends FormRequest
 {
@@ -24,6 +26,20 @@ class StoreResidentProfileRequest extends FormRequest
             'middle_name' => ['nullable', 'string', 'max:100'],
             'last_name' => ['required', 'string', 'max:100'],
             'suffix' => ['nullable', 'string', 'max:20'],
+            'email' => [
+                'sometimes',
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique(User::class)->ignore($this->user()?->id),
+            ],
+            'phone_number' => [
+                'nullable',
+                'string',
+                'max:20',
+                Rule::unique(User::class)->ignore($this->user()?->id),
+            ],
             'birthdate' => ['required', 'date', 'before:today'],
             'gender' => ['required', 'string', 'in:male,female,other'],
             'civil_status' => ['required', 'string', 'in:single,married,widowed,separated,divorced'],

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Public\InquiryController::__invoke
- * @see app/Http/Controllers/Public/InquiryController.php:13
+ * @see app/Http/Controllers/Public/InquiryController.php:14
  * @route '/inquiry'
  */
 const InquiryController = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ InquiryController.definition = {
 
 /**
 * @see \App\Http\Controllers\Public\InquiryController::__invoke
- * @see app/Http/Controllers/Public/InquiryController.php:13
+ * @see app/Http/Controllers/Public/InquiryController.php:14
  * @route '/inquiry'
  */
 InquiryController.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ InquiryController.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Public\InquiryController::__invoke
- * @see app/Http/Controllers/Public/InquiryController.php:13
+ * @see app/Http/Controllers/Public/InquiryController.php:14
  * @route '/inquiry'
  */
 InquiryController.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -35,7 +35,7 @@ InquiryController.post = (options?: RouteQueryOptions): RouteDefinition<'post'> 
 
     /**
 * @see \App\Http\Controllers\Public\InquiryController::__invoke
- * @see app/Http/Controllers/Public/InquiryController.php:13
+ * @see app/Http/Controllers/Public/InquiryController.php:14
  * @route '/inquiry'
  */
     const InquiryControllerForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -45,7 +45,7 @@ InquiryController.post = (options?: RouteQueryOptions): RouteDefinition<'post'> 
 
             /**
 * @see \App\Http\Controllers\Public\InquiryController::__invoke
- * @see app/Http/Controllers/Public/InquiryController.php:13
+ * @see app/Http/Controllers/Public/InquiryController.php:14
  * @route '/inquiry'
  */
         InquiryControllerForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

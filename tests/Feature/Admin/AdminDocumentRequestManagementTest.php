@@ -12,8 +12,16 @@ beforeEach(function () {
     $this->adminRole = Role::firstOrCreate(['slug' => 'admin'], ['name' => 'Admin']);
     $this->residentRole = Role::firstOrCreate(['slug' => 'resident'], ['name' => 'Resident']);
 
-    $this->admin = User::factory()->create(['role_id' => $this->adminRole->id]);
-    $this->resident = User::factory()->create(['role_id' => $this->residentRole->id]);
+    $this->admin = User::factory()->create([
+        'name' => 'Admin Staff',
+        'email' => 'admin.test@example.com',
+        'role_id' => $this->adminRole->id,
+    ]);
+    $this->resident = User::factory()->create([
+        'name' => 'Juan Dela Cruz',
+        'email' => 'juan.delacruz@example.com',
+        'role_id' => $this->residentRole->id,
+    ]);
 
     $this->docType = DocumentType::create([
         'name' => 'Barangay Clearance',
@@ -73,6 +81,7 @@ test('admin can filter document requests by status', function () {
 test('admin can search document requests by reference code or resident name', function () {
     $otherUser = User::factory()->create([
         'name' => 'Maria Clara',
+        'email' => 'maria.clara@example.com',
         'role_id' => $this->residentRole->id,
     ]);
 

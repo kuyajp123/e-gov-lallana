@@ -25,6 +25,19 @@
 
     <div style="background-color: #f1f5f9; border-left: 3px solid #1e3a8a; padding: 10px 14px; margin: 10px 0; font-size: 10.5pt; font-weight: bold; text-align: center; color: #0f172a;">
         {{ strtoupper($purpose ?? 'FINANCIAL / MEDICAL ASSISTANCE') }}
+        @if(!empty($submittedData['assistance_type']) || !empty($submittedData['requesting_agency']))
+            <div style="font-size: 8.5pt; font-weight: normal; margin-top: 4px; color: #475569;">
+                @if(!empty($submittedData['assistance_type']))
+                    <span>Assistance: <strong>{{ $submittedData['assistance_type'] }}</strong></span>
+                @endif
+                @if(!empty($submittedData['assistance_type']) && !empty($submittedData['requesting_agency']))
+                    &bull;
+                @endif
+                @if(!empty($submittedData['requesting_agency']))
+                    <span>Agency: <strong>{{ $submittedData['requesting_agency'] }}</strong></span>
+                @endif
+            </div>
+        @endif
     </div>
 
     <p class="doc-paragraph">
@@ -40,7 +53,7 @@
             <td style="width: 50%; text-align: center;">
                 <div class="captain-title">Approved & Issued by:</div>
                 <div style="height: 40px;"></div>
-                <div class="captain-name">{{ $officials['punong_barangay'] ?? 'HON. CRISANTO V. LALLANA' }}</div>
+                <div class="captain-name">{{ $officials['punong_barangay'] ?? 'HON. CECILIA M. DECILLO' }}</div>
                 <div class="captain-title" style="font-weight: bold; margin-top: 2px;">Punong Barangay</div>
             </td>
         </tr>

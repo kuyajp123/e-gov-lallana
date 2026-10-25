@@ -63,16 +63,31 @@ class ProfileController extends Controller
 
         unset($validated['government_id']);
 
+        // Update User account fields
+        $userUpdates = [];
+        if (isset($validated['email'])) {
+            $userUpdates['email'] = $validated['email'];
+            if ($user->email !== $validated['email']) {
+                $userUpdates['email_verified_at'] = null;
+            }
+        }
+        if (array_key_exists('phone_number', $validated)) {
+            $userUpdates['phone_number'] = $validated['phone_number'];
+        }
+        if (! empty($validated['first_name']) && ! empty($validated['last_name'])) {
+            $userUpdates['name'] = trim("{$validated['first_name']} {$validated['last_name']}");
+        }
+
+        if (! empty($userUpdates)) {
+            $user->update($userUpdates);
+        }
+
+        unset($validated['email'], $validated['phone_number']);
+
         ResidentProfile::updateOrCreate(
             ['user_id' => $user->id],
             $validated
         );
-
-        if (! empty($validated['first_name']) && ! empty($validated['last_name'])) {
-            $user->update([
-                'name' => trim("{$validated['first_name']} {$validated['last_name']}"),
-            ]);
-        }
 
         return redirect()->route('profile.edit')->with('success', 'Resident profile saved successfully.');
     }

@@ -1,8 +1,9 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft, CheckCircle2, Info, Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { DocumentTypeItem } from '@/features/documents/components/document-type-card';
 import { DynamicFormRenderer } from '@/features/documents/components/dynamic-form-renderer';
+import { FileAttachmentsPreview } from '@/features/documents/components/file-attachments-preview';
 import {
     Alert,
     AlertDescription,
@@ -21,6 +22,7 @@ import { Checkbox } from '@/shared/components/ui/checkbox';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { Textarea } from '@/shared/components/ui/textarea';
+import { useTranslation } from '@/shared/hooks/use-translation';
 
 interface ExistingGovernmentId {
     id: number;
@@ -37,8 +39,11 @@ export default function DocumentCreate({
     documentType,
     existingGovernmentId,
 }: DocumentCreateProps) {
+    const { t } = useTranslation();
     const hasExistingId = !!existingGovernmentId;
     const [useExistingId, setUseExistingId] = useState<boolean>(hasExistingId);
+    const governmentIdInputRef = useRef<HTMLInputElement>(null);
+    const supportingFilesInputRef = useRef<HTMLInputElement>(null);
 
     const { data, setData, post, processing, errors } = useForm<{
         document_type_id: number;
@@ -90,7 +95,7 @@ export default function DocumentCreate({
                         asChild
                         variant="outline"
                         size="icon"
-                        className="size-9 rounded-xl"
+                        className="size-9 rounded-none shadow-none"
                     >
                         <Link href="/documents">
                             <ArrowLeft className="size-4" />
@@ -98,17 +103,21 @@ export default function DocumentCreate({
                     </Button>
                     <div>
                         <h1 className="text-xl font-bold tracking-tight text-foreground">
-                            Request {documentType.name}
+                            {t('documents.new_request', 'New Document Request')}{' '}
+                            — {documentType.name}
                         </h1>
                         <p className="text-xs text-muted-foreground">
-                            Official Barangay Document Issuance & Verification
+                            {t(
+                                'documents.subtitle',
+                                'Request official barangay clearances, certificates, and indigency documents online.',
+                            )}
                         </p>
                     </div>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Document Info Card */}
-                    <Card className="rounded-2xl border-border">
+                    <Card className="rounded-none border border-border bg-card shadow-none">
                         <CardHeader className="pb-3">
                             <div className="flex flex-wrap items-center justify-between gap-2">
                                 <CardTitle className="text-base font-bold text-foreground">
@@ -116,9 +125,10 @@ export default function DocumentCreate({
                                 </CardTitle>
                                 <Badge
                                     variant="secondary"
-                                    className="font-bold"
+                                    className="rounded-none font-bold shadow-none"
                                 >
-                                    Fee: {documentType.formatted_fee}
+                                    {t('documents.fee', 'Fee')}:{' '}
+                                    {documentType.formatted_fee}
                                 </Badge>
                             </div>
                             {documentType.description && (
@@ -131,9 +141,12 @@ export default function DocumentCreate({
                         {documentType.requirements &&
                             documentType.requirements.length > 0 && (
                                 <CardContent className="pt-0">
-                                    <div className="rounded-xl border border-border/50 bg-muted/30 p-3">
+                                    <div className="rounded-none border border-border/50 bg-muted/30 p-3">
                                         <span className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">
-                                            Required Documents / Prerequisites:
+                                            {t(
+                                                'documents.required_documents',
+                                                'Required Documents:',
+                                            )}
                                         </span>
                                         <ul className="mt-1.5 list-inside list-disc space-y-0.5 text-xs text-foreground/90">
                                             {documentType.requirements.map(
@@ -148,14 +161,17 @@ export default function DocumentCreate({
                     </Card>
 
                     {/* Step 1: Purpose & Dynamic Fields */}
-                    <Card className="rounded-2xl border-border">
+                    <Card className="rounded-none border border-border bg-card shadow-none">
                         <CardHeader className="pb-3">
                             <CardTitle className="text-base font-bold">
-                                1. Request Purpose & Specific Details
+                                1.{' '}
+                                {t('documents.purpose', 'Purpose of Request')}
                             </CardTitle>
                             <CardDescription className="text-xs">
-                                Provide the legal or personal reason and
-                                specific fields required for this document.
+                                {t(
+                                    'documents.stated_purpose',
+                                    'Stated Purpose',
+                                )}
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4 pt-0">
@@ -165,7 +181,10 @@ export default function DocumentCreate({
                                     htmlFor="purpose"
                                     className="text-xs font-semibold"
                                 >
-                                    Purpose of Request{' '}
+                                    {t(
+                                        'documents.purpose',
+                                        'Purpose of Request',
+                                    )}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <Textarea
@@ -176,11 +195,11 @@ export default function DocumentCreate({
                                         setData('purpose', e.target.value)
                                     }
                                     rows={3}
-                                    className={
+                                    className={`rounded-none shadow-none ${
                                         errors.purpose
                                             ? 'border-destructive'
                                             : ''
-                                    }
+                                    }`}
                                 />
                                 {errors.purpose && (
                                     <p className="text-[11px] font-medium text-destructive">
@@ -205,10 +224,19 @@ export default function DocumentCreate({
                     </Card>
 
                     {/* Step 2: Identification & Supporting Attachments */}
-                    <Card className="rounded-2xl border-border">
+                    <Card className="rounded-none border border-border bg-card shadow-none">
                         <CardHeader className="pb-3">
                             <CardTitle className="text-base font-bold">
-                                2. Government Identification & Attachments
+                                2.{' '}
+                                {t(
+                                    'documents.government_id',
+                                    'Government-Issued ID',
+                                )}{' '}
+                                &{' '}
+                                {t(
+                                    'documents.supporting_files',
+                                    'Supporting Documents',
+                                )}
                             </CardTitle>
                             <CardDescription className="text-xs">
                                 Attach a valid government ID and any supporting
@@ -218,21 +246,23 @@ export default function DocumentCreate({
                         <CardContent className="space-y-4 pt-0">
                             {/* KYC ID Reuse Option */}
                             {hasExistingId && (
-                                <div className="space-y-2 rounded-xl border border-border/60 bg-muted/20 p-3.5">
+                                <div className="space-y-2 rounded-none border border-border/60 bg-muted/20 p-3.5">
                                     <div className="flex items-start gap-2.5">
                                         <Checkbox
                                             id="use_existing_id"
                                             checked={useExistingId}
                                             onCheckedChange={handleIdToggle}
-                                            className="mt-0.5"
+                                            className="mt-0.5 rounded-none"
                                         />
                                         <div className="space-y-0.5">
                                             <Label
                                                 htmlFor="use_existing_id"
                                                 className="cursor-pointer text-xs font-bold text-foreground"
                                             >
-                                                Use verified Government ID from
-                                                my Resident Profile
+                                                {t(
+                                                    'documents.use_saved_id',
+                                                    'Use my verified Government ID on file',
+                                                )}
                                             </Label>
                                             <p className="text-[11px] text-muted-foreground">
                                                 Reuses your existing verified
@@ -247,7 +277,7 @@ export default function DocumentCreate({
                                     </div>
 
                                     {useExistingId && (
-                                        <div className="mt-2 flex items-center gap-2 rounded-lg bg-emerald-500/10 p-2 text-xs font-semibold text-emerald-900 dark:text-emerald-300">
+                                        <div className="mt-2 flex items-center gap-2 rounded-none bg-emerald-500/10 p-2 text-xs font-semibold text-emerald-900 dark:text-emerald-300">
                                             <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" />
                                             Reusing profile identification. No
                                             additional ID upload needed.
@@ -263,12 +293,16 @@ export default function DocumentCreate({
                                         htmlFor="government_id_file"
                                         className="text-xs font-semibold"
                                     >
-                                        Upload Government ID{' '}
+                                        {t(
+                                            'documents.upload_id',
+                                            'Upload Government ID',
+                                        )}{' '}
                                         <span className="text-destructive">
                                             *
                                         </span>
                                     </Label>
                                     <Input
+                                        ref={governmentIdInputRef}
                                         id="government_id_file"
                                         type="file"
                                         accept="image/jpeg,image/png,application/pdf"
@@ -276,18 +310,36 @@ export default function DocumentCreate({
                                             const file =
                                                 e.target.files?.[0] || null;
                                             setData('government_id_file', file);
+
+                                            if (governmentIdInputRef.current) {
+                                                governmentIdInputRef.current.value =
+                                                    '';
+                                            }
                                         }}
-                                        className={
+                                        className={`rounded-none shadow-none ${
                                             errors.government_id_file
                                                 ? 'border-destructive'
                                                 : ''
-                                        }
+                                        }`}
                                     />
                                     <p className="text-[11px] text-muted-foreground">
                                         Accepts JPG, PNG, or PDF up to 5MB.
                                         (e.g. PhilID, Passport, Driver's
                                         License, Voter's ID)
                                     </p>
+
+                                    {data.government_id_file && (
+                                        <FileAttachmentsPreview
+                                            files={[data.government_id_file]}
+                                            onRemove={() =>
+                                                setData(
+                                                    'government_id_file',
+                                                    null,
+                                                )
+                                            }
+                                        />
+                                    )}
+
                                     {errors.government_id_file && (
                                         <p className="text-[11px] font-medium text-destructive">
                                             {errors.government_id_file}
@@ -302,30 +354,73 @@ export default function DocumentCreate({
                                     htmlFor="supporting_files"
                                     className="text-xs font-semibold"
                                 >
-                                    Additional Supporting Files (Optional)
+                                    {t(
+                                        'documents.supporting_files',
+                                        'Supporting Documents',
+                                    )}
                                 </Label>
                                 <Input
+                                    ref={supportingFilesInputRef}
                                     id="supporting_files"
                                     type="file"
                                     multiple
                                     accept="image/jpeg,image/png,application/pdf"
                                     onChange={(e) => {
-                                        const files = Array.from(
+                                        const newFiles = Array.from(
                                             e.target.files || [],
                                         );
-                                        setData('supporting_files', files);
+
+                                        if (newFiles.length > 0) {
+                                            setData('supporting_files', [
+                                                ...data.supporting_files,
+                                                ...newFiles.filter(
+                                                    (nf) =>
+                                                        !data.supporting_files.some(
+                                                            (ef) =>
+                                                                ef.name ===
+                                                                    nf.name &&
+                                                                ef.size ===
+                                                                    nf.size &&
+                                                                ef.lastModified ===
+                                                                    nf.lastModified,
+                                                        ),
+                                                ),
+                                            ]);
+                                        }
+
+                                        if (supportingFilesInputRef.current) {
+                                            supportingFilesInputRef.current.value =
+                                                '';
+                                        }
                                     }}
+                                    className="rounded-none shadow-none"
                                 />
                                 <p className="text-[11px] text-muted-foreground">
                                     Upload bills, endorsements, certifications
-                                    or other supporting documents if required.
+                                    or other supporting documents if required
+                                    (JPG, PNG, or PDF up to 5MB).
                                 </p>
+
+                                {data.supporting_files.length > 0 && (
+                                    <FileAttachmentsPreview
+                                        files={data.supporting_files}
+                                        onRemove={(indexToRemove) => {
+                                            setData(
+                                                'supporting_files',
+                                                data.supporting_files.filter(
+                                                    (_, idx) =>
+                                                        idx !== indexToRemove,
+                                                ),
+                                            );
+                                        }}
+                                    />
+                                )}
                             </div>
                         </CardContent>
                     </Card>
 
                     {/* Notice Card */}
-                    <Alert className="rounded-2xl border-primary/30 bg-primary/5">
+                    <Alert className="rounded-none border border-primary/30 bg-primary/5 shadow-none">
                         <Info className="size-5 text-primary" />
                         <AlertTitle className="text-xs font-bold text-foreground">
                             Processing & Physical Pickup Notice
@@ -343,22 +438,33 @@ export default function DocumentCreate({
 
                     {/* Form Action Buttons */}
                     <div className="flex items-center justify-end gap-3">
-                        <Button asChild variant="outline" size="sm">
-                            <Link href="/documents">Cancel</Link>
+                        <Button
+                            asChild
+                            variant="outline"
+                            size="sm"
+                            className="rounded-none shadow-none"
+                        >
+                            <Link href="/documents">
+                                {t('common.cancel', 'Cancel')}
+                            </Link>
                         </Button>
                         <Button
                             type="submit"
                             size="sm"
                             disabled={processing}
-                            className="min-w-[140px]"
+                            loading={processing}
+                            className="min-w-[140px] rounded-none shadow-none"
                         >
                             {processing ? (
                                 <>
                                     <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                                    Submitting...
+                                    {t('documents.submitting', 'Submitting...')}
                                 </>
                             ) : (
-                                'Submit Request'
+                                t(
+                                    'documents.submit_request',
+                                    'Submit Document Request',
+                                )
                             )}
                         </Button>
                     </div>

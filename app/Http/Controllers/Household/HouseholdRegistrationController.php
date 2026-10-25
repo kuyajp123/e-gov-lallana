@@ -111,6 +111,11 @@ class HouseholdRegistrationController extends Controller
                     'user_id' => $user->id,
                     'email' => $identifier,
                 ]);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unable to dispatch verification email. Please verify your email address or try again shortly.',
+                ], 500);
             }
         }
 

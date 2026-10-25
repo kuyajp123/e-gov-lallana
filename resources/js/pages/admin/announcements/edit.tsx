@@ -105,7 +105,7 @@ export default function EditAnnouncement({
     return (
         <>
             <Head
-                title={`Edit Announcement: ${announcement.title} | Admin Console`}
+                title={`Edit Announcement: ${announcement.title} | Admin Dashboard`}
             />
 
             <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-4 md:p-6">

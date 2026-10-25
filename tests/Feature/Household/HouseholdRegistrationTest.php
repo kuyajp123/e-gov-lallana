@@ -120,3 +120,19 @@ test('household registration rejects invalid OTP', function () {
     $response->assertSessionHasErrors(['otp_code']);
     $this->assertDatabaseEmpty('households');
 });
+
+test('returns 500 error when OTP email dispatch fails', function () {
+    Mail::shouldReceive('to->send')->andThrow(new RuntimeException('Transport error'));
+
+    $user = createHouseholdTestUser();
+
+    $response = $this->actingAs($user)->postJson('/household/register/otp/send', [
+        'channel' => 'email',
+    ]);
+
+    $response->assertStatus(500)
+        ->assertJson([
+            'success' => false,
+            'message' => 'Unable to dispatch verification email. Please verify your email address or try again shortly.',
+        ]);
+});

@@ -237,44 +237,50 @@
                 <div class="officials-title">Barangay Officials</div>
 
                 <div class="official-group">
-                    <div class="official-name">{{ $officials['punong_barangay'] ?? 'Hon. Crisanto V. Lallana' }}</div>
+                    <div class="official-name">{{ $officials['punong_barangay'] ?? 'Hon. Cecilia M. Decillo' }}</div>
                     <div class="official-role">Punong Barangay</div>
                 </div>
 
                 <div class="officials-title" style="font-size: 8pt; margin-top: 6px;">Sangguniang Barangay</div>
 
-                @php
-                    $councilors = $officials['kagawads'] ?? [
-                        'Hon. Maria Santos',
-                        'Hon. Danilo Reyes',
-                        'Hon. Elena Garcia',
-                        'Hon. Roberto Cruz',
-                        'Hon. Arlene Bautista',
-                        'Hon. Fernando Ocampo',
-                        'Hon. Grace Villanueva',
-                    ];
-                @endphp
+                <div class="councilor-list">
+                    <div class="official-name" style="font-size: 8pt;">Hon. Edrian C. Leachon</div>
+                    <div class="official-role">Committee &amp; Commission (I Kagawad)</div>
+                </div>
 
-                @foreach($councilors as $kagawad)
-                    <div class="councilor-list">
-                        <div class="official-name" style="font-size: 8pt;">{{ $kagawad }}</div>
-                        <div class="official-role">Barangay Kagawad</div>
-                    </div>
-                @endforeach
+                <div class="councilor-list">
+                    <div class="official-name" style="font-size: 8pt;">Hon. Sammy C. Leachon</div>
+                    <div class="official-role">Committee &amp; Peace (II Kagawad)</div>
+                </div>
+
+                <div class="councilor-list">
+                    <div class="official-name" style="font-size: 8pt;">Hon. Edgar M. Martinez</div>
+                    <div class="official-role">Women &amp; Family (III Kagawad)</div>
+                </div>
+
+                <div class="councilor-list">
+                    <div class="official-name" style="font-size: 8pt;">Hon. Teresita M. Siapco</div>
+                    <div class="official-role">Health (IV Kagawad)</div>
+                </div>
+
+                <div class="councilor-list">
+                    <div class="official-name" style="font-size: 8pt;">Hon. Celedonio B. Leachon</div>
+                    <div class="official-role">Pagawain (V Kagawad)</div>
+                </div>
+
+                <div class="councilor-list">
+                    <div class="official-name" style="font-size: 8pt;">Hon. Francis Dennis A. Camerino</div>
+                    <div class="official-role">Environment &amp; Disaster (VI Kagawad)</div>
+                </div>
+
+                <div class="councilor-list">
+                    <div class="official-name" style="font-size: 8pt;">Hon. Larry V. Adelante</div>
+                    <div class="official-role">Waste &amp; Means (VII Kagawad)</div>
+                </div>
 
                 <div class="official-group" style="margin-top: 8px;">
-                    <div class="official-name">{{ $officials['sk_chairperson'] ?? 'Hon. Justin Ramos' }}</div>
-                    <div class="official-role">SK Chairperson</div>
-                </div>
-
-                <div class="official-group">
-                    <div class="official-name">{{ $officials['secretary'] ?? 'Ana Patricia Diaz' }}</div>
-                    <div class="official-role">Barangay Secretary</div>
-                </div>
-
-                <div class="official-group">
-                    <div class="official-name">{{ $officials['treasurer'] ?? 'Ramonito Mendoza' }}</div>
-                    <div class="official-role">Barangay Treasurer</div>
+                    <div class="official-name">{{ $officials['sk_chairperson'] ?? 'Hon. Larah Draize E. Amparo' }}</div>
+                    <div class="official-role">Sanggunian Kabataan (SK)</div>
                 </div>
 
                 <div style="text-align: center; margin-top: 15px;">

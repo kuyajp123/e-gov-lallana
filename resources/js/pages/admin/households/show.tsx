@@ -12,10 +12,10 @@ import {
     XCircle,
 } from 'lucide-react';
 import { useState } from 'react';
-import { HouseholdVerificationModal } from '@/features/admin/households/components/household-verification-modal';
 import type { HouseholdActionType } from '@/features/admin/households/components/household-verification-modal';
-import { TransferHeadModal } from '@/features/admin/households/components/transfer-head-modal';
+import { HouseholdVerificationModal } from '@/features/admin/households/components/household-verification-modal';
 import type { SuccessorOption } from '@/features/admin/households/components/transfer-head-modal';
+import { TransferHeadModal } from '@/features/admin/households/components/transfer-head-modal';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import {
@@ -595,7 +595,7 @@ export default function AdminHouseholdShow({
 
 AdminHouseholdShow.layout = {
     breadcrumbs: [
-        { title: 'Admin Console', href: '/admin' },
+        { title: 'Admin Dashboard', href: '/admin' },
         { title: 'Households', href: '/admin/households' },
     ],
 };

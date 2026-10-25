@@ -10,6 +10,7 @@ import {
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent } from '@/shared/components/ui/card';
+import { useTranslation } from '@/shared/hooks/use-translation';
 import type { AppNotificationType, BreadcrumbItem } from '@/shared/types';
 
 type PaginatedData<T> = {
@@ -64,6 +65,8 @@ export default function NotificationsIndex({
     unreadCount,
     currentFilter,
 }: Props) {
+    const { t } = useTranslation();
+
     const handleNotificationClick = (notification: AppNotificationType) => {
         if (!notification.read_at) {
             router.patch(
@@ -89,7 +92,7 @@ export default function NotificationsIndex({
 
     return (
         <>
-            <Head title="Notifications" />
+            <Head title={t('notifications.title', 'Notifications')} />
 
             <div className="mx-auto flex h-full w-full max-w-4xl flex-1 flex-col gap-6 p-4 md:p-6">
                 {/* Page Header */}
@@ -97,20 +100,26 @@ export default function NotificationsIndex({
                     <div className="space-y-1">
                         <div className="flex items-center gap-2.5">
                             <h1 className="text-2xl font-bold tracking-tight">
-                                Notifications
+                                {t('notifications.title', 'Notifications')}
                             </h1>
                             {unreadCount > 0 && (
                                 <Badge
                                     variant="default"
-                                    className="rounded-full px-2.5"
+                                    className="rounded-none px-2.5 shadow-none"
                                 >
-                                    {unreadCount} unread
+                                    {t(
+                                        'notifications.unread_count',
+                                        { count: unreadCount },
+                                        `${unreadCount} unread`,
+                                    )}
                                 </Badge>
                             )}
                         </div>
                         <p className="text-sm text-muted-foreground">
-                            Stay updated with your document requests, household
-                            verification, and barangay advisories.
+                            {t(
+                                'notifications.subtitle',
+                                'Stay updated with your document requests, household verification, and barangay advisories.',
+                            )}
                         </p>
                     </div>
 
@@ -120,19 +129,24 @@ export default function NotificationsIndex({
                                 variant="outline"
                                 size="sm"
                                 onClick={handleMarkAllAsRead}
-                                className="flex items-center gap-1.5"
+                                className="flex items-center gap-1.5 rounded-none shadow-none"
                             >
                                 <CheckCheck className="size-4" />
-                                <span>Mark all as read</span>
+                                <span>
+                                    {t(
+                                        'notifications.mark_all_read',
+                                        'Mark all as read',
+                                    )}
+                                </span>
                             </Button>
                         )}
                         <Link href="/settings/notifications">
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                className="text-xs"
+                                className="rounded-none text-xs shadow-none"
                             >
-                                Preferences
+                                {t('notifications.preferences', 'Preferences')}
                             </Button>
                         </Link>
                     </div>
@@ -142,25 +156,28 @@ export default function NotificationsIndex({
                 <div className="flex items-center gap-2">
                     <Link
                         href="/notifications?filter=all"
-                        className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                        className={`rounded-none px-3 py-1.5 text-sm font-medium transition-colors ${
                             currentFilter === 'all'
                                 ? 'bg-primary text-primary-foreground'
                                 : 'bg-muted/60 text-muted-foreground hover:bg-muted'
                         }`}
                     >
-                        All ({notifications.total})
+                        {t('notifications.filter_all', 'All')} (
+                        {notifications.total})
                     </Link>
                     <Link
                         href="/notifications?filter=unread"
-                        className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                        className={`flex items-center gap-1.5 rounded-none px-3 py-1.5 text-sm font-medium transition-colors ${
                             currentFilter === 'unread'
                                 ? 'bg-primary text-primary-foreground'
                                 : 'bg-muted/60 text-muted-foreground hover:bg-muted'
                         }`}
                     >
-                        <span>Unread</span>
+                        <span>
+                            {t('notifications.filter_unread', 'Unread only')}
+                        </span>
                         {unreadCount > 0 && (
-                            <span className="py-0.2 rounded-full bg-red-500 px-1.5 text-xs text-white">
+                            <span className="py-0.2 rounded-none bg-red-500 px-1.5 text-xs text-white">
                                 {unreadCount}
                             </span>
                         )}
@@ -169,18 +186,24 @@ export default function NotificationsIndex({
 
                 {/* Notifications List */}
                 {notifications.data.length === 0 ? (
-                    <Card className="border-dashed py-12 text-center">
+                    <Card className="rounded-none border-dashed py-12 text-center shadow-none">
                         <CardContent className="flex flex-col items-center justify-center space-y-3">
-                            <div className="rounded-full bg-muted p-4">
+                            <div className="rounded-none bg-muted p-4">
                                 <Inbox className="size-8 text-muted-foreground" />
                             </div>
                             <h3 className="text-base font-semibold">
-                                No Notifications
+                                {t(
+                                    'notifications.no_notifications',
+                                    'No Notifications',
+                                )}
                             </h3>
                             <p className="max-w-sm text-sm text-muted-foreground">
                                 {currentFilter === 'unread'
                                     ? "You're all caught up! You have no unread notifications."
-                                    : "You don't have any notifications yet."}
+                                    : t(
+                                          'notifications.no_notifications_desc',
+                                          "You don't have any notifications yet.",
+                                      )}
                             </p>
                         </CardContent>
                     </Card>
@@ -192,14 +215,14 @@ export default function NotificationsIndex({
                                 onClick={() =>
                                     handleNotificationClick(notification)
                                 }
-                                className={`cursor-pointer transition-all duration-150 hover:border-primary/50 hover:shadow-sm ${
+                                className={`cursor-pointer rounded-none border border-border bg-card shadow-none transition-all duration-150 hover:border-primary/50 hover:shadow-sm ${
                                     !notification.read_at
                                         ? 'border-l-4 border-l-primary bg-primary/[0.02] dark:bg-primary/[0.05]'
                                         : 'opacity-90'
                                 }`}
                             >
                                 <CardContent className="flex items-start gap-4 p-4 sm:p-5">
-                                    <div className="mt-0.5 shrink-0 rounded-full bg-muted p-2.5">
+                                    <div className="mt-0.5 shrink-0 rounded-none bg-muted p-2.5">
                                         {getNotificationIcon(notification.type)}
                                     </div>
 
@@ -210,7 +233,7 @@ export default function NotificationsIndex({
                                                     {notification.title}
                                                 </h4>
                                                 {!notification.read_at && (
-                                                    <span className="size-2 shrink-0 rounded-full bg-primary" />
+                                                    <span className="size-2 shrink-0 rounded-none bg-primary" />
                                                 )}
                                             </div>
                                             <span className="text-xs whitespace-nowrap text-muted-foreground">
@@ -246,24 +269,42 @@ export default function NotificationsIndex({
                         <div className="flex items-center gap-2">
                             {notifications.prev_page_url ? (
                                 <Link href={notifications.prev_page_url}>
-                                    <Button variant="outline" size="sm">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="rounded-none shadow-none"
+                                    >
                                         ← Previous
                                     </Button>
                                 </Link>
                             ) : (
-                                <Button variant="outline" size="sm" disabled>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    disabled
+                                    className="rounded-none shadow-none"
+                                >
                                     ← Previous
                                 </Button>
                             )}
 
                             {notifications.next_page_url ? (
                                 <Link href={notifications.next_page_url}>
-                                    <Button variant="outline" size="sm">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="rounded-none shadow-none"
+                                    >
                                         Next →
                                     </Button>
                                 </Link>
                             ) : (
-                                <Button variant="outline" size="sm" disabled>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    disabled
+                                    className="rounded-none shadow-none"
+                                >
                                     Next →
                                 </Button>
                             )}
@@ -274,6 +315,10 @@ export default function NotificationsIndex({
         </>
     );
 }
+
+NotificationsIndex.layout = {
+    breadcrumbs,
+};
 
 NotificationsIndex.layout = {
     breadcrumbs,

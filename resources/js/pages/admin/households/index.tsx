@@ -84,7 +84,7 @@ interface AdminHouseholdIndexProps {
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Admin Console', href: '/admin' },
+    { title: 'Admin Dashboard', href: '/admin' },
     { title: 'Households', href: '/admin/households' },
 ];
 
@@ -223,7 +223,7 @@ export default function AdminHouseholdIndex({
                         >
                             <Link href="/admin">
                                 <Building2 className="size-3.5" />
-                                Admin Console
+                                Admin Dashboard
                             </Link>
                         </Button>
                     </div>
@@ -605,7 +605,6 @@ export default function AdminHouseholdIndex({
                                                                 >
                                                                     <Eye className="mr-2 size-3.5" />
                                                                     Quick Review
-                                                                    Drawer
                                                                 </DropdownMenuItem>
                                                                 <DropdownMenuItem
                                                                     asChild
@@ -781,7 +780,7 @@ export default function AdminHouseholdIndex({
                 )}
             </div>
 
-            {/* Slide-over Inspection Drawer */}
+            {/* Inspection Modal */}
             <HouseholdDrawer
                 isOpen={isDrawerOpen}
                 onClose={() => setIsDrawerOpen(false)}

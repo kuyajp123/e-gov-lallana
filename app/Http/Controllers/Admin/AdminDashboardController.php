@@ -98,9 +98,9 @@ class AdminDashboardController extends Controller
             ->map(fn (DocumentRequest $req) => [
                 'id' => $req->id,
                 'reference_code' => $req->reference_code,
-                'applicant_name' => $req->user->name,
-                'document_name' => $req->documentType->name,
-                'document_slug' => $req->documentType->slug,
+                'applicant_name' => $req->user ? $req->user->name : ($req->walkin_name ?? 'Walk-in Citizen'),
+                'document_name' => $req->documentType ? $req->documentType->name : ($req->custom_document_title ?? 'Document Certificate'),
+                'document_slug' => $req->documentType ? $req->documentType->slug : 'custom',
                 'status' => $req->current_status->value,
                 'status_label' => $req->current_status->label(),
                 'status_color' => $req->current_status->color(),

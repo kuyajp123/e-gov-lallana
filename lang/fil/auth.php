@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'login_title' => 'Sign In sa Resident Portal',
+    'login_subtitle' => 'Ilagay ang iyong credentials upang ma-access ang iyong mga rekord sa barangay',
+    'email' => 'Email address',
+    'password' => 'Password',
+    'password_required' => 'Kinakailangan ang password.',
+    'password_min_length' => 'Dapat mayroong hindi bababa sa 8 karakter ang password.',
+    'min_characters_hint' => 'Kailangan ng hindi bababa sa 8 karakter',
+    'remember_me' => 'Tandaan ako',
+    'forgot_password' => 'Nakalimutan ang password?',
+    'sign_in' => 'Mag-sign In sa Resident Portal',
+    'no_account' => 'Wala ka pa bang opisyal na account?',
+    'register_now' => 'Magrehistro bilang Resident',
+    'back_to_login' => 'Bumalik sa Sign In',
+    'back_to_home' => 'Bumalik sa Portal Home',
+    'register_title' => 'Pagpaparehistro ng Resident',
+    'register_subtitle' => 'Gumawa ng iyong beripikadong account para sa Barangay Lallana',
+    'account_information' => 'Impormasyon ng Account',
+    'already_registered' => 'May account na?',
+    'confirm_password' => 'Kumpirmahin ang Password',
+    'forgot_password_title' => 'Nakalimutan ang Password',
+    'forgot_password_subtitle' => 'Ilagay ang iyong email address at padadalhan ka namin ng password reset link.',
+    'send_reset_link' => 'Ipadala ang password reset link',
+    'or_return_to' => 'O kaya, bumalik sa',
+    'log_in' => 'mag-log in',
+];

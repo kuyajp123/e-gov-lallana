@@ -1,4 +1,5 @@
 import { Form } from '@inertiajs/react';
+import { Loader2 } from 'lucide-react';
 import { useRef } from 'react';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import Heading from '@/shared/components/heading';
@@ -15,22 +16,32 @@ import {
     DialogTrigger,
 } from '@/shared/components/ui/dialog';
 import { Label } from '@/shared/components/ui/label';
+import { useTranslation } from '@/shared/hooks/use-translation';
 
 export default function DeleteUser() {
     const passwordInput = useRef<HTMLInputElement>(null);
+    const { t } = useTranslation();
 
     return (
         <div className="space-y-6">
             <Heading
                 variant="small"
-                title="Delete account"
-                description="Delete your account and all of its resources"
+                title={t('settings.delete_account', 'Delete account')}
+                description={t(
+                    'settings.delete_account_desc',
+                    'Delete your account and all of its resources',
+                )}
             />
-            <div className="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10">
-                <div className="relative space-y-0.5 text-red-600 dark:text-red-100">
-                    <p className="font-medium">Warning</p>
+            <div className="space-y-4 rounded-none border border-red-200 bg-red-50 p-4 dark:border-red-900/30 dark:bg-red-950/20">
+                <div className="relative space-y-0.5 text-red-600 dark:text-red-400">
+                    <p className="text-xs font-semibold tracking-wider uppercase">
+                        {t('common.warning', 'Warning')}
+                    </p>
                     <p className="text-sm">
-                        Please proceed with caution, this cannot be undone.
+                        {t(
+                            'settings.delete_account_warning',
+                            'Please proceed with caution, this cannot be undone.',
+                        )}
                     </p>
                 </div>
 
@@ -39,19 +50,23 @@ export default function DeleteUser() {
                         <Button
                             variant="destructive"
                             data-test="delete-user-button"
+                            className="rounded-none shadow-none"
                         >
-                            Delete account
+                            {t('settings.delete_account', 'Delete account')}
                         </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="rounded-none shadow-none">
                         <DialogTitle>
-                            Are you sure you want to delete your account?
+                            {t(
+                                'settings.delete_account_confirm_title',
+                                'Are you sure you want to delete your account?',
+                            )}
                         </DialogTitle>
                         <DialogDescription>
-                            Once your account is deleted, all of its resources
-                            and data will also be permanently deleted. Please
-                            enter your password to confirm you would like to
-                            permanently delete your account.
+                            {t(
+                                'settings.delete_account_confirm_desc',
+                                'Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.',
+                            )}
                         </DialogDescription>
 
                         <Form
@@ -87,6 +102,7 @@ export default function DeleteUser() {
                                             ref={passwordInput}
                                             placeholder="Password"
                                             autoComplete="current-password"
+                                            className="rounded-none"
                                         />
 
                                         <InputError message={errors.password} />
@@ -96,24 +112,33 @@ export default function DeleteUser() {
                                         <DialogClose asChild>
                                             <Button
                                                 variant="secondary"
+                                                className="rounded-none shadow-none"
                                                 onClick={() =>
                                                     resetAndClearErrors()
                                                 }
                                             >
-                                                Cancel
+                                                {t('common.cancel', 'Cancel')}
                                             </Button>
                                         </DialogClose>
 
                                         <Button
                                             variant="destructive"
                                             disabled={processing}
+                                            className="rounded-none shadow-none"
                                             asChild
                                         >
                                             <button
                                                 type="submit"
                                                 data-test="confirm-delete-user-button"
+                                                className="flex items-center gap-2"
                                             >
-                                                Delete account
+                                                {processing && (
+                                                    <Loader2 className="size-4 animate-spin" />
+                                                )}
+                                                {t(
+                                                    'settings.delete_account',
+                                                    'Delete account',
+                                                )}
                                             </button>
                                         </Button>
                                     </DialogFooter>

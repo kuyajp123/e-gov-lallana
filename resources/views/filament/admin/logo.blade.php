@@ -1,5 +1,5 @@
 <div class="flex items-center gap-3 py-1">
-    <div class="flex aspect-square size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-violet-600/10 p-0.5 ring-1 ring-violet-600/20 dark:bg-violet-400/10 dark:ring-violet-400/20">
+    <div class="flex aspect-square size-8 shrink-0 items-center justify-center overflow-hidden">
         <img
             src="{{ asset('lallana-icon.png') }}"
             alt="Barangay Lallana Logo"
@@ -13,7 +13,7 @@
             BARANGAY LALLANA
         </span>
         <span class="text-[10px] font-medium leading-tight text-violet-700 dark:text-violet-400">
-            Admin Console
+            Admin Dashboard
         </span>
     </div>
 </div>

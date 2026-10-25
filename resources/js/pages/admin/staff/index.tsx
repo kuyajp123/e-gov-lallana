@@ -15,11 +15,11 @@ import {
     Users,
     X,
 } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { CreateStaffModal } from '@/features/admin/staff/components/create-staff-modal';
 import { DesignateResidentModal } from '@/features/admin/staff/components/designate-resident-modal';
-import { EditStaffModal } from '@/features/admin/staff/components/edit-staff-modal';
 import type { StaffMember } from '@/features/admin/staff/components/edit-staff-modal';
+import { EditStaffModal } from '@/features/admin/staff/components/edit-staff-modal';
 import {
     Avatar,
     AvatarFallback,
@@ -143,7 +143,7 @@ export default function StaffIndex({
 
     return (
         <>
-            <Head title="Staff & Privilege Management | Admin Console" />
+            <Head title="Staff & Privilege Management | Admin Dashboard" />
 
             <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-4 md:p-6">
                 {/* Header */}
@@ -181,7 +181,7 @@ export default function StaffIndex({
                             className="h-9 gap-1.5 text-xs shadow-xs"
                         >
                             <UserPlus className="h-3.5 w-3.5" />
-                            Provision Staff Account
+                            Add staff account
                         </Button>
                     </div>
                 </div>

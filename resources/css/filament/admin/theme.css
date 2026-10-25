@@ -50,29 +50,32 @@ body,
     font-variant-numeric: tabular-nums;
 }
 
-/* Double-bezel card structure for tangible physical depth */
+/* Single border sharp card structure */
 .bezel-outer {
-    border-radius: 1rem;
-    padding: 0.25rem;
-    background-color: rgb(23 23 23 / 0.03);
-    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.05);
+    border-radius: 0;
+    padding: 0;
+    background-color: transparent;
+    box-shadow: none;
+    border: none;
 }
 
 :is(.dark .bezel-outer) {
-    background-color: rgb(255 255 255 / 0.04);
-    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.1);
+    background-color: transparent;
+    box-shadow: none;
+    border: none;
 }
 
 .bezel-inner {
-    border-radius: calc(1rem - 4px);
+    border-radius: 0;
     background-color: var(--card, #ffffff);
-    border: 1px solid var(--border, rgb(228 228 231 / 0.6));
-    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    border: 1px solid var(--border, rgb(228 228 231 / 0.8));
+    box-shadow: none;
 }
 
 :is(.dark .bezel-inner) {
-    background-color: var(--card, #18181b);
-    border-color: var(--border, rgb(39 39 42 / 0.6));
+    background-color: var(--card, #ffffff);
+    border-color: var(--border, rgb(228 228 231 / 0.8));
+    box-shadow: none;
 }
 
 /* Elevated styling for Filament Stats Overview Widgets */

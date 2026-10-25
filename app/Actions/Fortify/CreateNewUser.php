@@ -32,10 +32,10 @@ class CreateNewUser implements CreatesNewUsers
         Validator::make($input, [
             ...$this->profileRules(),
             'password' => $this->passwordRules(),
-            'birthdate' => ['nullable', 'date', 'before:today'],
-            'gender' => ['nullable', 'string', 'in:male,female,other'],
-            'civil_status' => ['nullable', 'string', 'in:single,married,widowed,separated,divorced'],
-            'citizenship' => ['nullable', 'string', 'max:100'],
+            'birthdate' => ['required', 'date', 'before:today'],
+            'gender' => ['required', 'string', 'in:male,female,other'],
+            'civil_status' => ['required', 'string', 'in:single,married,widowed,separated,divorced'],
+            'citizenship' => ['required', 'string', 'max:100'],
             'religion' => ['nullable', 'string', 'max:100'],
             'residency_status' => ['nullable', 'string', 'in:official,resident,new_resident,tenant,boarder,student,temporary'],
             'date_of_residency' => ['nullable', 'date'],
@@ -49,7 +49,11 @@ class CreateNewUser implements CreatesNewUsers
             'pwd_id_number' => ['nullable', 'string', 'max:50'],
             'solo_parent_status' => ['nullable', 'boolean'],
             'solo_parent_id_number' => ['nullable', 'string', 'max:50'],
-            'government_id' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp,pdf', 'max:5120'],
+            'government_id' => ['required', 'file', 'mimes:jpg,jpeg,png,webp,pdf', 'max:5120'],
+        ], [
+            'government_id.required' => 'A valid government ID photo or document is required for verification.',
+        ], [
+            'government_id' => 'government ID',
         ])->validate();
 
         $fullName = trim(implode(' ', array_filter([

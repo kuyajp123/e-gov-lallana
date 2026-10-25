@@ -50,20 +50,25 @@ class PdfGenerationService
 
         // 2. Prepare resident view data
         $user = $request->user;
-        $profile = $user->residentProfile;
-        $household = $user->household();
+        $profile = $user?->residentProfile;
+        $household = $user?->household();
 
         $age = null;
         if ($profile && $profile->birthdate) {
             $age = Carbon::parse($profile->birthdate)->age;
+        } elseif ($request->walkin_age) {
+            $age = $request->walkin_age;
+        } elseif ($request->walkin_birthdate) {
+            $age = Carbon::parse($request->walkin_birthdate)->age;
         }
 
         $residentData = [
-            'name' => $user->name,
+            'name' => $user ? $user->name : ($request->walkin_name ?? 'Walk-in Resident'),
             'age' => $age,
-            'civil_status' => $profile?->civil_status ? ucfirst($profile->civil_status) : 'Single',
-            'purok' => $household ? $household->purok_sitio : '',
-            'household_code' => $household?->household_code,
+            'civil_status' => $profile?->civil_status ? ucfirst($profile->civil_status) : ($request->walkin_civil_status ? ucfirst($request->walkin_civil_status) : 'Single'),
+            'purok' => $household ? $household->purok_sitio : ($request->walkin_purok ?? ''),
+            'address' => $request->walkin_address ?? ($household ? $household->purok_sitio : ''),
+            'household_code' => $household ? $household->household_code : 'Walk-in',
         ];
 
         // 3. Official seals (Base64 for reliable Dompdf rendering)
@@ -89,13 +94,15 @@ class PdfGenerationService
             'barangaySealBase64' => $barangaySealBase64,
             'citySealBase64' => $barangaySealBase64,
             'officials' => $this->getDefaultOfficials(),
+            'customTitle' => $request->custom_document_title,
+            'customBody' => $request->custom_document_body,
         ];
 
         // 4. Select matching template
-        $template = $this->resolveTemplate($request->documentType->slug);
+        $template = $this->resolveTemplate($request->documentType ? $request->documentType->slug : 'custom');
 
         // 5. Generate PDF binary via Spatie PDF
-        $tempPath = tempnam(sys_get_temp_dir(), 'pdf_doc_').'.pdf';
+        $tempPath = @tempnam(sys_get_temp_dir(), 'pdf_doc_').'.pdf';
 
         Pdf::view($template, $viewData)
             ->format('A4')
@@ -112,7 +119,7 @@ class PdfGenerationService
 
         $fileRecord = $this->fileUploadService->uploadVerificationDocument(
             $uploadedFile,
-            userId: $request->user_id
+            userId: $request->user_id ?? $issuer?->id
         );
 
         @unlink($tempPath);
@@ -218,6 +225,7 @@ class PdfGenerationService
         return match ($slug) {
             'certificate-of-indigency', 'indigency' => 'pdf.documents.certificate-of-indigency',
             'certificate-of-residency', 'residency', 'barangay-certificate' => 'pdf.documents.certificate-of-residency',
+            'custom', 'custom-document' => 'pdf.documents.custom-certification',
             default => 'pdf.documents.barangay-clearance',
         };
     }
@@ -230,19 +238,19 @@ class PdfGenerationService
     protected function getDefaultOfficials(): array
     {
         return [
-            'punong_barangay' => 'HON. CRISANTO V. LALLANA',
+            'punong_barangay' => 'HON. CECILIA M. DECILLO',
             'kagawads' => [
-                'Hon. Maria Santos',
-                'Hon. Danilo Reyes',
-                'Hon. Elena Garcia',
-                'Hon. Roberto Cruz',
-                'Hon. Arlene Bautista',
-                'Hon. Fernando Ocampo',
-                'Hon. Grace Villanueva',
+                'Hon. Edrian C. Leachon (Committee & Commission / I Kagawad)',
+                'Hon. Sammy C. Leachon (Committee & Peace / II Kagawad)',
+                'Hon. Edgar M. Martinez (Women & Family / III Kagawad)',
+                'Hon. Teresita M. Siapco (Health / IV Kagawad)',
+                'Hon. Celedonio B. Leachon (Pagawain / V Kagawad)',
+                'Hon. Francis Dennis A. Camerino (Environment & Disaster / VI Kagawad)',
+                'Hon. Larry V. Adelante (Waste & Means / VII Kagawad)',
             ],
-            'sk_chairperson' => 'Hon. Justin Ramos',
-            'secretary' => 'Ana Patricia Diaz',
-            'treasurer' => 'Ramonito Mendoza',
+            'sk_chairperson' => 'Hon. Larah Draize E. Amparo (Sanggunian Kabataan)',
+            'secretary' => 'Barangay Secretary',
+            'treasurer' => 'Barangay Treasurer',
         ];
     }
 }

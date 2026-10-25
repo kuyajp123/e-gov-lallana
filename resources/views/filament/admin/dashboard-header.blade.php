@@ -22,7 +22,7 @@
             <div class="space-y-1">
                 <div class="flex flex-wrap items-center gap-2">
                     <h1 class="text-xl font-bold tracking-tight text-gray-950 sm:text-2xl dark:text-white">
-                        Mabuhay, {{ $user->name }}!
+                        Welcome, {{ $user->name }}!
                     </h1>
                     <span class="inline-flex items-center rounded-md border border-violet-200/60 bg-violet-50 px-2.5 py-0.5 text-[11px] font-bold text-violet-800 dark:border-violet-800/60 dark:bg-violet-950/60 dark:text-violet-300">
                         {{ $roleName }}

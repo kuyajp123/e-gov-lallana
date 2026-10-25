@@ -13,9 +13,9 @@
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
 
-    --radius-lg: var(--radius);
-    --radius-md: calc(var(--radius) - 2px);
-    --radius-sm: calc(var(--radius) - 4px);
+    --radius-lg: 0px;
+    --radius-md: 0px;
+    --radius-sm: 0px;
 
     --color-background: var(--background);
     --color-foreground: var(--foreground);
@@ -86,7 +86,7 @@
     --chart-3: oklch(0.42 0.12 260);
     --chart-4: oklch(0.82 0.14 85);
     --chart-5: oklch(0.72 0.18 165);
-    --radius: 0.75rem;
+    --radius: 0px;
     --sidebar: oklch(0.985 0.004 285);
     --sidebar-foreground: oklch(0.2 0.015 285);
     --sidebar-primary: oklch(0.48 0.21 293);
@@ -97,44 +97,19 @@
     --sidebar-ring: oklch(0.55 0.2 293 / 0.4);
 }
 
-.dark {
-    --background: oklch(0.12 0.015 285);
-    --foreground: oklch(0.98 0.005 285);
-    --card: oklch(0.15 0.018 285);
-    --card-foreground: oklch(0.98 0.005 285);
-    --popover: oklch(0.15 0.018 285);
-    --popover-foreground: oklch(0.98 0.005 285);
-    --primary: oklch(0.68 0.21 293);
-    --primary-foreground: oklch(0.12 0.015 285);
-    --secondary: oklch(0.22 0.025 288);
-    --secondary-foreground: oklch(0.96 0.01 290);
-    --muted: oklch(0.2 0.018 285);
-    --muted-foreground: oklch(0.7 0.015 285);
-    --accent: oklch(0.23 0.035 293);
-    --accent-foreground: oklch(0.96 0.01 290);
-    --destructive: oklch(0.45 0.18 27);
-    --destructive-foreground: oklch(0.98 0 0);
-    --border: oklch(0.24 0.018 285);
-    --input: oklch(0.24 0.018 285);
-    --ring: oklch(0.68 0.21 293 / 0.45);
-    --chart-1: oklch(0.68 0.21 293);
-    --chart-2: oklch(0.6 0.16 280);
-    --chart-3: oklch(0.72 0.18 165);
-    --chart-4: oklch(0.82 0.14 85);
-    --chart-5: oklch(0.65 0.22 25);
-    --sidebar: oklch(0.14 0.015 285);
-    --sidebar-foreground: oklch(0.96 0.008 285);
-    --sidebar-primary: oklch(0.68 0.21 293);
-    --sidebar-primary-foreground: oklch(0.12 0.015 285);
-    --sidebar-accent: oklch(0.22 0.025 288);
-    --sidebar-accent-foreground: oklch(0.96 0.01 290);
-    --sidebar-border: oklch(0.24 0.018 285);
-    --sidebar-ring: oklch(0.68 0.21 293 / 0.45);
-}
-
 @layer base {
+    *,
+    ::before,
+    ::after {
+        border-radius: 0px !important;
+    }
+
     * {
         @apply border-border;
+    }
+
+    html {
+        color-scheme: light;
     }
 
     body {
@@ -148,16 +123,28 @@
     }
 }
 
+/* Page loading progress bar indicator (violet system accent) */
+#nprogress .bar {
+    background: #7c3aed !important;
+    height: 3px !important;
+}
+
+#nprogress .peg {
+    box-shadow:
+        0 0 10px #7c3aed,
+        0 0 5px #7c3aed !important;
+}
+
 /* Fluid spring dynamics for high-end micro-interactions */
 .transition-spring {
     transition: all 300ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-/* Nested double-bezel card structure for tangible physical depth */
+/* Solid sharp minimalist card structures (single crisp border, no double border) */
 .bezel-outer {
-    @apply rounded-2xl bg-neutral-900/[0.03] p-1 ring-1 ring-black/5 dark:bg-white/[0.04] dark:ring-white/10;
+    @apply rounded-none border-0 bg-transparent p-0 shadow-none;
 }
 
 .bezel-inner {
-    @apply rounded-[calc(1rem-4px)] border border-border/60 bg-card shadow-xs;
+    @apply rounded-none border border-border bg-card shadow-none;
 }

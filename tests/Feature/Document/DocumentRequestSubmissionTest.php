@@ -184,3 +184,29 @@ test('verified resident can reuse government ID from profile KYC', function () {
         'file_type' => 'government_id',
     ]);
 });
+
+test('dynamic schema validation fails gracefully with validation error when required field is missing from submitted data', function () {
+    $existingFile = FileRecord::create([
+        'user_id' => $this->verifiedUser->id,
+        'file_name' => 'kyc-id-test.jpg',
+        'disk' => 'government-ids',
+        'bucket' => 'government-ids',
+        'path' => 'kyc-id-test.jpg',
+        'mime_type' => 'image/jpeg',
+        'is_private' => true,
+    ]);
+
+    $this->verifiedUser->residentProfile->update([
+        'government_id_file_id' => $existingFile->id,
+    ]);
+
+    // Omit 'purpose' from submitted_data even though form_schema requires it
+    $response = $this->actingAs($this->verifiedUser)->post('/documents', [
+        'document_type_id' => $this->docType->id,
+        'purpose' => 'Bank loan application',
+        'use_existing_id' => true,
+        'submitted_data' => [],
+    ]);
+
+    $response->assertSessionHasErrors(['submitted_data.purpose']);
+});

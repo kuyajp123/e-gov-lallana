@@ -83,7 +83,7 @@ export default function CreateAnnouncement({
 
     return (
         <>
-            <Head title="Create Announcement | Admin Console" />
+            <Head title="Create Announcement | Admin Dashboard" />
 
             <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-4 md:p-6">
                 {/* Back button and title */}
