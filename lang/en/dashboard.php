@@ -12,6 +12,9 @@ return [
     'kyc_incomplete_title' => 'Resident Profile Incomplete',
     'kyc_incomplete_desc' => 'Please complete your demographic profile and upload a valid government ID to unlock official document requesting and household registration.',
     'complete_profile_btn' => 'Complete Profile',
+    'profile_complete_badge' => 'Profile Complete',
+    'profile_incomplete_badge' => 'Profile Incomplete',
+    'action_required' => 'Action Required',
 
     // Quick Actions
     'quick_actions_title' => 'Quick Civic Actions',

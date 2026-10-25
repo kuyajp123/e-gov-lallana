@@ -1,8 +1,9 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft, CheckCircle2, Info, Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { DocumentTypeItem } from '@/features/documents/components/document-type-card';
 import { DynamicFormRenderer } from '@/features/documents/components/dynamic-form-renderer';
+import { FileAttachmentsPreview } from '@/features/documents/components/file-attachments-preview';
 import {
     Alert,
     AlertDescription,
@@ -41,6 +42,8 @@ export default function DocumentCreate({
     const { t } = useTranslation();
     const hasExistingId = !!existingGovernmentId;
     const [useExistingId, setUseExistingId] = useState<boolean>(hasExistingId);
+    const governmentIdInputRef = useRef<HTMLInputElement>(null);
+    const supportingFilesInputRef = useRef<HTMLInputElement>(null);
 
     const { data, setData, post, processing, errors } = useForm<{
         document_type_id: number;
@@ -299,6 +302,7 @@ export default function DocumentCreate({
                                         </span>
                                     </Label>
                                     <Input
+                                        ref={governmentIdInputRef}
                                         id="government_id_file"
                                         type="file"
                                         accept="image/jpeg,image/png,application/pdf"
@@ -306,6 +310,9 @@ export default function DocumentCreate({
                                             const file =
                                                 e.target.files?.[0] || null;
                                             setData('government_id_file', file);
+                                            if (governmentIdInputRef.current) {
+                                                governmentIdInputRef.current.value = '';
+                                            }
                                         }}
                                         className={`rounded-none shadow-none ${
                                             errors.government_id_file
@@ -318,6 +325,19 @@ export default function DocumentCreate({
                                         (e.g. PhilID, Passport, Driver's
                                         License, Voter's ID)
                                     </p>
+
+                                    {data.government_id_file && (
+                                        <FileAttachmentsPreview
+                                            files={[data.government_id_file]}
+                                            onRemove={() =>
+                                                setData(
+                                                    'government_id_file',
+                                                    null,
+                                                )
+                                            }
+                                        />
+                                    )}
+
                                     {errors.government_id_file && (
                                         <p className="text-[11px] font-medium text-destructive">
                                             {errors.government_id_file}
@@ -338,22 +358,59 @@ export default function DocumentCreate({
                                     )}
                                 </Label>
                                 <Input
+                                    ref={supportingFilesInputRef}
                                     id="supporting_files"
                                     type="file"
                                     multiple
                                     accept="image/jpeg,image/png,application/pdf"
                                     onChange={(e) => {
-                                        const files = Array.from(
+                                        const newFiles = Array.from(
                                             e.target.files || [],
                                         );
-                                        setData('supporting_files', files);
+                                        if (newFiles.length > 0) {
+                                            setData('supporting_files', [
+                                                ...data.supporting_files,
+                                                ...newFiles.filter(
+                                                    (nf) =>
+                                                        !data.supporting_files.some(
+                                                            (ef) =>
+                                                                ef.name ===
+                                                                    nf.name &&
+                                                                ef.size ===
+                                                                    nf.size &&
+                                                                ef.lastModified ===
+                                                                    nf.lastModified,
+                                                        ),
+                                                ),
+                                            ]);
+                                        }
+                                        if (supportingFilesInputRef.current) {
+                                            supportingFilesInputRef.current.value =
+                                                '';
+                                        }
                                     }}
                                     className="rounded-none shadow-none"
                                 />
                                 <p className="text-[11px] text-muted-foreground">
                                     Upload bills, endorsements, certifications
-                                    or other supporting documents if required.
+                                    or other supporting documents if required
+                                    (JPG, PNG, or PDF up to 5MB).
                                 </p>
+
+                                {data.supporting_files.length > 0 && (
+                                    <FileAttachmentsPreview
+                                        files={data.supporting_files}
+                                        onRemove={(indexToRemove) => {
+                                            setData(
+                                                'supporting_files',
+                                                data.supporting_files.filter(
+                                                    (_, idx) =>
+                                                        idx !== indexToRemove,
+                                                ),
+                                            );
+                                        }}
+                                    />
+                                )}
                             </div>
                         </CardContent>
                     </Card>

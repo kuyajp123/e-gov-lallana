@@ -694,11 +694,21 @@ export default function Dashboard({
                                             ? 'default'
                                             : 'destructive'
                                     }
-                                    className="rounded-none text-[10px] font-bold uppercase"
+                                    className={`rounded-none text-[10px] font-bold uppercase ${
+                                        isProfileComplete
+                                            ? 'bg-emerald-600 text-white'
+                                            : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                                    }`}
                                 >
                                     {isProfileComplete
-                                        ? t('common.verified', 'Verified')
-                                        : t('common.pending', 'Pending ID')}
+                                        ? t(
+                                              'dashboard.profile_complete_badge',
+                                              'Profile Complete',
+                                          )
+                                        : t(
+                                              'dashboard.profile_incomplete_badge',
+                                              'Profile Incomplete',
+                                          )}
                                 </Badge>
                             </div>
 
@@ -716,12 +726,24 @@ export default function Dashboard({
                                     </span>
                                 </div>
                                 <div className="flex items-center justify-between py-1 text-muted-foreground">
-                                    <span>Citizen Verification:</span>
-                                    <span className="flex items-center gap-1 font-semibold text-emerald-600">
+                                    <span>Profile Record:</span>
+                                    <span
+                                        className={`flex items-center gap-1 font-semibold ${
+                                            isProfileComplete
+                                                ? 'text-emerald-600'
+                                                : 'text-amber-600'
+                                        }`}
+                                    >
                                         <CheckCircle2 className="size-3.5" />
                                         {isProfileComplete
-                                            ? t('common.verified', 'Complete')
-                                            : 'Action Required'}
+                                            ? t(
+                                                  'dashboard.profile_complete_badge',
+                                                  'Profile Complete',
+                                              )
+                                            : t(
+                                                  'dashboard.action_required',
+                                                  'Action Required',
+                                              )}
                                     </span>
                                 </div>
                             </div>

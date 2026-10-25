@@ -12,6 +12,9 @@ return [
     'kyc_incomplete_title' => 'Kailangang Kumpletuhin ang Profile ng Residente',
     'kyc_incomplete_desc' => 'Mangyaring kumpletuhin ang iyong demographic profile at mag-upload ng valid government ID upang magamit ang paghiling ng dokumento at pagpaparehistro ng sambahayan.',
     'complete_profile_btn' => 'Kumpletuhin ang Profile',
+    'profile_complete_badge' => 'Kumpleto ang Profile',
+    'profile_incomplete_badge' => 'Kulang ang Profile',
+    'action_required' => 'Kailangang Aksyunan',
 
     // Quick Actions
     'quick_actions_title' => 'Mabilisang Aksyon',
