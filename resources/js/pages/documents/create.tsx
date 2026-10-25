@@ -310,8 +310,10 @@ export default function DocumentCreate({
                                             const file =
                                                 e.target.files?.[0] || null;
                                             setData('government_id_file', file);
+
                                             if (governmentIdInputRef.current) {
-                                                governmentIdInputRef.current.value = '';
+                                                governmentIdInputRef.current.value =
+                                                    '';
                                             }
                                         }}
                                         className={`rounded-none shadow-none ${
@@ -367,6 +369,7 @@ export default function DocumentCreate({
                                         const newFiles = Array.from(
                                             e.target.files || [],
                                         );
+
                                         if (newFiles.length > 0) {
                                             setData('supporting_files', [
                                                 ...data.supporting_files,
@@ -384,6 +387,7 @@ export default function DocumentCreate({
                                                 ),
                                             ]);
                                         }
+
                                         if (supportingFilesInputRef.current) {
                                             supportingFilesInputRef.current.value =
                                                 '';

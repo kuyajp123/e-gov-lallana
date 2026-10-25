@@ -1,5 +1,5 @@
 import { Eye, FileText, X, ZoomIn } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/shared/components/ui/button';
 import {
     Dialog,
@@ -19,9 +19,11 @@ function formatFileSize(bytes: number): string {
     if (bytes < 1024) {
         return `${bytes} B`;
     }
+
     if (bytes < 1024 * 1024) {
         return `${(bytes / 1024).toFixed(1)} KB`;
     }
+
     return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 }
 
@@ -30,25 +32,29 @@ export function FileAttachmentsPreview({
     onRemove,
     className = '',
 }: FileAttachmentsPreviewProps) {
-    const [previewUrls, setPreviewUrls] = useState<Record<number, string>>({});
     const [selectedImage, setSelectedImage] = useState<{
         url: string;
         name: string;
     } | null>(null);
 
-    useEffect(() => {
+    const previewUrls = useMemo(() => {
         const urls: Record<number, string> = {};
         files.forEach((file, index) => {
             if (file.type.startsWith('image/')) {
                 urls[index] = URL.createObjectURL(file);
             }
         });
-        setPreviewUrls(urls);
 
-        return () => {
-            Object.values(urls).forEach((url) => URL.revokeObjectURL(url));
-        };
+        return urls;
     }, [files]);
+
+    useEffect(() => {
+        return () => {
+            Object.values(previewUrls).forEach((url) => {
+                URL.revokeObjectURL(url);
+            });
+        };
+    }, [previewUrls]);
 
     if (!files || files.length === 0) {
         return null;
@@ -64,7 +70,7 @@ export function FileAttachmentsPreview({
                     return (
                         <div
                             key={`${file.name}-${file.size}-${index}`}
-                            className="flex items-center justify-between gap-3 border border-border bg-card p-2 sm:p-2.5 transition-colors hover:border-border/80"
+                            className="flex items-center justify-between gap-3 border border-border bg-card p-2 transition-colors hover:border-border/80 sm:p-2.5"
                         >
                             <div className="flex min-w-0 items-center gap-3">
                                 {isImage && previewUrl ? (
@@ -160,7 +166,7 @@ export function FileAttachmentsPreview({
                             <img
                                 src={selectedImage.url}
                                 alt={selectedImage.name}
-                                className="max-h-[70vh] w-auto max-w-full select-none object-contain"
+                                className="max-h-[70vh] w-auto max-w-full object-contain select-none"
                             />
                         )}
                     </div>
