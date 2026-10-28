@@ -4,11 +4,15 @@ import {
     Award,
     Building2,
     Calendar,
+    Check,
     CheckCircle2,
     ChevronDown,
     ChevronRight,
     Clock,
+    Copy,
     FileText,
+    Flame,
+    HeartPulse,
     Home as HomeIcon,
     Landmark,
     MapPin,
@@ -17,7 +21,10 @@ import {
     Phone,
     QrCode,
     Send,
+    ShieldAlert,
     ShieldCheck,
+    Siren,
+    UserCheck,
     Users,
     X,
 } from 'lucide-react';
@@ -63,10 +70,70 @@ interface LandingProps {
         total_residents: number;
         total_households: number;
         total_officials: number;
+        total_population?: number;
+        actual_population?: number;
+        personnel_breakdown?: {
+            officials: number;
+            sk: number;
+            office: number;
+            tanod: number;
+            utility: number;
+        };
     };
     services: ServiceItem[];
     announcements: AnnouncementItem[];
 }
+
+const emergencyHotlines = [
+    {
+        agency: 'BARANGAY HALL',
+        dept: 'Barangay Lallana Operations',
+        icon: Building2,
+        numbers: [{ tel: '0956-811-8583', network: 'Barangay Hotline' }],
+    },
+    {
+        agency: 'BDRRMC / BHERT',
+        dept: 'Disaster & Health Emergency Team',
+        icon: ShieldAlert,
+        numbers: [{ tel: '0965-054-3893', network: 'Emergency Desk' }],
+    },
+    {
+        agency: 'PNP (POLICE)',
+        dept: 'Philippine National Police',
+        icon: Siren,
+        numbers: [
+            { tel: '0998-967-3354', network: 'SMART' },
+            { tel: '0917-901-4619', network: 'GLOBE' },
+        ],
+    },
+    {
+        agency: 'CDRRMO',
+        dept: 'City Disaster Risk Reduction',
+        icon: ShieldCheck,
+        numbers: [
+            { tel: '0977-676-3491', network: 'GLOBE' },
+            { tel: '0949-629-8026', network: 'SMART' },
+        ],
+    },
+    {
+        agency: 'BFP (FIRE STATION)',
+        dept: 'Bureau of Fire Protection',
+        icon: Flame,
+        numbers: [{ tel: '0945-238-8226', network: 'GLOBE / TM' }],
+    },
+    {
+        agency: 'CSWDO',
+        dept: 'Social Welfare & Development',
+        icon: Users,
+        numbers: [{ tel: '0954-983-6056', network: 'GLOBE' }],
+    },
+    {
+        agency: 'CHO (CITY HEALTH)',
+        dept: 'City Health Office',
+        icon: HeartPulse,
+        numbers: [{ tel: '0921-451-9099', network: 'Health Line' }],
+    },
+];
 
 export default function Welcome({
     t,
@@ -79,6 +146,22 @@ export default function Welcome({
         auth: Auth;
     }>().props;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [copiedNumber, setCopiedNumber] = useState<string | null>(null);
+
+    const handleCopyNumber = (tel: string) => {
+        if (
+            typeof navigator !== 'undefined' &&
+            navigator.clipboard?.writeText
+        ) {
+            navigator.clipboard.writeText(tel);
+            setCopiedNumber(tel);
+            setTimeout(() => {
+                setCopiedNumber((current) =>
+                    current === tel ? null : current,
+                );
+            }, 2000);
+        }
+    };
 
     const isAdmin =
         auth?.user?.role?.slug === 'admin' ||
@@ -927,38 +1010,152 @@ export default function Welcome({
                         </p>
                     </div>
 
+                    {/* Primary Aggregate Statistics */}
                     <div className="mx-auto mt-12 grid max-w-4xl grid-cols-1 gap-6 sm:grid-cols-3">
                         <div className="space-y-2 rounded-none border border-border bg-card p-6 text-center shadow-none">
                             <Users className="mx-auto size-6 text-violet-600" />
                             <span className="block font-mono text-3xl font-extrabold tracking-tight text-foreground tabular-nums">
-                                {statistics.total_residents.toLocaleString()}
+                                {(
+                                    statistics.total_population ?? 5253
+                                ).toLocaleString()}
                             </span>
-                            <span className="block text-xs font-semibold text-muted-foreground">
-                                {t.statistics?.total_residents ||
-                                    'Active Residents'}
+                            <span className="block text-xs font-semibold text-foreground">
+                                {t.statistics?.total_population ||
+                                    'Total Population'}
+                            </span>
+                            <span className="block text-[11px] text-muted-foreground">
+                                {t.statistics?.total_population_sub ||
+                                    'Official Census'}
                             </span>
                         </div>
 
                         <div className="space-y-2 rounded-none border border-border bg-card p-6 text-center shadow-none">
-                            <HomeIcon className="mx-auto size-6 text-violet-600" />
-                            <span className="block font-mono text-3xl font-extrabold tracking-tight text-violet-700 tabular-nums">
-                                {statistics.total_households.toLocaleString()}
+                            <UserCheck className="mx-auto size-6 text-violet-600" />
+                            <span className="block font-mono text-3xl font-extrabold tracking-tight text-foreground tabular-nums">
+                                {(
+                                    statistics.actual_population ?? 4180
+                                ).toLocaleString()}
                             </span>
-                            <span className="block text-xs font-semibold text-muted-foreground">
-                                {t.statistics?.total_households ||
-                                    'Registered Households'}
+                            <span className="block text-xs font-semibold text-foreground">
+                                {t.statistics?.actual_population ||
+                                    'Actual Population'}
+                            </span>
+                            <span className="block text-[11px] text-muted-foreground">
+                                {t.statistics?.actual_population_sub ||
+                                    'On-ground Recorded'}
                             </span>
                         </div>
 
                         <div className="space-y-2 rounded-none border border-border bg-card p-6 text-center shadow-none">
                             <ShieldCheck className="mx-auto size-6 text-violet-600" />
                             <span className="block font-mono text-3xl font-extrabold tracking-tight text-foreground tabular-nums">
-                                {statistics.total_officials.toLocaleString()}
+                                {(
+                                    statistics.total_officials ?? 34
+                                ).toLocaleString()}
                             </span>
-                            <span className="block text-xs font-semibold text-muted-foreground">
+                            <span className="block text-xs font-semibold text-foreground">
                                 {t.statistics?.total_officials ||
                                     'Barangay Personnel'}
                             </span>
+                            <span className="block text-[11px] text-muted-foreground">
+                                {t.statistics?.total_officials_sub ||
+                                    'Active Public Servants'}
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Personnel Distribution Registry */}
+                    <div className="mx-auto mt-6 max-w-4xl rounded-none border border-border bg-card p-5 shadow-none sm:p-6">
+                        <div className="flex flex-col gap-1 border-b border-border pb-3 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                                <h3 className="text-xs font-bold tracking-wider text-foreground uppercase">
+                                    {t.statistics?.breakdown_title ||
+                                        'Barangay Personnel Breakdown'}
+                                </h3>
+                                <p className="text-[11px] text-muted-foreground">
+                                    {t.statistics?.breakdown_subtitle ||
+                                        'Dedicated public servants serving Barangay Lallana'}
+                                </p>
+                            </div>
+                            <span className="w-fit rounded-none border border-violet-200 bg-violet-50 px-2.5 py-1 font-mono text-xs font-bold text-violet-700 dark:border-violet-900/60 dark:bg-violet-950/40 dark:text-violet-300">
+                                Total: {statistics.total_officials ?? 34}{' '}
+                                Personnel
+                            </span>
+                        </div>
+
+                        <div className="mt-4 grid grid-cols-2 gap-3 text-center sm:grid-cols-5">
+                            <div className="space-y-1 rounded-none border border-border/70 bg-background/50 p-3">
+                                <span className="block font-mono text-2xl font-extrabold text-foreground tabular-nums">
+                                    {statistics.personnel_breakdown
+                                        ?.officials ?? 8}
+                                </span>
+                                <span className="block text-xs font-semibold text-foreground">
+                                    {t.statistics?.personnel_officials ||
+                                        'Barangay Officials'}
+                                </span>
+                                <span className="block text-[10px] text-muted-foreground">
+                                    {t.statistics?.personnel_officials_sub ||
+                                        'Sangguniang Barangay'}
+                                </span>
+                            </div>
+
+                            <div className="space-y-1 rounded-none border border-border/70 bg-background/50 p-3">
+                                <span className="block font-mono text-2xl font-extrabold text-foreground tabular-nums">
+                                    {statistics.personnel_breakdown?.sk ?? 8}
+                                </span>
+                                <span className="block text-xs font-semibold text-foreground">
+                                    {t.statistics?.personnel_sk ||
+                                        'SK Officials'}
+                                </span>
+                                <span className="block text-[10px] text-muted-foreground">
+                                    {t.statistics?.personnel_sk_sub ||
+                                        'Sangguniang Kabataan'}
+                                </span>
+                            </div>
+
+                            <div className="space-y-1 rounded-none border border-border/70 bg-background/50 p-3">
+                                <span className="block font-mono text-2xl font-extrabold text-foreground tabular-nums">
+                                    {statistics.personnel_breakdown?.office ??
+                                        5}
+                                </span>
+                                <span className="block text-xs font-semibold text-foreground">
+                                    {t.statistics?.personnel_office ||
+                                        'Office Staff'}
+                                </span>
+                                <span className="block text-[10px] text-muted-foreground">
+                                    {t.statistics?.personnel_office_sub ||
+                                        'Administrative & Desk'}
+                                </span>
+                            </div>
+
+                            <div className="space-y-1 rounded-none border border-border/70 bg-background/50 p-3">
+                                <span className="block font-mono text-2xl font-extrabold text-foreground tabular-nums">
+                                    {statistics.personnel_breakdown?.tanod ?? 8}
+                                </span>
+                                <span className="block text-xs font-semibold text-foreground">
+                                    {t.statistics?.personnel_tanod ||
+                                        'Barangay Tanod'}
+                                </span>
+                                <span className="block text-[10px] text-muted-foreground">
+                                    {t.statistics?.personnel_tanod_sub ||
+                                        'Peace & Order'}
+                                </span>
+                            </div>
+
+                            <div className="col-span-2 space-y-1 rounded-none border border-border/70 bg-background/50 p-3 sm:col-span-1">
+                                <span className="block font-mono text-2xl font-extrabold text-foreground tabular-nums">
+                                    {statistics.personnel_breakdown?.utility ??
+                                        5}
+                                </span>
+                                <span className="block text-xs font-semibold text-foreground">
+                                    {t.statistics?.personnel_utility ||
+                                        'Utility Personnel'}
+                                </span>
+                                <span className="block text-[10px] text-muted-foreground">
+                                    {t.statistics?.personnel_utility_sub ||
+                                        'Maintenance & Facilities'}
+                                </span>
+                            </div>
                         </div>
                     </div>
 
@@ -1105,14 +1302,43 @@ export default function Welcome({
 
                                 <div className="flex items-start gap-3.5 rounded-none border border-border bg-card p-4 shadow-none">
                                     <Phone className="mt-0.5 size-5 shrink-0 text-violet-600" />
-                                    <div>
+                                    <div className="min-w-0 flex-1">
                                         <h4 className="font-semibold text-foreground">
                                             Office Telephone & Hotlines
                                         </h4>
-                                        <p className="mt-0.5 font-mono text-xs text-muted-foreground">
-                                            {t.contact?.phone_val ||
-                                                '+63 (46) 419-0000 / 0917-000-0000'}
-                                        </p>
+                                        <div className="mt-0.5 flex items-center justify-between gap-2">
+                                            <p className="font-mono text-xs text-muted-foreground">
+                                                {t.contact?.phone_val ||
+                                                    '0956-811-8583'}
+                                            </p>
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    handleCopyNumber(
+                                                        t.contact?.phone_val ||
+                                                            '0956-811-8583',
+                                                    )
+                                                }
+                                                className="inline-flex cursor-pointer items-center gap-1 rounded-none border border-border bg-background/60 px-2 py-0.5 text-[10px] font-semibold text-muted-foreground transition-colors hover:border-violet-600 hover:text-violet-700"
+                                                title="Copy hotline"
+                                            >
+                                                {copiedNumber ===
+                                                (t.contact?.phone_val ||
+                                                    '0956-811-8583') ? (
+                                                    <>
+                                                        <Check className="size-3 text-emerald-600 dark:text-emerald-400" />
+                                                        <span className="text-emerald-600 dark:text-emerald-400">
+                                                            Copied!
+                                                        </span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Copy className="size-3" />
+                                                        <span>Copy</span>
+                                                    </>
+                                                )}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -1301,6 +1527,96 @@ export default function Welcome({
                                     </Button>
                                 </form>
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Emergency & Public Assistance Directory */}
+                    <div className="mt-14 border-t border-border pt-12">
+                        <div className="mb-6 flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
+                            <div>
+                                <span className="text-xs font-bold tracking-wider text-rose-600 uppercase dark:text-rose-400">
+                                    {t.contact?.emergency_tag ||
+                                        'Emergency & Public Assistance Directory'}
+                                </span>
+                                <h3 className="mt-1 text-2xl font-extrabold tracking-tight text-foreground">
+                                    {t.contact?.hotlines_title ||
+                                        'Emergency Hotlines & Agency Contacts'}
+                                </h3>
+                                <p className="mt-1 text-xs text-muted-foreground">
+                                    {t.contact?.hotlines_subtitle ||
+                                        'Official emergency hotlines serving Barangay Lallana and Trece Martires City residents.'}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                            {emergencyHotlines.map((item) => {
+                                const IconComponent = item.icon;
+
+                                return (
+                                    <div
+                                        key={item.agency}
+                                        className="flex flex-col justify-between rounded-none border border-border bg-card p-4 shadow-none transition-colors hover:border-violet-600"
+                                    >
+                                        <div className="space-y-1.5">
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex size-8 items-center justify-center rounded-none border border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-900/60 dark:bg-violet-950/40 dark:text-violet-300">
+                                                    <IconComponent className="size-4" />
+                                                </div>
+                                                <span className="text-[10px] font-bold tracking-wider text-muted-foreground uppercase">
+                                                    Priority
+                                                </span>
+                                            </div>
+                                            <h4 className="text-sm font-bold text-foreground">
+                                                {item.agency}
+                                            </h4>
+                                            <p className="text-[11px] text-muted-foreground">
+                                                {item.dept}
+                                            </p>
+                                        </div>
+
+                                        <div className="mt-3 space-y-2 border-t border-border pt-3">
+                                            {item.numbers.map((num) => (
+                                                <button
+                                                    key={num.tel}
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleCopyNumber(
+                                                            num.tel,
+                                                        )
+                                                    }
+                                                    className="group flex w-full cursor-pointer items-center justify-between rounded-none border border-border/80 bg-background/60 px-2.5 py-1.5 text-left transition-colors hover:border-violet-600 hover:bg-violet-50 dark:hover:bg-violet-950/30"
+                                                    title={`Copy ${num.tel}`}
+                                                >
+                                                    <div className="flex items-center gap-1.5">
+                                                        {copiedNumber ===
+                                                        num.tel ? (
+                                                            <Check className="size-3 text-emerald-600 dark:text-emerald-400" />
+                                                        ) : (
+                                                            <Copy className="size-3 text-muted-foreground transition-colors group-hover:text-violet-600" />
+                                                        )}
+                                                        <span className="font-mono text-xs font-bold text-foreground transition-colors group-hover:text-violet-700">
+                                                            {num.tel}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1.5">
+                                                        {copiedNumber ===
+                                                        num.tel ? (
+                                                            <span className="rounded-none border border-emerald-300 bg-emerald-50 px-1.5 py-0.5 text-[9px] font-bold text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300">
+                                                                Copied!
+                                                            </span>
+                                                        ) : (
+                                                            <span className="rounded-none border border-border bg-muted/60 px-1.5 py-0.5 text-[9px] font-bold text-muted-foreground group-hover:border-violet-200 group-hover:text-violet-700">
+                                                                {num.network}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>

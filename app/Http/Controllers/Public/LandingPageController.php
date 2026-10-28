@@ -22,11 +22,20 @@ class LandingPageController extends Controller
         $totalHouseholds = Household::where('status', 'verified')->count();
         $totalOfficials = User::whereHas('role', fn ($q) => $q->whereIn('slug', ['admin', 'sub_admin']))->count();
 
-        // Fallback friendly baseline counters if initial database is empty
+        // Official community statistics with fallback baseline counters
         $statistics = [
-            'total_residents' => max($totalResidents, 1250),
+            'total_population' => 5253,
+            'actual_population' => max($totalResidents, 4180),
+            'total_residents' => max($totalResidents, 4180),
             'total_households' => max($totalHouseholds, 310),
-            'total_officials' => max($totalOfficials, 12),
+            'total_officials' => max($totalOfficials, 34),
+            'personnel_breakdown' => [
+                'officials' => 8,
+                'sk' => 8,
+                'office' => 5,
+                'tanod' => 8,
+                'utility' => 5,
+            ],
         ];
 
         // 2. Confirmed Public Services
