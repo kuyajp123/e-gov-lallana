@@ -92,6 +92,11 @@ class AdminDashboardController extends Controller
 
         // Recent Document Requests needing action
         $recentDocRequests = DocumentRequest::with(['user', 'documentType'])
+            ->whereIn('current_status', [
+                DocumentRequestStatus::Pending,
+                DocumentRequestStatus::Processing,
+                DocumentRequestStatus::OnHold,
+            ])
             ->orderByDesc('created_at')
             ->take(6)
             ->get()

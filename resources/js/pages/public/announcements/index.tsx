@@ -1,15 +1,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import {
-    AlertTriangle,
-    Calendar,
-    ChevronRight,
-    Megaphone,
-    Search,
-    Users,
-    X,
-} from 'lucide-react';
+import { Megaphone, Search, X } from 'lucide-react';
 import React, { useState } from 'react';
-import { Badge } from '@/shared/components/ui/badge';
+import { AnnouncementCard } from '@/shared/components/announcement-card';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { useTranslation } from '@/shared/hooks/use-translation';
@@ -97,42 +89,6 @@ export default function PublicAnnouncementsIndex({
             {},
             { preserveState: true, replace: true },
         );
-    };
-
-    const getCategoryBadge = (category: string) => {
-        switch (category.toLowerCase()) {
-            case 'emergency':
-                return (
-                    <Badge
-                        variant="destructive"
-                        className="gap-1 rounded-none text-xs font-semibold capitalize shadow-none"
-                    >
-                        <AlertTriangle className="h-3 w-3" />
-                        {t('announcements.category_emergency', 'Emergency')}
-                    </Badge>
-                );
-            case 'event':
-                return (
-                    <span className="inline-flex items-center gap-1 rounded-none border border-indigo-500/20 bg-indigo-500/10 px-2 py-0.5 text-xs font-medium text-indigo-600 capitalize dark:text-indigo-400">
-                        <Calendar className="h-3 w-3" />
-                        {t('announcements.category_event', 'Event')}
-                    </span>
-                );
-            case 'meeting':
-                return (
-                    <span className="inline-flex items-center gap-1 rounded-none border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-600 capitalize dark:text-amber-400">
-                        <Users className="h-3 w-3" />
-                        {t('announcements.category_meeting', 'Meeting')}
-                    </span>
-                );
-            default:
-                return (
-                    <span className="inline-flex items-center gap-1 rounded-none border border-violet-500/20 bg-violet-500/10 px-2 py-0.5 text-xs font-medium text-violet-700 capitalize dark:text-violet-300">
-                        <Megaphone className="h-3 w-3" />
-                        {t('announcements.category_advisory', 'Advisory')}
-                    </span>
-                );
-        }
     };
 
     return (
@@ -237,40 +193,39 @@ export default function PublicAnnouncementsIndex({
             <section className="relative overflow-hidden pt-12 pb-8 md:pt-16 md:pb-12">
                 <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                     <div className="mx-auto max-w-3xl text-center">
-                        <span className="inline-flex items-center gap-1.5 rounded-none border border-violet-200 bg-violet-50/80 px-3 py-1 text-xs font-semibold text-violet-800 shadow-none dark:border-violet-800/60 dark:bg-violet-950/50 dark:text-violet-300">
-                            <Megaphone className="h-3.5 w-3.5" />
-                            Official Barangay Bulletins
+                        <span className="text-xs font-bold tracking-wider text-violet-700 uppercase">
+                            BARANGAY
                         </span>
-                        <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl md:text-5xl">
+                        <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl md:text-5xl">
                             {t(
                                 'announcements.title',
-                                'Announcements & Public Advisories',
+                                'Announcements & Advisories',
                             )}
                         </h1>
-                        <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                        <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">
                             {t(
                                 'announcements.subtitle',
-                                'Stay informed on community events, health advisories, civic sessions, and emergency notices from the Barangay Council of Lallana.',
+                                'Official community advisories, public events, schedules, and emergency alerts.',
                             )}
                         </p>
                     </div>
 
                     {/* Search & Filter Controls */}
-                    <div className="mx-auto mt-10 max-w-4xl space-y-4">
+                    <div className="mx-auto mt-6 max-w-xl space-y-4">
                         <form
                             onSubmit={handleSearchSubmit}
                             className="relative"
                         >
-                            <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+                            <Search className="absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 type="search"
                                 placeholder={t(
                                     'announcements.search_placeholder',
-                                    'Search advisories, events, or keywords...',
+                                    'Search announcements...',
                                 )}
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="h-12 rounded-none border-border/80 bg-card pr-12 pl-12 text-sm shadow-none"
+                                className="h-10 rounded-lg border-border/80 bg-background pr-9 pl-9 text-xs shadow-xs placeholder:text-muted-foreground/60 sm:text-sm"
                             />
                             {search && (
                                 <button
@@ -291,40 +246,44 @@ export default function PublicAnnouncementsIndex({
                                             },
                                         );
                                     }}
-                                    className="absolute top-1/2 right-4 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                    className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"
                                 >
-                                    <X className="h-4 w-4" />
+                                    <X className="size-3.5" />
                                 </button>
                             )}
                         </form>
 
-                        {/* Category Pills */}
-                        <div className="flex flex-wrap items-center justify-center gap-2">
+                        {/* Category Filter Pills */}
+                        <div className="flex flex-wrap items-center justify-center gap-2 overflow-x-auto py-1">
                             <button
                                 type="button"
                                 onClick={() => handleCategoryClick('all')}
-                                className={`rounded-none px-3.5 py-1.5 text-xs font-semibold shadow-none transition-all ${
+                                className={`cursor-pointer rounded-md px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition-all ${
                                     selectedCategory === 'all'
-                                        ? 'bg-violet-600 text-white'
-                                        : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
+                                        ? 'bg-violet-600 text-white shadow-xs'
+                                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
                                 }`}
                             >
                                 {t('announcements.category_all', 'All')} (
                                 {counts.all})
                             </button>
                             {categories.map((cat) => {
+                                const catKey = cat.toLowerCase();
                                 const catCount =
-                                    counts[cat as keyof typeof counts] ?? 0;
+                                    counts[catKey as keyof typeof counts] ??
+                                    counts[cat as keyof typeof counts] ??
+                                    0;
 
                                 return (
                                     <button
                                         key={cat}
                                         type="button"
                                         onClick={() => handleCategoryClick(cat)}
-                                        className={`rounded-none px-3.5 py-1.5 text-xs font-semibold capitalize shadow-none transition-all ${
-                                            selectedCategory === cat
-                                                ? 'bg-violet-600 text-white'
-                                                : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
+                                        className={`cursor-pointer rounded-md px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap capitalize transition-all ${
+                                            selectedCategory.toLowerCase() ===
+                                            catKey
+                                                ? 'bg-violet-600 text-white shadow-xs'
+                                                : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
                                         }`}
                                     >
                                         {cat} ({catCount})
@@ -336,9 +295,9 @@ export default function PublicAnnouncementsIndex({
                                     variant="ghost"
                                     size="sm"
                                     onClick={handleClearFilters}
-                                    className="h-7 rounded-none text-xs text-muted-foreground shadow-none hover:text-foreground"
+                                    className="h-7 cursor-pointer rounded-none text-xs text-muted-foreground shadow-none hover:text-foreground"
                                 >
-                                    <X className="mr-1 h-3 w-3" />
+                                    <X className="mr-1 size-3" />
                                     Clear filters
                                 </Button>
                             )}
@@ -385,63 +344,10 @@ export default function PublicAnnouncementsIndex({
                 ) : (
                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         {announcements.data.map((item) => (
-                            <Link
+                            <AnnouncementCard
                                 key={item.id}
-                                href={`/announcements/${item.slug}`}
-                                className="group flex flex-col overflow-hidden rounded-none border border-border/70 bg-card shadow-none transition-all hover:border-violet-300 dark:hover:border-violet-700"
-                            >
-                                {/* Banner / Thumbnail */}
-                                {item.banner_url ? (
-                                    <div className="relative aspect-video w-full overflow-hidden bg-muted">
-                                        <img
-                                            src={item.banner_url}
-                                            alt={item.title}
-                                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                        />
-                                    </div>
-                                ) : (
-                                    <div className="flex aspect-video w-full items-center justify-center bg-gradient-to-br from-violet-500/10 via-background to-muted/40 text-violet-600/50">
-                                        <Megaphone className="h-12 w-12 transition-transform duration-300 group-hover:scale-110" />
-                                    </div>
-                                )}
-
-                                {/* Content Details */}
-                                <div className="flex flex-1 flex-col justify-between space-y-4 p-5">
-                                    <div className="space-y-2.5">
-                                        <div className="flex items-center justify-between text-xs">
-                                            {getCategoryBadge(item.category)}
-                                            <span className="flex items-center gap-1 font-mono text-[11px] text-muted-foreground">
-                                                <Calendar className="h-3 w-3" />
-                                                {item.published_at_formatted}
-                                            </span>
-                                        </div>
-
-                                        <h2 className="line-clamp-2 text-base font-bold text-foreground transition-colors group-hover:text-violet-700 dark:group-hover:text-violet-300">
-                                            {item.title}
-                                        </h2>
-
-                                        {item.excerpt && (
-                                            <p className="line-clamp-3 text-xs leading-relaxed text-muted-foreground">
-                                                {item.excerpt}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    <div className="flex items-center justify-between border-t border-border/70 pt-3 text-xs">
-                                        <span className="text-2xs max-w-[150px] truncate text-muted-foreground">
-                                            {t('announcements.author', 'By')}{' '}
-                                            {item.author_name}
-                                        </span>
-                                        <span className="flex items-center font-semibold text-violet-700 transition-transform group-hover:translate-x-0.5 dark:text-violet-400">
-                                            {t(
-                                                'announcements.read_more',
-                                                'Read Article',
-                                            )}
-                                            <ChevronRight className="ml-1 h-3.5 w-3.5" />
-                                        </span>
-                                    </div>
-                                </div>
-                            </Link>
+                                announcement={item}
+                            />
                         ))}
                     </div>
                 )}
