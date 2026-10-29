@@ -1,15 +1,21 @@
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import {
     ArrowRight,
-    Award,
     Building2,
     Calendar,
+    Check,
     CheckCircle2,
     ChevronDown,
+    ChevronLeft,
     ChevronRight,
     Clock,
+    Copy,
+    ExternalLink,
     FileText,
+    Flame,
+    HeartPulse,
     Home as HomeIcon,
+    Info,
     Landmark,
     MapPin,
     Megaphone,
@@ -17,13 +23,26 @@ import {
     Phone,
     QrCode,
     Send,
+    Shield,
+    ShieldAlert,
     ShieldCheck,
+    Siren,
+    UserCheck,
     Users,
     X,
+    ZoomIn,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { AnnouncementCard } from '@/shared/components/announcement-card';
 import { TurnstileWidget } from '@/shared/components/turnstile-widget';
 import { Button } from '@/shared/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@/shared/components/ui/dialog';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { Textarea } from '@/shared/components/ui/textarea';
@@ -42,9 +61,12 @@ interface AnnouncementItem {
     id: number;
     title: string;
     slug: string;
-    excerpt: string;
+    excerpt?: string | null;
     category: string;
-    published_at: string;
+    published_at?: string;
+    published_at_formatted?: string;
+    author_name?: string;
+    banner_url?: string | null;
 }
 
 interface LandingProps {
@@ -54,6 +76,8 @@ interface LandingProps {
         about: Record<string, string>;
         leadership: Record<string, string>;
         services: Record<string, string>;
+        charter?: Record<string, string>;
+        map?: Record<string, string>;
         statistics: Record<string, string>;
         announcements: Record<string, string>;
         contact: Record<string, string>;
@@ -63,10 +87,205 @@ interface LandingProps {
         total_residents: number;
         total_households: number;
         total_officials: number;
+        total_population?: number;
+        actual_population?: number;
+        personnel_breakdown?: {
+            officials: number;
+            sk: number;
+            office: number;
+            tanod: number;
+            utility: number;
+        };
     };
     services: ServiceItem[];
     announcements: AnnouncementItem[];
+    announcement_counts?: {
+        all: number;
+        advisory: number;
+        event: number;
+        meeting: number;
+        emergency: number;
+    };
 }
+
+interface HotlineAgencyItem {
+    agency: string;
+    dept: string;
+    icon: React.ComponentType<{ className?: string }>;
+    numbers: string[];
+}
+
+const emergencyResponseHotlines: HotlineAgencyItem[] = [
+    {
+        agency: 'PNP (POLICE)',
+        dept: 'Philippine National Police',
+        icon: Shield,
+        numbers: ['0998-967-3354', '0917-901-4619'],
+    },
+    {
+        agency: 'BFP (FIRE STATION)',
+        dept: 'Bureau of Fire Protection',
+        icon: Flame,
+        numbers: ['0945-238-8226'],
+    },
+    {
+        agency: 'BDRRMC / BHERT',
+        dept: 'Disaster & Health Emergency Team',
+        icon: ShieldAlert,
+        numbers: ['0965-054-3893'],
+    },
+    {
+        agency: 'CDRRMO',
+        dept: 'City Disaster Risk Reduction',
+        icon: ShieldCheck,
+        numbers: ['0977-676-3491', '0949-629-8026'],
+    },
+];
+
+const publicAssistanceHotlines: HotlineAgencyItem[] = [
+    {
+        agency: 'BARANGAY HALL',
+        dept: 'Barangay Lallana Operations',
+        icon: Building2,
+        numbers: ['0956-811-8583'],
+    },
+    {
+        agency: 'CSWDO',
+        dept: 'Social Welfare & Development',
+        icon: Users,
+        numbers: ['0954-983-6056'],
+    },
+    {
+        agency: 'CHO (CITY HEALTH)',
+        dept: 'City Health Office',
+        icon: HeartPulse,
+        numbers: ['0921-451-9099'],
+    },
+];
+
+interface CharterFeeItem {
+    name: string;
+    fee: string;
+    note?: string;
+}
+
+interface CharterSheetItem {
+    id: string;
+    tabLabel: string;
+    title: string;
+    tag: string;
+    turnaround: string;
+    description: string;
+    thumb: string;
+    full: string;
+    fees: CharterFeeItem[];
+    requirements: string[];
+}
+
+const charterSheets: CharterSheetItem[] = [
+    {
+        id: 'sheet-1',
+        tabLabel: 'Clearances & Permits',
+        title: 'Certifications & Clearances',
+        tag: 'Part 1 • Standard Fees',
+        turnaround: '1–3 Working Days',
+        description:
+            'Official clearances, residency certifications, and business endorsements issued pursuant to Republic Act No. 11032 service standards.',
+        thumb: '/images/charter-clearance-residency.webp',
+        full: '/images/charter-clearance-residency.webp',
+        fees: [
+            {
+                name: 'Barangay Clearance (Employment, Local, Bank, Postal)',
+                fee: '₱60.00',
+            },
+            { name: 'Certificate of Residency', fee: '₱60.00' },
+            {
+                name: 'Certificate of Indigency (Scholarship, Medical, Legal)',
+                fee: 'FREE (₱0.00)',
+                note: 'For qualified indigent constituents',
+            },
+            {
+                name: 'Barangay Business Clearance (New / Renewal)',
+                fee: '₱250.00+',
+            },
+            {
+                name: 'Tricycle Operators (TODA) Franchise Clearance',
+                fee: '₱150.00',
+            },
+        ],
+        requirements: [
+            'Valid Government-Issued Photo ID',
+            'Verified Barangay Household Registration (RBI)',
+            'Community Tax Certificate (Cedula)',
+        ],
+    },
+    {
+        id: 'sheet-2',
+        tabLabel: 'Barangay ID & Work',
+        title: 'Barangay ID & Working Clearances',
+        tag: 'Part 2 • Identification & Labor',
+        turnaround: '1–2 Working Days',
+        description:
+            'Official resident photo identification cards and labor clearances for local jobseekers, workers, and commercial operators.',
+        thumb: '/images/charter-id-working-clearance.webp',
+        full: '/images/charter-id-working-clearance.webp',
+        fees: [
+            {
+                name: 'Official Barangay Resident ID Card (PVC / QR)',
+                fee: '₱100.00',
+            },
+            {
+                name: 'Individual Working Clearance (Private/Construction)',
+                fee: '₱100.00',
+            },
+            {
+                name: 'Peddler’s / Food Vendor Clearance',
+                fee: '₱100.00',
+            },
+            {
+                name: 'First-Time Jobseeker Clearance',
+                fee: 'FREE (₱0.00)',
+                note: 'Waived under R.A. 11261',
+            },
+        ],
+        requirements: [
+            '2x2 Formal Photo or On-site Digital Capture',
+            'Proof of Employment or Employer Endorsement',
+            'Barangay Clearance for Employment Purposes',
+        ],
+    },
+    {
+        id: 'sheet-3',
+        tabLabel: 'Cedula & Tax Stamp',
+        title: 'Cedula & Documentary Stamp',
+        tag: 'Part 3 • Local Taxes & Stamps',
+        turnaround: 'Immediate / Same-Day',
+        description:
+            'Community Tax Certificates (Cedula) and mandatory documentary stamps authorized under Section 152 of the Local Government Code.',
+        thumb: '/images/charter-cedula-documentary-stamp.webp',
+        full: '/images/charter-cedula-documentary-stamp.webp',
+        fees: [
+            {
+                name: 'Community Tax Certificate (Cedula) Individual',
+                fee: '₱5.00 base + income',
+            },
+            { name: 'Official Documentary Stamp Tax', fee: '₱30.00' },
+            {
+                name: 'Peddler’s Annual Regulatory Permit Stamp',
+                fee: '₱50.00',
+            },
+            {
+                name: 'True Copy Certification & Verification Stamp',
+                fee: '₱50.00',
+            },
+        ],
+        requirements: [
+            'Declared Gross Annual Income / Payslip (for Cedula)',
+            'Valid Government-issued Identification',
+            'Prior Year Cedula Copy (for renewal)',
+        ],
+    },
+];
 
 export default function Welcome({
     t,
@@ -79,6 +298,77 @@ export default function Welcome({
         auth: Auth;
     }>().props;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [copiedNumber, setCopiedNumber] = useState<string | null>(null);
+    const [activeModalImage, setActiveModalImage] = useState<{
+        url: string;
+        title: string;
+        subtitle?: string;
+    } | null>(null);
+    const [activeSheetIndex, setActiveSheetIndex] = useState(0);
+    const [isAutoPlayPaused, setIsAutoPlayPaused] = useState(false);
+    const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
+    const displayedAnnouncements = useMemo(() => {
+        return (announcements || []).slice(0, 3);
+    }, [announcements]);
+
+    const handleNextSheet = useCallback(() => {
+        setActiveSheetIndex((prev) => (prev + 1) % charterSheets.length);
+    }, []);
+
+    const handlePrevSheet = useCallback(() => {
+        setActiveSheetIndex(
+            (prev) => (prev - 1 + charterSheets.length) % charterSheets.length,
+        );
+    }, []);
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+        setTouchStartX(e.touches[0].clientX);
+    };
+
+    const handleTouchEnd = (e: React.TouchEvent) => {
+        if (touchStartX === null) {
+            return;
+        }
+
+        const touchEndX = e.changedTouches[0].clientX;
+        const diff = touchStartX - touchEndX;
+
+        if (diff > 50) {
+            handleNextSheet();
+        } else if (diff < -50) {
+            handlePrevSheet();
+        }
+
+        setTouchStartX(null);
+    };
+
+    useEffect(() => {
+        if (isAutoPlayPaused) {
+            return;
+        }
+
+        const timer = setInterval(() => {
+            setActiveSheetIndex((prev) => (prev + 1) % charterSheets.length);
+        }, 3000);
+
+        return () => clearInterval(timer);
+    }, [handleNextSheet, isAutoPlayPaused]);
+
+    const handleCopyNumber = (tel: string) => {
+        if (
+            typeof navigator !== 'undefined' &&
+            navigator.clipboard?.writeText
+        ) {
+            navigator.clipboard.writeText(tel);
+            setCopiedNumber(tel);
+            setTimeout(() => {
+                setCopiedNumber((current) =>
+                    current === tel ? null : current,
+                );
+            }, 2000);
+        }
+    };
 
     const isAdmin =
         auth?.user?.role?.slug === 'admin' ||
@@ -677,7 +967,7 @@ export default function Welcome({
                                 <h3 className="flex items-center gap-2.5 text-base font-bold text-foreground">
                                     <Landmark className="size-5 text-violet-600" />
                                     {t.about?.city_title ||
-                                        'Trece Martires City Context'}
+                                        'Trece Martires City'}
                                 </h3>
                                 <p className="text-sm leading-relaxed text-muted-foreground">
                                     {t.about?.city_p1 ||
@@ -690,10 +980,6 @@ export default function Welcome({
                         <div className="lg:col-span-5">
                             <div className="flex h-full flex-col justify-between rounded-none border border-border bg-card p-8 text-foreground shadow-none">
                                 <div className="space-y-4">
-                                    <div className="inline-flex items-center gap-2 rounded-none border border-violet-200 bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-800">
-                                        <Award className="size-4 text-violet-600" />
-                                        Pioneering Digital Governance
-                                    </div>
                                     <h3 className="text-2xl leading-snug font-bold text-foreground">
                                         Modern Public Records, Accessible to
                                         Every Family.
@@ -710,13 +996,16 @@ export default function Welcome({
                                 <div className="mt-8 grid grid-cols-2 gap-4 border-t border-border pt-6 text-xs">
                                     <div>
                                         <span className="block font-mono text-2xl font-bold text-foreground">
-                                            6 Puroks
+                                            8 Puroks
                                         </span>
                                         <span className="text-muted-foreground">
                                             Active Community Zones
                                         </span>
                                     </div>
                                     <div>
+                                        <span className="block font-mono text-2xl font-bold text-foreground">
+                                            4 zones
+                                        </span>
                                         <span className="text-muted-foreground">
                                             Online Request Tracking
                                         </span>
@@ -832,82 +1121,52 @@ export default function Welcome({
                 className="border-t border-border bg-card py-20"
             >
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    {/* Centered Header */}
                     <div className="mx-auto max-w-3xl text-center">
                         <span className="text-xs font-bold tracking-wider text-violet-700 uppercase">
-                            Community Notices
+                            BARANGAY
                         </span>
-                        <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-foreground md:text-4xl">
+                        <h2 className="mt-1 text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
                             {t.announcements?.title ||
-                                'Official Announcements & Advisories'}
+                                'Announcements & Advisories'}
                         </h2>
-                        <p className="mt-3 text-base text-muted-foreground">
+                        <p className="mt-2 text-sm text-muted-foreground sm:text-base">
                             {t.announcements?.subtitle ||
-                                'Stay updated with the latest community news, public notices, and upcoming events.'}
+                                'Official community advisories, public events, schedules, and emergency alerts.'}
                         </p>
                     </div>
 
-                    <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
-                        {announcements && announcements.length > 0 ? (
-                            announcements.map((item) => (
-                                <div
+                    {/* Announcements Grid (Max 3 on Landing Page) */}
+                    <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                        {displayedAnnouncements.length > 0 ? (
+                            displayedAnnouncements.map((item) => (
+                                <AnnouncementCard
                                     key={item.id}
-                                    className="flex h-full flex-col justify-between space-y-4 rounded-none border border-border bg-card p-6 shadow-none"
-                                >
-                                    <div className="space-y-2.5">
-                                        <div className="flex items-center justify-between text-xs">
-                                            <span className="rounded-none border border-violet-200 bg-violet-100 px-2.5 py-0.5 text-[10px] font-bold tracking-wide text-violet-800 uppercase">
-                                                {item.category}
-                                            </span>
-                                            <span className="flex items-center gap-1 font-mono text-[11px] text-muted-foreground">
-                                                <Calendar className="size-3" />
-                                                {item.published_at}
-                                            </span>
-                                        </div>
-
-                                        <h3 className="line-clamp-2 text-base font-bold text-foreground">
-                                            {item.title}
-                                        </h3>
-
-                                        <p className="line-clamp-3 text-xs leading-relaxed text-muted-foreground">
-                                            {item.excerpt}
-                                        </p>
-                                    </div>
-
-                                    <div className="border-t border-border pt-3">
-                                        <Link
-                                            href={`/announcements/${item.slug}`}
-                                            className="inline-flex cursor-pointer items-center text-xs font-semibold text-violet-700 hover:underline"
-                                        >
-                                            {t.announcements?.read_more ||
-                                                'Read Advisory'}
-                                            <ChevronRight className="ml-1 size-3.5" />
-                                        </Link>
-                                    </div>
-                                </div>
+                                    announcement={item}
+                                />
                             ))
                         ) : (
-                            <div className="col-span-full py-8 text-center text-sm text-muted-foreground">
+                            <div className="col-span-full py-12 text-center text-sm text-muted-foreground">
                                 {t.announcements?.empty_state ||
                                     'No active announcements published at this time.'}
                             </div>
                         )}
                     </div>
 
-                    {announcements && announcements.length > 0 && (
-                        <div className="mt-10 text-center">
-                            <Button
-                                asChild
-                                variant="outline"
-                                size="sm"
-                                className="rounded-none border-violet-200 text-xs font-semibold text-violet-700 shadow-none hover:bg-violet-50"
-                            >
-                                <Link href="/announcements">
-                                    View All Announcements & Advisories
-                                    <ChevronRight className="ml-1 size-3.5" />
-                                </Link>
-                            </Button>
-                        </div>
-                    )}
+                    {/* View All Button */}
+                    <div className="mt-10 text-center">
+                        <Button
+                            asChild
+                            variant="outline"
+                            size="sm"
+                            className="rounded-none border-violet-200 text-xs font-semibold text-violet-700 shadow-none hover:bg-violet-50 dark:border-violet-800/60 dark:hover:bg-violet-950/40"
+                        >
+                            <Link href="/announcements">
+                                View All Announcements & Advisories
+                                <ChevronRight className="ml-1 size-3.5" />
+                            </Link>
+                        </Button>
+                    </div>
                 </div>
             </section>
 
@@ -927,38 +1186,152 @@ export default function Welcome({
                         </p>
                     </div>
 
+                    {/* Primary Aggregate Statistics */}
                     <div className="mx-auto mt-12 grid max-w-4xl grid-cols-1 gap-6 sm:grid-cols-3">
                         <div className="space-y-2 rounded-none border border-border bg-card p-6 text-center shadow-none">
                             <Users className="mx-auto size-6 text-violet-600" />
                             <span className="block font-mono text-3xl font-extrabold tracking-tight text-foreground tabular-nums">
-                                {statistics.total_residents.toLocaleString()}
+                                {(
+                                    statistics.total_population ?? 5253
+                                ).toLocaleString()}
                             </span>
-                            <span className="block text-xs font-semibold text-muted-foreground">
-                                {t.statistics?.total_residents ||
-                                    'Active Residents'}
+                            <span className="block text-xs font-semibold text-foreground">
+                                {t.statistics?.total_population ||
+                                    'Total Population'}
+                            </span>
+                            <span className="block text-[11px] text-muted-foreground">
+                                {t.statistics?.total_population_sub ||
+                                    'Official Census'}
                             </span>
                         </div>
 
                         <div className="space-y-2 rounded-none border border-border bg-card p-6 text-center shadow-none">
-                            <HomeIcon className="mx-auto size-6 text-violet-600" />
-                            <span className="block font-mono text-3xl font-extrabold tracking-tight text-violet-700 tabular-nums">
-                                {statistics.total_households.toLocaleString()}
+                            <UserCheck className="mx-auto size-6 text-violet-600" />
+                            <span className="block font-mono text-3xl font-extrabold tracking-tight text-foreground tabular-nums">
+                                {(
+                                    statistics.actual_population ?? 4180
+                                ).toLocaleString()}
                             </span>
-                            <span className="block text-xs font-semibold text-muted-foreground">
-                                {t.statistics?.total_households ||
-                                    'Registered Households'}
+                            <span className="block text-xs font-semibold text-foreground">
+                                {t.statistics?.actual_population ||
+                                    'Actual Population'}
+                            </span>
+                            <span className="block text-[11px] text-muted-foreground">
+                                {t.statistics?.actual_population_sub ||
+                                    'On-ground Recorded'}
                             </span>
                         </div>
 
                         <div className="space-y-2 rounded-none border border-border bg-card p-6 text-center shadow-none">
                             <ShieldCheck className="mx-auto size-6 text-violet-600" />
                             <span className="block font-mono text-3xl font-extrabold tracking-tight text-foreground tabular-nums">
-                                {statistics.total_officials.toLocaleString()}
+                                {(
+                                    statistics.total_officials ?? 34
+                                ).toLocaleString()}
                             </span>
-                            <span className="block text-xs font-semibold text-muted-foreground">
+                            <span className="block text-xs font-semibold text-foreground">
                                 {t.statistics?.total_officials ||
                                     'Barangay Personnel'}
                             </span>
+                            <span className="block text-[11px] text-muted-foreground">
+                                {t.statistics?.total_officials_sub ||
+                                    'Active Public Servants'}
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Personnel Distribution Registry */}
+                    <div className="mx-auto mt-6 max-w-4xl rounded-none border border-border bg-card p-5 shadow-none sm:p-6">
+                        <div className="flex flex-col gap-1 border-b border-border pb-3 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                                <h3 className="text-xs font-bold tracking-wider text-foreground uppercase">
+                                    {t.statistics?.breakdown_title ||
+                                        'Barangay Personnel Breakdown'}
+                                </h3>
+                                <p className="text-[11px] text-muted-foreground">
+                                    {t.statistics?.breakdown_subtitle ||
+                                        'Dedicated public servants serving Barangay Lallana'}
+                                </p>
+                            </div>
+                            <span className="w-fit rounded-none border border-violet-200 bg-violet-50 px-2.5 py-1 font-mono text-xs font-bold text-violet-700 dark:border-violet-900/60 dark:bg-violet-950/40 dark:text-violet-300">
+                                Total: {statistics.total_officials ?? 34}{' '}
+                                Personnel
+                            </span>
+                        </div>
+
+                        <div className="mt-4 grid grid-cols-2 gap-3 text-center sm:grid-cols-5">
+                            <div className="space-y-1 rounded-none border border-border/70 bg-background/50 p-3">
+                                <span className="block font-mono text-2xl font-extrabold text-foreground tabular-nums">
+                                    {statistics.personnel_breakdown
+                                        ?.officials ?? 8}
+                                </span>
+                                <span className="block text-xs font-semibold text-foreground">
+                                    {t.statistics?.personnel_officials ||
+                                        'Barangay Officials'}
+                                </span>
+                                <span className="block text-[10px] text-muted-foreground">
+                                    {t.statistics?.personnel_officials_sub ||
+                                        'Sangguniang Barangay'}
+                                </span>
+                            </div>
+
+                            <div className="space-y-1 rounded-none border border-border/70 bg-background/50 p-3">
+                                <span className="block font-mono text-2xl font-extrabold text-foreground tabular-nums">
+                                    {statistics.personnel_breakdown?.sk ?? 8}
+                                </span>
+                                <span className="block text-xs font-semibold text-foreground">
+                                    {t.statistics?.personnel_sk ||
+                                        'SK Officials'}
+                                </span>
+                                <span className="block text-[10px] text-muted-foreground">
+                                    {t.statistics?.personnel_sk_sub ||
+                                        'Sangguniang Kabataan'}
+                                </span>
+                            </div>
+
+                            <div className="space-y-1 rounded-none border border-border/70 bg-background/50 p-3">
+                                <span className="block font-mono text-2xl font-extrabold text-foreground tabular-nums">
+                                    {statistics.personnel_breakdown?.office ??
+                                        5}
+                                </span>
+                                <span className="block text-xs font-semibold text-foreground">
+                                    {t.statistics?.personnel_office ||
+                                        'Office Staff'}
+                                </span>
+                                <span className="block text-[10px] text-muted-foreground">
+                                    {t.statistics?.personnel_office_sub ||
+                                        'Administrative & Desk'}
+                                </span>
+                            </div>
+
+                            <div className="space-y-1 rounded-none border border-border/70 bg-background/50 p-3">
+                                <span className="block font-mono text-2xl font-extrabold text-foreground tabular-nums">
+                                    {statistics.personnel_breakdown?.tanod ?? 8}
+                                </span>
+                                <span className="block text-xs font-semibold text-foreground">
+                                    {t.statistics?.personnel_tanod ||
+                                        'Barangay Tanod'}
+                                </span>
+                                <span className="block text-[10px] text-muted-foreground">
+                                    {t.statistics?.personnel_tanod_sub ||
+                                        'Peace & Order'}
+                                </span>
+                            </div>
+
+                            <div className="col-span-2 space-y-1 rounded-none border border-border/70 bg-background/50 p-3 sm:col-span-1">
+                                <span className="block font-mono text-2xl font-extrabold text-foreground tabular-nums">
+                                    {statistics.personnel_breakdown?.utility ??
+                                        5}
+                                </span>
+                                <span className="block text-xs font-semibold text-foreground">
+                                    {t.statistics?.personnel_utility ||
+                                        'Utility Personnel'}
+                                </span>
+                                <span className="block text-[10px] text-muted-foreground">
+                                    {t.statistics?.personnel_utility_sub ||
+                                        'Maintenance & Facilities'}
+                                </span>
+                            </div>
                         </div>
                     </div>
 
@@ -1067,28 +1440,255 @@ export default function Welcome({
                             </div>
                         )}
                     </div>
+
+                    {/* Official Citizen's Charter & Schedule of Fees Gallery */}
+                    <div className="mt-14 border-t border-border pt-12">
+                        <div className="mb-8 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+                            <div>
+                                <span className="text-xs font-bold tracking-wider text-violet-700 uppercase">
+                                    {t.charter?.tag ||
+                                        "Official Citizen's Charter"}
+                                </span>
+                                <h3 className="mt-1 text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
+                                    {t.charter?.title ||
+                                        'Schedule of Fees & Service Standards'}
+                                </h3>
+                                <p className="mt-1 max-w-2xl text-xs text-muted-foreground sm:text-sm">
+                                    {t.charter?.subtitle ||
+                                        'Under Republic Act No. 11032 (Ease of Doing Business), Barangay Lallana ensures standardized fees, verified requirements, and transparent turnaround times.'}
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* 2-Column Interactive Carousel Showcase */}
+                        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8">
+                            {/* Left Column: Maximized Borderless Image Carousel (7 cols) */}
+                            <div
+                                className="group/carousel flex flex-col justify-between lg:col-span-7"
+                                onMouseEnter={() => setIsAutoPlayPaused(true)}
+                                onMouseLeave={() => setIsAutoPlayPaused(false)}
+                                onTouchStart={handleTouchStart}
+                                onTouchEnd={handleTouchEnd}
+                            >
+                                {/* Active Image Stage (No card, no borders, maximized space) */}
+                                <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted/20">
+                                    {charterSheets.map((sheet, idx) => (
+                                        <div
+                                            key={sheet.id}
+                                            className={`absolute inset-0 size-full transition-opacity duration-500 ease-in-out ${
+                                                idx === activeSheetIndex
+                                                    ? 'z-10 opacity-100'
+                                                    : 'pointer-events-none z-0 opacity-0'
+                                            }`}
+                                        >
+                                            <img
+                                                src={sheet.full}
+                                                alt={sheet.title}
+                                                loading="eager"
+                                                decoding="async"
+                                                className="size-full object-contain object-top"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Bottom Carousel Navigation: Prev, Next, Indicators, Full View Tab */}
+                                <div className="mt-3 flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={handlePrevSheet}
+                                            aria-label="Previous sheet"
+                                            className="size-8 cursor-pointer rounded-none p-0 text-foreground shadow-none hover:border-violet-600 hover:text-violet-600"
+                                        >
+                                            <ChevronLeft className="size-4" />
+                                        </Button>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={handleNextSheet}
+                                            aria-label="Next sheet"
+                                            className="size-8 cursor-pointer rounded-none p-0 text-foreground shadow-none hover:border-violet-600 hover:text-violet-600"
+                                        >
+                                            <ChevronRight className="size-4" />
+                                        </Button>
+                                    </div>
+
+                                    {/* Indicator Dots */}
+                                    <div className="flex items-center gap-2">
+                                        {charterSheets.map((sheet, idx) => (
+                                            <button
+                                                key={sheet.id}
+                                                type="button"
+                                                onClick={() =>
+                                                    setActiveSheetIndex(idx)
+                                                }
+                                                aria-label={`Show ${sheet.title}`}
+                                                className={`h-2 cursor-pointer rounded-none transition-all ${
+                                                    idx === activeSheetIndex
+                                                        ? 'w-7 bg-violet-600'
+                                                        : 'w-2 bg-muted-foreground/30 hover:bg-muted-foreground'
+                                                }`}
+                                            />
+                                        ))}
+                                    </div>
+
+                                    {/* Full View Tab (Opens in new browser tab, no dialog) */}
+                                    <a
+                                        href={
+                                            charterSheets[activeSheetIndex].full
+                                        }
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1.5 rounded-none border border-border bg-background px-3 py-1.5 text-xs font-semibold text-foreground shadow-none transition-colors hover:border-violet-600 hover:text-violet-600"
+                                        title="Open full view in a new browser tab"
+                                    >
+                                        <ExternalLink className="size-3.5 text-violet-600" />
+                                        <span>Full View Tab</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            {/* Right Column: Detailed Breakdown & Requirements (5 cols) */}
+                            <div
+                                className="flex flex-col justify-between rounded-none border border-border bg-card p-6 shadow-none lg:col-span-5"
+                                onMouseEnter={() => setIsAutoPlayPaused(true)}
+                                onMouseLeave={() => setIsAutoPlayPaused(false)}
+                            >
+                                <div className="space-y-4">
+                                    {/* Active Sheet Header */}
+                                    <div>
+                                        <div className="flex items-center justify-between gap-2">
+                                            <span className="rounded-none border border-violet-200 bg-violet-50 px-2 py-0.5 font-mono text-[10px] font-bold text-violet-700 dark:border-violet-900/60 dark:bg-violet-950/40 dark:text-violet-300">
+                                                {
+                                                    charterSheets[
+                                                        activeSheetIndex
+                                                    ].tag
+                                                }
+                                            </span>
+                                            <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+                                                <Clock className="size-3.5 text-violet-600" />
+                                                <span>
+                                                    {
+                                                        charterSheets[
+                                                            activeSheetIndex
+                                                        ].turnaround
+                                                    }
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <h4 className="mt-2 text-xl font-extrabold tracking-tight text-foreground">
+                                            {
+                                                charterSheets[activeSheetIndex]
+                                                    .title
+                                            }
+                                        </h4>
+                                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                                            {
+                                                charterSheets[activeSheetIndex]
+                                                    .description
+                                            }
+                                        </p>
+                                    </div>
+
+                                    {/* Structured Fees Table */}
+                                    <div className="rounded-none border border-border/80 bg-background/50 p-3.5">
+                                        <span className="block text-[10px] font-bold tracking-wider text-muted-foreground uppercase">
+                                            Schedule of Official Fees
+                                        </span>
+                                        <div className="mt-2 divide-y divide-border/60">
+                                            {charterSheets[
+                                                activeSheetIndex
+                                            ].fees.map((feeItem, fIdx) => (
+                                                <div
+                                                    key={fIdx}
+                                                    className="flex items-center justify-between py-1.5 text-xs"
+                                                >
+                                                    <div className="min-w-0 pr-2">
+                                                        <span className="font-medium text-foreground">
+                                                            {feeItem.name}
+                                                        </span>
+                                                        {feeItem.note && (
+                                                            <span className="block font-mono text-[10px] text-emerald-600 dark:text-emerald-400">
+                                                                {feeItem.note}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <span className="shrink-0 font-mono font-bold text-violet-700 dark:text-violet-300">
+                                                        {feeItem.fee}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Requirements Checklist */}
+                                    <div className="space-y-1.5">
+                                        <span className="block text-[10px] font-bold tracking-wider text-muted-foreground uppercase">
+                                            Mandatory Requirements
+                                        </span>
+                                        <ul className="space-y-1 text-xs text-muted-foreground">
+                                            {charterSheets[
+                                                activeSheetIndex
+                                            ].requirements.map((req, rIdx) => (
+                                                <li
+                                                    key={rIdx}
+                                                    className="flex items-center gap-2"
+                                                >
+                                                    <CheckCircle2 className="size-3.5 shrink-0 text-emerald-600" />
+                                                    <span>{req}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                {/* Bottom Action & Legal Assurance */}
+                                <div className="mt-6 border-t border-border pt-4">
+                                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                        <p className="text-[11px] leading-tight text-muted-foreground">
+                                            QR code verification and official
+                                            receipt are issued upon successful
+                                            document request completion.
+                                        </p>
+                                        <a
+                                            href="#services"
+                                            className="inline-flex items-center justify-center gap-1.5 rounded-none bg-violet-600 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-violet-700"
+                                        >
+                                            <span>Apply Online</span>
+                                            <ArrowRight className="size-3.5" />
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
             {/* Section 7: Citizen Contact & Inquiry Form */}
             <section id="contact" className="bg-background py-20">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
-                        {/* Contact Information & Office Details */}
-                        <div className="space-y-6 lg:col-span-5">
-                            <div>
-                                <span className="text-xs font-bold tracking-wider text-violet-700 uppercase">
-                                    Civic Assistance
-                                </span>
-                                <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-foreground">
-                                    {t.contact?.title || 'Contact & Location'}
-                                </h2>
-                                <p className="mt-2 text-sm text-muted-foreground">
-                                    {t.contact?.subtitle ||
-                                        'Reach out to our Barangay Hall for assistance, inquiries, or emergency services.'}
-                                </p>
-                            </div>
+                    {/* Section Header */}
+                    <div className="mb-8">
+                        <span className="text-xs font-bold tracking-wider text-violet-700 uppercase">
+                            Civic Assistance
+                        </span>
+                        <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+                            {t.contact?.title || 'Contact & Location'}
+                        </h2>
+                        <p className="mt-2 text-sm text-muted-foreground sm:text-base">
+                            {t.contact?.subtitle ||
+                                'Reach out to our Barangay Hall for assistance, inquiries, or emergency services.'}
+                        </p>
+                    </div>
 
+                    <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
+                        {/* Contact Information & Office Details */}
+                        <div className="space-y-4 lg:col-span-5">
                             <div className="space-y-4 text-sm">
                                 <div className="flex items-start gap-3.5 rounded-none border border-border bg-card p-4 shadow-none">
                                     <MapPin className="mt-0.5 size-5 shrink-0 text-violet-600" />
@@ -1105,14 +1705,43 @@ export default function Welcome({
 
                                 <div className="flex items-start gap-3.5 rounded-none border border-border bg-card p-4 shadow-none">
                                     <Phone className="mt-0.5 size-5 shrink-0 text-violet-600" />
-                                    <div>
+                                    <div className="min-w-0 flex-1">
                                         <h4 className="font-semibold text-foreground">
                                             Office Telephone & Hotlines
                                         </h4>
-                                        <p className="mt-0.5 font-mono text-xs text-muted-foreground">
-                                            {t.contact?.phone_val ||
-                                                '+63 (46) 419-0000 / 0917-000-0000'}
-                                        </p>
+                                        <div className="mt-0.5 flex items-center justify-between gap-2">
+                                            <p className="font-mono text-xs text-muted-foreground">
+                                                {t.contact?.phone_val ||
+                                                    '0956-811-8583'}
+                                            </p>
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    handleCopyNumber(
+                                                        t.contact?.phone_val ||
+                                                            '0956-811-8583',
+                                                    )
+                                                }
+                                                className="inline-flex cursor-pointer items-center gap-1 rounded-none border border-border bg-background/60 px-2 py-0.5 text-[10px] font-semibold text-muted-foreground transition-colors hover:border-violet-600 hover:text-violet-700"
+                                                title="Copy hotline"
+                                            >
+                                                {copiedNumber ===
+                                                (t.contact?.phone_val ||
+                                                    '0956-811-8583') ? (
+                                                    <>
+                                                        <Check className="size-3 text-emerald-600 dark:text-emerald-400" />
+                                                        <span className="text-emerald-600 dark:text-emerald-400">
+                                                            Copied!
+                                                        </span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Copy className="size-3" />
+                                                        <span>Copy</span>
+                                                    </>
+                                                )}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -1127,6 +1756,74 @@ export default function Welcome({
                                                 'Monday - Friday: 8:00 AM - 5:00 PM'}
                                         </p>
                                     </div>
+                                </div>
+                            </div>
+
+                            {/* Evacuation & Territorial Map Card */}
+                            <div className="rounded-none border border-border bg-card p-4 shadow-none">
+                                <div className="flex items-center justify-between pb-3">
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex size-7 items-center justify-center rounded-none border border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-900/60 dark:bg-violet-950/40 dark:text-violet-300">
+                                            <MapPin className="size-4" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-xs font-bold tracking-wider text-foreground uppercase">
+                                                {t.map?.title ||
+                                                    'Barangay Evacuation Map'}
+                                            </h4>
+                                            <span className="text-[10px] text-muted-foreground">
+                                                Zoning & Designated Centers
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div
+                                    onClick={() =>
+                                        setActiveModalImage({
+                                            url: '/images/barangay-lallana-evacuation-map.webp',
+                                            title: 'Barangay Lallana Evacuation Map & Zoning Directory',
+                                            subtitle:
+                                                'Official Disaster Risk Reduction Directory • Evacuation Centers 1, 2 & 3',
+                                        })
+                                    }
+                                    className="group relative aspect-[4/3] w-full cursor-pointer overflow-hidden border border-border bg-muted/30"
+                                    title="Click to view full evacuation map"
+                                >
+                                    <img
+                                        src="/images/barangay-lallana-evacuation-map.webp"
+                                        alt="Barangay Lallana Evacuation Map"
+                                        loading="lazy"
+                                        decoding="async"
+                                        className="size-full object-cover transition-transform duration-200 group-hover:scale-105"
+                                    />
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                                        <div className="flex items-center gap-1.5 rounded-none bg-background/95 px-3 py-1.5 text-xs font-semibold text-foreground shadow-sm">
+                                            <ZoomIn className="size-3.5 text-violet-600" />
+                                            <span>Click to View Full Map</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="mt-3 space-y-1.5 text-[11px] text-muted-foreground">
+                                    <p className="flex items-start gap-1.5">
+                                        <span className="font-semibold text-foreground">
+                                            • Centers:
+                                        </span>
+                                        <span>
+                                            Brgy. Hall (1), Covered Court (2),
+                                            Multi-Purpose Hall (3)
+                                        </span>
+                                    </p>
+                                    <p className="flex items-start gap-1.5">
+                                        <span className="font-semibold text-foreground">
+                                            • Coverage:
+                                        </span>
+                                        <span>
+                                            Sitio Kubuhan, Sitio Talipusngo, San
+                                            Francisco Villaggio (Zones 1-4)
+                                        </span>
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -1303,48 +2000,372 @@ export default function Welcome({
                             </div>
                         </div>
                     </div>
+
+                    {/* Emergency & Public Assistance Directory */}
+                    <div className="mt-16 border-t border-border pt-14">
+                        <div className="mb-8">
+                            <span className="text-xs font-bold tracking-wider text-violet-700 uppercase dark:text-violet-400">
+                                {t.contact?.emergency_tag ||
+                                    'EMERGENCY & PUBLIC ASSISTANCE DIRECTORY'}
+                            </span>
+                            <h3 className="mt-1.5 text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+                                {t.contact?.hotlines_title ||
+                                    'Emergency Hotlines & Agency Contacts'}
+                            </h3>
+                            <p className="mt-2 text-sm text-muted-foreground sm:text-base">
+                                {t.contact?.hotlines_subtitle ||
+                                    'Official emergency hotlines serving Barangay Lallana and Trece Martires City residents.'}
+                            </p>
+                        </div>
+
+                        {/* Category 1: Emergency Response */}
+                        <div className="rounded-2xl border border-rose-100 bg-rose-50/40 p-5 sm:p-7 dark:border-rose-900/30 dark:bg-rose-950/20">
+                            <div className="flex items-center gap-3.5">
+                                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-rose-100/90 text-rose-600 dark:bg-rose-900/50 dark:text-rose-300">
+                                    <Siren className="size-5" />
+                                </div>
+                                <div>
+                                    <h4 className="text-lg font-bold tracking-tight text-foreground">
+                                        {t.contact?.emergency_response_title ||
+                                            'Emergency Response'}
+                                    </h4>
+                                    <p className="text-xs text-muted-foreground sm:text-sm">
+                                        {t.contact?.emergency_response_desc ||
+                                            'For urgent situations, emergencies, and disaster-related incidents.'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                {emergencyResponseHotlines.map((item) => {
+                                    const IconComponent = item.icon;
+
+                                    return (
+                                        <div
+                                            key={item.agency}
+                                            className="flex flex-col justify-between rounded-xl border border-border/80 bg-card p-5 shadow-2xs transition-colors hover:border-violet-300 dark:hover:border-violet-700/60"
+                                        >
+                                            <div>
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-violet-100 bg-violet-50 text-violet-600 dark:border-violet-900/50 dark:bg-violet-950/50 dark:text-violet-300">
+                                                        <IconComponent className="size-5" />
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <h5 className="text-sm leading-tight font-bold text-foreground">
+                                                            {item.agency}
+                                                        </h5>
+                                                        <p
+                                                            className="mt-0.5 truncate text-xs text-muted-foreground"
+                                                            title={item.dept}
+                                                        >
+                                                            {item.dept}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div className="my-4 border-t border-border/60" />
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                {item.numbers.map((num) => (
+                                                    <div
+                                                        key={num}
+                                                        className="flex items-center justify-between gap-2 rounded-lg border border-border/60 bg-muted/20 px-3 py-2"
+                                                    >
+                                                        <div className="flex min-w-0 items-center gap-2">
+                                                            <Phone className="size-3.5 shrink-0 text-muted-foreground" />
+                                                            <span className="font-mono text-xs font-semibold tracking-tight whitespace-nowrap text-foreground">
+                                                                {num}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex shrink-0 items-center gap-1.5">
+                                                            <a
+                                                                href={`tel:${num.replace(/\D/g, '')}`}
+                                                                className="inline-flex items-center gap-1 rounded-md bg-violet-50 px-2 py-1 text-[11px] font-semibold text-violet-700 transition-colors hover:bg-violet-100 dark:bg-violet-950/60 dark:text-violet-300 dark:hover:bg-violet-900/60"
+                                                                title={`Call ${num}`}
+                                                            >
+                                                                <Phone className="size-3" />
+                                                                <span>
+                                                                    {t.contact
+                                                                        ?.call ||
+                                                                        'Call'}
+                                                                </span>
+                                                            </a>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    handleCopyNumber(
+                                                                        num,
+                                                                    )
+                                                                }
+                                                                className="inline-flex cursor-pointer items-center gap-1 rounded-md border border-border/70 bg-background px-2 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:border-violet-300 hover:text-foreground"
+                                                                title={`Copy ${num}`}
+                                                            >
+                                                                {copiedNumber ===
+                                                                num ? (
+                                                                    <>
+                                                                        <Check className="size-3 text-emerald-600 dark:text-emerald-400" />
+                                                                        <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                                                                            {t
+                                                                                .contact
+                                                                                ?.copied ||
+                                                                                'Copied!'}
+                                                                        </span>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <Copy className="size-3" />
+                                                                        <span>
+                                                                            {t
+                                                                                .contact
+                                                                                ?.copy ||
+                                                                                'Copy'}
+                                                                        </span>
+                                                                    </>
+                                                                )}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* Category 2: Barangay & Public Assistance */}
+                        <div className="mt-6 rounded-2xl border border-violet-100 bg-violet-50/40 p-5 sm:p-7 dark:border-violet-900/30 dark:bg-violet-950/20">
+                            <div className="flex items-center gap-3.5">
+                                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-violet-100/90 text-violet-600 dark:bg-violet-900/50 dark:text-violet-300">
+                                    <Users className="size-5" />
+                                </div>
+                                <div>
+                                    <h4 className="text-lg font-bold tracking-tight text-foreground">
+                                        {t.contact?.public_assistance_title ||
+                                            'Barangay & Public Assistance'}
+                                    </h4>
+                                    <p className="text-xs text-muted-foreground sm:text-sm">
+                                        {t.contact?.public_assistance_desc ||
+                                            'For barangay services, social welfare, and health-related concerns.'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                {publicAssistanceHotlines.map((item) => {
+                                    const IconComponent = item.icon;
+
+                                    return (
+                                        <div
+                                            key={item.agency}
+                                            className="flex flex-col justify-between rounded-xl border border-border/80 bg-card p-5 shadow-2xs transition-colors hover:border-violet-300 dark:hover:border-violet-700/60"
+                                        >
+                                            <div>
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-violet-100 bg-violet-50 text-violet-600 dark:border-violet-900/50 dark:bg-violet-950/50 dark:text-violet-300">
+                                                        <IconComponent className="size-5" />
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <h5 className="text-sm leading-tight font-bold text-foreground">
+                                                            {item.agency}
+                                                        </h5>
+                                                        <p
+                                                            className="mt-0.5 truncate text-xs text-muted-foreground"
+                                                            title={item.dept}
+                                                        >
+                                                            {item.dept}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div className="my-4 border-t border-border/60" />
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                {item.numbers.map((num) => (
+                                                    <div
+                                                        key={num}
+                                                        className="flex items-center justify-between gap-2 rounded-lg border border-border/60 bg-muted/20 px-3 py-2"
+                                                    >
+                                                        <div className="flex min-w-0 items-center gap-2">
+                                                            <Phone className="size-3.5 shrink-0 text-muted-foreground" />
+                                                            <span className="font-mono text-xs font-semibold tracking-tight whitespace-nowrap text-foreground">
+                                                                {num}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex shrink-0 items-center gap-1.5">
+                                                            <a
+                                                                href={`tel:${num.replace(/\D/g, '')}`}
+                                                                className="inline-flex items-center gap-1 rounded-md bg-violet-50 px-2 py-1 text-[11px] font-semibold text-violet-700 transition-colors hover:bg-violet-100 dark:bg-violet-950/60 dark:text-violet-300 dark:hover:bg-violet-900/60"
+                                                                title={`Call ${num}`}
+                                                            >
+                                                                <Phone className="size-3" />
+                                                                <span>
+                                                                    {t.contact
+                                                                        ?.call ||
+                                                                        'Call'}
+                                                                </span>
+                                                            </a>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    handleCopyNumber(
+                                                                        num,
+                                                                    )
+                                                                }
+                                                                className="inline-flex cursor-pointer items-center gap-1 rounded-md border border-border/70 bg-background px-2 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:border-violet-300 hover:text-foreground"
+                                                                title={`Copy ${num}`}
+                                                            >
+                                                                {copiedNumber ===
+                                                                num ? (
+                                                                    <>
+                                                                        <Check className="size-3 text-emerald-600 dark:text-emerald-400" />
+                                                                        <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                                                                            {t
+                                                                                .contact
+                                                                                ?.copied ||
+                                                                                'Copied!'}
+                                                                        </span>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <Copy className="size-3" />
+                                                                        <span>
+                                                                            {t
+                                                                                .contact
+                                                                                ?.copy ||
+                                                                                'Copy'}
+                                                                        </span>
+                                                                    </>
+                                                                )}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* Footer Notice Bar */}
+                        <div className="mt-6 flex flex-col justify-between gap-3 rounded-xl border border-border/80 bg-card px-4 py-3.5 text-xs text-muted-foreground shadow-2xs sm:flex-row sm:items-center sm:px-5">
+                            <div className="flex items-center gap-2.5">
+                                <Info className="size-4 shrink-0 text-violet-600 dark:text-violet-400" />
+                                <span>
+                                    {t.contact?.hotlines_disclaimer ||
+                                        'Contact numbers are provided for public reference. Please verify with the concerned agencies for the latest information.'}
+                                </span>
+                            </div>
+                            <div className="flex shrink-0 items-center gap-2 sm:border-l sm:border-border/80 sm:pl-4">
+                                <Calendar className="size-3.5 shrink-0 text-muted-foreground" />
+                                <span>
+                                    {t.contact?.hotlines_updated ||
+                                        'Last updated October 2026.'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
             {/* Official Civic Footer */}
-            <footer className="border-t border-border bg-card py-12 text-xs text-muted-foreground">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <footer className="relative overflow-hidden border-t border-slate-800/80 bg-[#090F22] py-14 text-xs text-slate-400">
+                {/* Layer 2 & 3: Decorative Cinematic Landmark Backdrop & Directional Blending */}
+                <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 z-0 overflow-hidden select-none"
+                >
+                    {/* Layer 2: Enlarged Photograph (Zoomed 1.4x-1.6x, naturally cropped by footer boundaries) */}
+                    <div
+                        className="absolute -top-16 -right-16 -bottom-16 w-full max-w-lg opacity-35 mix-blend-luminosity brightness-90 contrast-125 filter sm:max-w-xl md:max-w-2xl lg:max-w-3xl"
+                        style={{
+                            maskImage:
+                                'linear-gradient(to left, black 20%, rgba(0, 0, 0, 0.4) 60%, transparent 95%), linear-gradient(to top, black 50%, transparent 98%)',
+                            WebkitMaskImage:
+                                'linear-gradient(to left, black 20%, rgba(0, 0, 0, 0.4) 60%, transparent 95%), linear-gradient(to top, black 50%, transparent 98%)',
+                        }}
+                    >
+                        <img
+                            src="/images/statue.webp"
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                            className="size-full origin-right scale-140 transform object-cover object-[center_30%] sm:scale-150 lg:scale-160"
+                        />
+                    </div>
+
+                    {/* Layer 3A: Directional Gradient Blend (Solid navy on left -> Smooth transition -> Subtle reveal on right) */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#090F22] via-[#090F22] via-35% to-transparent md:via-40%" />
+
+                    {/* Layer 3B: Secondary Soft Center Wash to ensure clear text readability */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#090F22]/90 via-[#090F22]/60 to-transparent" />
+
+                    {/* Layer 3C: Top & Bottom Seamless Edge Transitions */}
+                    <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[#090F22] via-[#090F22]/70 to-transparent" />
+                    <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#090F22] via-[#090F22]/70 to-transparent" />
+
+                    {/* Layer 3D: Atmospheric Vignette */}
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,transparent_25%,#090F22_85%)] opacity-70" />
+                </div>
+
+                <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
                         {/* Col 1: Barangay Seal & Identity */}
-                        <div className="space-y-3 md:col-span-2">
+                        <div className="space-y-3.5 md:col-span-2">
                             <div className="flex items-center gap-3">
                                 <img
                                     src="/lallana-icon.png"
                                     alt="Barangay Lallana Seal"
-                                    className="size-10 object-contain"
+                                    className="size-10 object-contain drop-shadow"
                                 />
                                 <div>
-                                    <span className="block text-sm font-bold text-foreground">
+                                    <span className="block text-sm font-bold tracking-tight text-white">
                                         BARANGAY LALLANA
                                     </span>
-                                    <span className="text-[11px] font-semibold text-violet-700">
+                                    <span className="text-[11px] font-semibold text-violet-400">
                                         Trece Martires City, Cavite
                                     </span>
                                 </div>
                             </div>
-                            <p className="max-w-md text-xs leading-relaxed">
+                            <p className="max-w-md text-xs leading-relaxed text-slate-300">
                                 The official e-government web portal of Barangay
                                 Lallana, empowering residents with secure,
                                 digital document processing, household
                                 management, and municipal transparency.
                             </p>
+
+                            {/* Facebook Social Link (Icon Only) */}
+                            <div className="pt-1">
+                                <a
+                                    href="https://www.facebook.com/profile.php?id=61593963904394"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="Barangay Lallana Official Facebook"
+                                    title="Follow Barangay Lallana on Facebook"
+                                    className="inline-flex size-8 items-center justify-center text-slate-300"
+                                >
+                                    <svg
+                                        className="size-4 fill-current"
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                                    </svg>
+                                </a>
+                            </div>
                         </div>
 
                         {/* Col 2: Quick Links */}
                         <div className="space-y-2.5">
-                            <h5 className="text-xs font-bold tracking-wider text-foreground uppercase">
+                            <h5 className="text-xs font-bold tracking-wider text-white uppercase">
                                 Citizen Navigation
                             </h5>
-                            <ul className="space-y-1.5 text-xs">
+                            <ul className="space-y-2 text-xs">
                                 <li>
                                     <a
                                         href="#services"
-                                        className="hover:text-violet-700"
+                                        className="text-slate-300 transition-colors hover:text-white hover:underline"
                                     >
                                         Document Requests
                                     </a>
@@ -1352,7 +2373,7 @@ export default function Welcome({
                                 <li>
                                     <a
                                         href="#about"
-                                        className="hover:text-violet-700"
+                                        className="text-slate-300 transition-colors hover:text-white hover:underline"
                                     >
                                         Community Profile
                                     </a>
@@ -1360,7 +2381,7 @@ export default function Welcome({
                                 <li>
                                     <a
                                         href="#leadership"
-                                        className="hover:text-violet-700"
+                                        className="text-slate-300 transition-colors hover:text-white hover:underline"
                                     >
                                         Barangay Officials
                                     </a>
@@ -1368,7 +2389,7 @@ export default function Welcome({
                                 <li>
                                     <a
                                         href="#announcements"
-                                        className="hover:text-violet-700"
+                                        className="text-slate-300 transition-colors hover:text-white hover:underline"
                                     >
                                         Public Advisories
                                     </a>
@@ -1378,10 +2399,10 @@ export default function Welcome({
 
                         {/* Col 3: Government Transparency */}
                         <div className="space-y-2.5">
-                            <h5 className="text-xs font-bold tracking-wider text-foreground uppercase">
+                            <h5 className="text-xs font-bold tracking-wider text-white uppercase">
                                 Republic of the Philippines
                             </h5>
-                            <ul className="space-y-1.5 text-xs">
+                            <ul className="space-y-2 text-xs text-slate-400">
                                 <li>Republic Act No. 10173 (DPA 2012)</li>
                                 <li>Ease of Doing Business Act (RA 11032)</li>
                                 <li>Barangay Citizen's Charter</li>
@@ -1390,27 +2411,94 @@ export default function Welcome({
                         </div>
                     </div>
 
-                    <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border/80 pt-6 text-[11px] sm:flex-row">
+                    <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-800/80 pt-6 text-[11px] text-slate-400 sm:flex-row">
                         <p>
                             © {new Date().getFullYear()} Barangay Lallana, Trece
                             Martires City, Cavite. All rights reserved.
                         </p>
                         <div className="flex items-center gap-4">
-                            <a href="#" className="hover:text-foreground">
+                            <a
+                                href="#"
+                                className="transition-colors hover:text-white"
+                            >
                                 Privacy Policy
                             </a>
                             <span>•</span>
-                            <a href="#" className="hover:text-foreground">
+                            <a
+                                href="#"
+                                className="transition-colors hover:text-white"
+                            >
                                 Terms of Service
                             </a>
                             <span>•</span>
-                            <a href="#" className="hover:text-foreground">
+                            <a
+                                href="#"
+                                className="transition-colors hover:text-white"
+                            >
                                 Accessibility
                             </a>
                         </div>
                     </div>
                 </div>
             </footer>
+
+            {/* Modal Dialog for Full-Res Image Previews (Charter & Evacuation Map) */}
+            <Dialog
+                open={activeModalImage !== null}
+                onOpenChange={(open) => !open && setActiveModalImage(null)}
+            >
+                <DialogContent className="max-w-5xl rounded-none p-4 sm:p-6">
+                    <DialogHeader className="border-b border-border pb-3 text-left">
+                        <div className="flex items-start justify-between gap-4">
+                            <div>
+                                <DialogTitle className="truncate text-base font-bold">
+                                    {activeModalImage?.title}
+                                </DialogTitle>
+                                {activeModalImage?.subtitle && (
+                                    <DialogDescription className="mt-0.5 text-xs">
+                                        {activeModalImage.subtitle}
+                                    </DialogDescription>
+                                )}
+                            </div>
+                        </div>
+                    </DialogHeader>
+
+                    <div className="flex max-h-[75vh] w-full items-center justify-center overflow-auto rounded-none border border-border bg-neutral-950/5 p-2 dark:bg-neutral-950/40">
+                        {activeModalImage && (
+                            <img
+                                src={activeModalImage.url}
+                                alt={activeModalImage.title}
+                                className="max-h-[70vh] w-auto max-w-full object-contain select-none"
+                            />
+                        )}
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2">
+                        {activeModalImage && (
+                            <a
+                                href={activeModalImage.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 text-xs font-semibold text-violet-600 hover:underline"
+                            >
+                                <ExternalLink className="size-3.5" />
+                                <span>
+                                    Open full-resolution image in new tab
+                                </span>
+                            </a>
+                        )}
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setActiveModalImage(null)}
+                            className="rounded-none shadow-none"
+                        >
+                            Close
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

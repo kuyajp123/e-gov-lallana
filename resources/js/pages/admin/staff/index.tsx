@@ -1,4 +1,4 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import {
     CheckCircle2,
     MoreHorizontal,
@@ -563,6 +563,49 @@ export default function StaffIndex({
                         </table>
                     </div>
                 </Card>
+
+                {/* Pagination */}
+                {staff.links && (
+                    <div className="flex items-center justify-between pt-4">
+                        <p className="text-xs text-muted-foreground">
+                            Showing {staff.data.length} of {staff.total} staff
+                            members
+                            {staff.last_page > 1 &&
+                                ` (Page ${staff.current_page} of ${staff.last_page})`}
+                        </p>
+                        {staff.links.length > 3 && (
+                            <div className="flex items-center gap-1">
+                                {staff.links.map((link, i) => (
+                                    <Button
+                                        key={i}
+                                        asChild={!!link.url}
+                                        disabled={!link.url}
+                                        variant={
+                                            link.active ? 'default' : 'outline'
+                                        }
+                                        size="sm"
+                                        className="h-8 text-xs"
+                                    >
+                                        {link.url ? (
+                                            <Link
+                                                href={link.url}
+                                                dangerouslySetInnerHTML={{
+                                                    __html: link.label,
+                                                }}
+                                            />
+                                        ) : (
+                                            <span
+                                                dangerouslySetInnerHTML={{
+                                                    __html: link.label,
+                                                }}
+                                            />
+                                        )}
+                                    </Button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
 
             {/* Modals */}

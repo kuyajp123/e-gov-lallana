@@ -175,13 +175,29 @@ class AdminDocumentTypeController extends Controller
      */
     public function destroy(DocumentType $documentType): RedirectResponse
     {
-        if ($documentType->documentRequests()->exists()) {
-            return back()->withErrors([
-                'delete' => "Cannot delete '{$documentType->name}' because it has existing document requests linked to it. Consider deactivating it instead.",
+        $requestsCount = $documentType->documentRequests()->count();
+
+        if ($requestsCount > 0) {
+            $msg = "Cannot delete '{$documentType->name}' because it has {$requestsCount} existing citizen document request(s) linked to it. Please deactivate the service instead to preserve audit records.";
+
+            Inertia::flash('toast', [
+                'type' => 'error',
+                'message' => $msg,
             ]);
+
+            return back()
+                ->with('error', $msg)
+                ->withErrors([
+                    'delete' => $msg,
+                ]);
         }
 
         $documentType->delete();
+
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => "Document type '{$documentType->name}' deleted successfully.",
+        ]);
 
         return redirect()
             ->route('admin.document-types.index')

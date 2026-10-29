@@ -22,11 +22,20 @@ class LandingPageController extends Controller
         $totalHouseholds = Household::where('status', 'verified')->count();
         $totalOfficials = User::whereHas('role', fn ($q) => $q->whereIn('slug', ['admin', 'sub_admin']))->count();
 
-        // Fallback friendly baseline counters if initial database is empty
+        // Official community statistics with fallback baseline counters
         $statistics = [
-            'total_residents' => max($totalResidents, 1250),
+            'total_population' => 5253,
+            'actual_population' => max($totalResidents, 4180),
+            'total_residents' => max($totalResidents, 4180),
             'total_households' => max($totalHouseholds, 310),
-            'total_officials' => max($totalOfficials, 12),
+            'total_officials' => max($totalOfficials, 34),
+            'personnel_breakdown' => [
+                'officials' => 8,
+                'sk' => 8,
+                'office' => 5,
+                'tanod' => 8,
+                'utility' => 5,
+            ],
         ];
 
         // 2. Confirmed Public Services
@@ -44,13 +53,15 @@ class LandingPageController extends Controller
             });
 
         // 3. Published Dynamic Announcements
-        $announcements = Announcement::where('is_published', true)
+        $announcements = Announcement::with('banner')
+            ->where('is_published', true)
             ->where(function ($query) {
                 $query->whereNull('published_at')->orWhere('published_at', '<=', now());
             })
             ->latest('published_at')
+            ->latest('id')
             ->take(3)
-            ->get(['id', 'title', 'slug', 'excerpt', 'category', 'published_at'])
+            ->get()
             ->map(function ($item) {
                 return [
                     'id' => $item->id,
@@ -59,8 +70,18 @@ class LandingPageController extends Controller
                     'excerpt' => $item->excerpt,
                     'category' => $item->category,
                     'published_at' => $item->published_at?->format('M d, Y') ?? now()->format('M d, Y'),
+                    'published_at_formatted' => $item->published_at?->format('M d, Y') ?? now()->format('M d, Y'),
+                    'banner_url' => $item->banner?->getUrl(),
                 ];
             });
+
+        $announcementCounts = [
+            'all' => Announcement::where('is_published', true)->where(fn ($q) => $q->whereNull('published_at')->orWhere('published_at', '<=', now()))->count(),
+            'advisory' => Announcement::where('is_published', true)->where('category', 'Advisory')->where(fn ($q) => $q->whereNull('published_at')->orWhere('published_at', '<=', now()))->count(),
+            'event' => Announcement::where('is_published', true)->where('category', 'Event')->where(fn ($q) => $q->whereNull('published_at')->orWhere('published_at', '<=', now()))->count(),
+            'meeting' => Announcement::where('is_published', true)->where('category', 'Meeting')->where(fn ($q) => $q->whereNull('published_at')->orWhere('published_at', '<=', now()))->count(),
+            'emergency' => Announcement::where('is_published', true)->where('category', 'Emergency')->where(fn ($q) => $q->whereNull('published_at')->orWhere('published_at', '<=', now()))->count(),
+        ];
 
         // 4. Translation dictionary
         $t = trans('landing', [], $locale);
@@ -71,6 +92,7 @@ class LandingPageController extends Controller
             'statistics' => $statistics,
             'services' => $services,
             'announcements' => $announcements,
+            'announcement_counts' => $announcementCounts,
         ]);
     }
 }
