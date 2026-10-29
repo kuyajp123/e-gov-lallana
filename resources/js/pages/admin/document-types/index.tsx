@@ -1,5 +1,6 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
+    AlertTriangle,
     CheckCircle2,
     FileCheck2,
     FileCode2,
@@ -13,7 +14,8 @@ import {
     Trash2,
     X,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent } from '@/shared/components/ui/card';
@@ -88,6 +90,15 @@ export default function DocumentTypesIndex({
     const [deleteTarget, setDeleteTarget] = useState<DocumentTypeItem | null>(
         null,
     );
+    const [deleteError, setDeleteError] = useState<string | null>(null);
+    const { errors } = usePage().props as { errors?: Record<string, string> };
+    const activeError = deleteError || errors?.delete;
+
+    useEffect(() => {
+        if (errors?.delete) {
+            toast.error(errors.delete);
+        }
+    }, [errors?.delete]);
 
     const handleApplyFilters = (newStatus?: string) => {
         const targetStatus = newStatus !== undefined ? newStatus : statusFilter;
@@ -129,8 +140,21 @@ export default function DocumentTypesIndex({
             return;
         }
 
+        setDeleteError(null);
+
         router.delete(`/admin/document-types/${deleteTarget.id}`, {
-            onSuccess: () => setDeleteTarget(null),
+            onSuccess: () => {
+                setDeleteTarget(null);
+                setDeleteError(null);
+            },
+            onError: (errs) => {
+                const message =
+                    errs.delete ||
+                    Object.values(errs)[0] ||
+                    'Cannot delete document type.';
+                setDeleteError(message);
+                toast.error(message);
+            },
         });
     };
 
@@ -653,7 +677,12 @@ export default function DocumentTypesIndex({
             {/* Delete Confirmation Dialog */}
             <Dialog
                 open={deleteTarget !== null}
-                onOpenChange={(open) => !open && setDeleteTarget(null)}
+                onOpenChange={(open) => {
+                    if (!open) {
+                        setDeleteTarget(null);
+                        setDeleteError(null);
+                    }
+                }}
             >
                 <DialogContent>
                     <DialogHeader>
@@ -663,25 +692,104 @@ export default function DocumentTypesIndex({
                             <span className="font-semibold text-foreground">
                                 {deleteTarget?.name}
                             </span>
-                            ? This action cannot be undone. Services with
-                            existing document requests cannot be deleted.
+                            ? This action cannot be undone.
                         </DialogDescription>
                     </DialogHeader>
+
+                    {/* Warning / Error when linked to existing document requests */}
+                    {deleteTarget &&
+                    deleteTarget.document_requests_count > 0 ? (
+                        <div className="rounded-lg border border-amber-300 bg-amber-50 p-3.5 text-xs text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-200">
+                            <div className="flex items-start gap-2.5">
+                                <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                                <div className="space-y-1">
+                                    <p className="font-semibold text-foreground">
+                                        Cannot Delete: Linked Citizen Requests
+                                    </p>
+                                    <p className="text-[11px] leading-relaxed text-muted-foreground">
+                                        This document service has{' '}
+                                        <strong className="text-foreground">
+                                            {
+                                                deleteTarget.document_requests_count
+                                            }
+                                        </strong>{' '}
+                                        citizen document request(s) linked to
+                                        it. To protect municipal audit trails,
+                                        public records, and applicant tracking,
+                                        services with request history cannot be
+                                        permanently deleted.
+                                    </p>
+                                    <p className="text-[11px] font-medium text-amber-700 dark:text-amber-300">
+                                        Recommendation: Deactivate this service
+                                        instead. It will be hidden from new
+                                        citizen applications while preserving
+                                        past records.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    ) : null}
+
+                    {activeError && (
+                        <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
+                            <div className="flex items-center gap-2">
+                                <AlertTriangle className="size-4 shrink-0" />
+                                <span>{activeError}</span>
+                            </div>
+                        </div>
+                    )}
+
                     <DialogFooter className="gap-2">
                         <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setDeleteTarget(null)}
+                            onClick={() => {
+                                setDeleteTarget(null);
+                                setDeleteError(null);
+                            }}
                         >
                             Cancel
                         </Button>
-                        <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={confirmDelete}
-                        >
-                            Delete Document Type
-                        </Button>
+
+                        {deleteTarget &&
+                        deleteTarget.document_requests_count > 0 ? (
+                            deleteTarget.is_active ? (
+                                <Button
+                                    type="button"
+                                    variant="default"
+                                    size="sm"
+                                    className="bg-amber-600 text-white hover:bg-amber-700 dark:bg-amber-600"
+                                    onClick={() => {
+                                        handleToggleActive(deleteTarget.id);
+                                        setDeleteTarget(null);
+                                        setDeleteError(null);
+                                        toast.info(
+                                            `'${deleteTarget.name}' has been deactivated.`,
+                                        );
+                                    }}
+                                >
+                                    Deactivate Service Instead
+                                </Button>
+                            ) : (
+                                <Button
+                                    type="button"
+                                    variant="destructive"
+                                    size="sm"
+                                    disabled
+                                    title="Services with linked requests cannot be deleted"
+                                >
+                                    Cannot Delete (Has Requests)
+                                </Button>
+                            )
+                        ) : (
+                            <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={confirmDelete}
+                            >
+                                Delete Document Type
+                            </Button>
+                        )}
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

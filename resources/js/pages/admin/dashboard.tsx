@@ -124,9 +124,6 @@ export default function AdminDashboard({
                 <div className="bezel-outer">
                     <div className="bezel-inner flex flex-col justify-between gap-6 p-6 sm:flex-row sm:items-center">
                         <div className="flex items-center gap-4">
-                            <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-violet-600/10 text-violet-700 ring-1 ring-violet-600/20 dark:bg-violet-400/10 dark:text-violet-300">
-                                <ShieldCheck className="size-7" />
-                            </div>
                             <div className="space-y-1">
                                 <div className="flex flex-wrap items-center gap-2">
                                     <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
