@@ -139,7 +139,7 @@ class AdminHouseholdController extends Controller
     }
 
     /**
-     * Display a specific household dossier with full members directory and verification trail.
+     * Display a specific household's details with full members directory and verification trail.
      */
     public function show(Household $household): Response
     {

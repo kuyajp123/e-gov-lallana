@@ -214,7 +214,7 @@ export function HouseholdModal({
                                 <Link
                                     href={`/admin/households/${household.id}`}
                                 >
-                                    Full Dossier
+                                    Full Details
                                     <ArrowRight className="size-3.5" />
                                 </Link>
                             </Button>

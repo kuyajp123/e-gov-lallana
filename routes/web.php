@@ -135,6 +135,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Resident Profiles Civil Registry
         Route::prefix('admin/resident-profiles')->name('admin.resident-profiles.')->group(function () {
             Route::get('/', [AdminResidentProfileController::class, 'index'])->name('index');
+            Route::get('/export-pdf', [AdminResidentProfileController::class, 'exportPdf'])->name('export-pdf');
             Route::get('/{residentProfile}', [AdminResidentProfileController::class, 'show'])->name('show')->whereNumber('residentProfile');
             Route::get('/{residentProfile}/export/form-b', [AdminResidentProfileController::class, 'exportFormBPdf'])->name('export-form-b')->whereNumber('residentProfile');
             Route::delete('/{residentProfile}', [AdminResidentProfileController::class, 'destroy'])->name('destroy')->whereNumber('residentProfile');

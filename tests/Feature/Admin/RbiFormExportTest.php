@@ -71,6 +71,23 @@ test('admin can export RBI Form B as PDF for an individual resident', function (
     expect($response->headers->get('content-disposition'))->toContain('RBI-Form-B-Santos');
 });
 
+test('admin can export RBI Form B as PDF for a resident with no household', function () {
+    $userWithoutHousehold = User::factory()->create(['role_id' => $this->residentRole->id]);
+    $profileWithoutHousehold = ResidentProfile::create([
+        'user_id' => $userWithoutHousehold->id,
+        'first_name' => 'Juan',
+        'last_name' => 'Dela Cruz',
+        'citizenship' => 'Filipino',
+        'residency_status' => 'resident',
+    ]);
+
+    $response = $this->actingAs($this->admin)
+        ->get("/admin/resident-profiles/{$profileWithoutHousehold->id}/export/form-b");
+
+    $response->assertOk();
+    $response->assertHeader('content-type', 'application/pdf');
+});
+
 test('admin can export RBI Form C as PDF for semestral monitoring', function () {
     $response = $this->actingAs($this->admin)
         ->get('/admin/households/export/form-c?year=2026&semester=1st');

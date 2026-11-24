@@ -309,7 +309,7 @@ export function ResidentProfileModal({
                         className="gap-1.5 rounded-none text-xs"
                     >
                         <Link href={`/admin/resident-profiles/${resident.id}`}>
-                            View Full Civil Dossier
+                            View Full Profile
                             <ArrowRight className="size-3.5" />
                         </Link>
                     </Button>

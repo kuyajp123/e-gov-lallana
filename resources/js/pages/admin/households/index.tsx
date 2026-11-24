@@ -606,7 +606,7 @@ export default function AdminHouseholdIndex({
                                                                         <Home className="mr-2 size-3.5" />
                                                                         Full
                                                                         Household
-                                                                        Dossier
+                                                                        Details
                                                                     </Link>
                                                                 </DropdownMenuItem>
                                                                 <DropdownMenuItem

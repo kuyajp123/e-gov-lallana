@@ -192,7 +192,8 @@ export function RbiExportModal({
                     <div className="space-y-1 rounded-lg bg-muted/40 p-2.5 text-[11px] text-muted-foreground">
                         <p>
                             • <strong>RBI Form A (Household):</strong> Download
-                            directly from any household dossier or row menu.
+                            directly from any household details page or row
+                            menu.
                         </p>
                         <p>
                             • <strong>RBI Form B (Individual):</strong> Download

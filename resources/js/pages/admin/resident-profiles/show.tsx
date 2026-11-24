@@ -128,7 +128,7 @@ export default function AdminResidentShow({
                         <div>
                             <div className="flex items-center gap-2">
                                 <span className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                                    Citizen Civil Dossier
+                                    Resident Profile Information
                                 </span>
                                 <Badge variant="outline" className="text-xs">
                                     {residentProfile.residency_status}

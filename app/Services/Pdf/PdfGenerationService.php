@@ -13,6 +13,7 @@ use App\Services\Files\FileUploadService;
 use App\Services\QrCode\QrCodeService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use Spatie\LaravelPdf\Facades\Pdf;
 
@@ -607,6 +608,112 @@ class PdfGenerationService
         return Pdf::view('pdf.reports.rbi-form-c', $viewData)
             ->format('A4')
             ->name("RBI-Form-C-{$reportingYear}-{$sem}-Semester.pdf")
+            ->generatePdfContent();
+    }
+
+    /**
+     * Generate an official landscape PDF masterlist report for resident profiles with active filter annotations.
+     *
+     * @param  Collection<int, ResidentProfile>|\Illuminate\Database\Eloquent\Collection<int, ResidentProfile>  $profiles
+     * @param  array<int, string>  $activeFilters
+     */
+    public function generateResidentRegistryReport($profiles, array $activeFilters = [], ?User $issuer = null): string
+    {
+        @ini_set('memory_limit', '512M');
+
+        $userIds = $profiles->pluck('user_id')->filter()->unique()->values()->all();
+
+        $householdMemberships = HouseholdMember::query()
+            ->with('household')
+            ->whereIn('user_id', $userIds)
+            ->get()
+            ->keyBy('user_id');
+
+        $headedHouseholds = Household::query()
+            ->whereIn('family_head_id', $userIds)
+            ->get()
+            ->keyBy('family_head_id');
+
+        $rows = [];
+        foreach ($profiles as $index => $profile) {
+            $age = $profile->birthdate ? Carbon::parse($profile->birthdate)->age : null;
+            $userId = $profile->user_id;
+
+            $household = $householdMemberships->get($userId)->household
+                ?? $headedHouseholds->get($userId);
+
+            $address = $household
+                ? ($household->purok_sitio ? $household->purok_sitio.', '.$household->address : $household->address)
+                : 'Barangay Lallana';
+
+            $specialStatuses = [];
+            if ($profile->senior_citizen_status || ($age !== null && $age >= 60)) {
+                $specialStatuses[] = 'Senior';
+            }
+            if ($profile->pwd_status) {
+                $specialStatuses[] = 'PWD';
+            }
+            if ($profile->solo_parent_status) {
+                $specialStatuses[] = 'Solo Parent';
+            }
+            if ($profile->is_ofw) {
+                $specialStatuses[] = 'OFW';
+            }
+            if ($profile->is_ip) {
+                $specialStatuses[] = 'IP';
+            }
+            if ($profile->is_out_of_school) {
+                if ($age !== null && $age >= 15 && $age <= 24) {
+                    $specialStatuses[] = 'OSY';
+                } elseif ($age !== null && $age >= 6 && $age <= 14) {
+                    $specialStatuses[] = 'OSC';
+                } else {
+                    $specialStatuses[] = 'OSC/OSY';
+                }
+            }
+
+            $rows[] = [
+                'index' => $index + 1,
+                'full_name' => $profile->last_name.', '.$profile->first_name.($profile->middle_name ? ' '.$profile->middle_name : '').($profile->suffix ? ' '.$profile->suffix : ''),
+                'birthdate_formatted' => $profile->birthdate ? Carbon::parse($profile->birthdate)->format('m/d/Y') : '—',
+                'age' => $age ?? '—',
+                'gender' => ucfirst($profile->gender ?? '—'),
+                'civil_status' => ucfirst($profile->civil_status ?? '—'),
+                'citizenship' => $profile->citizenship ?: 'Filipino',
+                'residency_status' => match ($profile->residency_status) {
+                    'official' => 'Official',
+                    'resident' => 'Resident',
+                    'new_resident' => 'New Resident',
+                    'tenant' => 'Tenant',
+                    'student' => 'Student',
+                    'temporary' => 'Temporary',
+                    default => ucfirst($profile->residency_status ?? 'Official'),
+                },
+                'address' => $address,
+                'occupation' => $profile->occupation ?: (ucfirst($profile->employment_status ?? '') ?: '—'),
+                'is_voter' => $profile->is_voter ? 'Yes' : 'No',
+                'special_statuses' => count($specialStatuses) > 0 ? implode(', ', $specialStatuses) : '—',
+                'phone' => $profile->user->phone_number ?: '—',
+            ];
+        }
+
+        $viewData = [
+            'rows' => $rows,
+            'totalCount' => count($rows),
+            'activeFilters' => $activeFilters,
+            'generatedAt' => now()->format('F d, Y h:i A'),
+            'issuerName' => $issuer ? ($issuer->name.($issuer->role ? ' ('.$issuer->role->name.')' : '')) : 'Barangay Administrator',
+            'officials' => $this->getDefaultOfficials(),
+            'region' => 'REGION IV-A (CALABARZON)',
+            'province' => 'CAVITE',
+            'city' => 'TRECE MARTIRES CITY',
+            'barangay' => 'BARANGAY LALLANA',
+        ];
+
+        return Pdf::view('pdf.reports.resident-registry-list', $viewData)
+            ->landscape()
+            ->format('A4')
+            ->name('Barangay-Lallana-Resident-Registry-'.now()->format('Ymd-His').'.pdf')
             ->generatePdfContent();
     }
 

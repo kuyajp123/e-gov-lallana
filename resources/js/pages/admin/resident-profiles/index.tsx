@@ -1,10 +1,13 @@
 import { Head, Link, router } from '@inertiajs/react';
 import {
     Building2,
+    ChevronDown,
+    ChevronUp,
     Eye,
     FileDown,
     RotateCcw,
     Search,
+    SlidersHorizontal,
     User,
     Users,
     X,
@@ -57,13 +60,22 @@ interface AdminResidentIndexProps {
         from?: number;
         to?: number;
     };
-    sectorCounts: SectorCounts;
+    sectorCounts?: SectorCounts;
     filters: {
-        search: string;
-        sector: string;
-        gender: string;
-        civil_status: string;
-        residency_status: string;
+        search?: string;
+        sector?: string;
+        gender?: string;
+        civil_status?: string;
+        residency_status?: string;
+        employment_status?: string;
+        citizenship?: string;
+        is_voter?: string;
+        senior_citizen_status?: string;
+        pwd_status?: string;
+        solo_parent_status?: string;
+        is_ofw?: string;
+        is_ip?: string;
+        is_out_of_school?: string;
     };
 }
 
@@ -72,17 +84,8 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Resident Registry', href: '/admin/resident-profiles' },
 ];
 
-const SECTOR_TABS = [
-    { key: 'all', label: 'All Residents', countKey: 'all' },
-    { key: 'voters', label: 'Registered Voters', countKey: 'voters' },
-    { key: 'seniors', label: 'Senior Citizens', countKey: 'seniors' },
-    { key: 'pwd', label: 'Persons with Disability', countKey: 'pwd' },
-    { key: 'solo_parents', label: 'Solo Parents', countKey: 'solo_parents' },
-] as const;
-
 export default function AdminResidentIndex({
     residents,
-    sectorCounts,
     filters,
 }: AdminResidentIndexProps) {
     const [searchValue, setSearchValue] = useState(filters.search || '');
@@ -90,6 +93,25 @@ export default function AdminResidentIndex({
         useState<AdminResidentProfileItem | null>(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+
+    const activeAdvancedCount = [
+        filters.gender,
+        filters.civil_status,
+        filters.residency_status,
+        filters.employment_status,
+        filters.citizenship,
+        filters.is_voter,
+        filters.senior_citizen_status,
+        filters.pwd_status,
+        filters.solo_parent_status,
+        filters.is_ofw,
+        filters.is_ip,
+        filters.is_out_of_school,
+    ].filter((val) => Boolean(val) && val !== 'all').length;
+
+    const [isAdvancedOpen, setIsAdvancedOpen] = useState(
+        activeAdvancedCount > 0,
+    );
 
     const updateFilter = (newParams: Record<string, any>) => {
         router.get(
@@ -107,6 +129,32 @@ export default function AdminResidentIndex({
         );
     };
 
+    const handleClearAdvancedFilters = () => {
+        router.get(
+            '/admin/resident-profiles',
+            {
+                search: filters.search || undefined,
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            },
+        );
+    };
+
+    const handleExportPdf = () => {
+        const params = new URLSearchParams();
+        Object.entries(filters).forEach(([key, value]) => {
+            if (value && value !== 'all') {
+                params.set(key, value);
+            }
+        });
+        const queryString = params.toString();
+        const url = `/admin/resident-profiles/export-pdf${queryString ? `?${queryString}` : ''}`;
+        window.open(url, '_blank');
+    };
+
     const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             updateFilter({ search: searchValue.trim() });
@@ -118,12 +166,7 @@ export default function AdminResidentIndex({
         setIsDrawerOpen(true);
     };
 
-    const hasActiveFilters =
-        filters.search !== '' ||
-        (filters.sector !== 'all' && filters.sector !== '') ||
-        (filters.gender !== 'all' && filters.gender !== '') ||
-        (filters.civil_status !== 'all' && filters.civil_status !== '') ||
-        (filters.residency_status !== 'all' && filters.residency_status !== '');
+    const hasActiveFilters = Boolean(filters.search) || activeAdvancedCount > 0;
 
     const residentList = residents?.data || [];
 
@@ -177,42 +220,6 @@ export default function AdminResidentIndex({
                     </div>
                 </div>
 
-                {/* Sectoral Tabs Bar */}
-                <div className="flex scrollbar-none items-center gap-1.5 overflow-x-auto pb-1">
-                    {SECTOR_TABS.map((tab) => {
-                        const isActive = (filters.sector || 'all') === tab.key;
-                        const count =
-                            sectorCounts[tab.countKey as keyof SectorCounts] ??
-                            0;
-
-                        return (
-                            <button
-                                key={tab.key}
-                                type="button"
-                                onClick={() =>
-                                    updateFilter({ sector: tab.key })
-                                }
-                                className={`flex shrink-0 items-center gap-2 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all ${
-                                    isActive
-                                        ? 'bg-primary text-primary-foreground shadow-sm'
-                                        : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
-                                }`}
-                            >
-                                <span>{tab.label}</span>
-                                <span
-                                    className={`py-0.2 rounded-full px-1.5 text-[10px] font-bold ${
-                                        isActive
-                                            ? 'bg-primary-foreground/20 text-primary-foreground'
-                                            : 'bg-background/80 text-muted-foreground'
-                                    }`}
-                                >
-                                    {count}
-                                </span>
-                            </button>
-                        );
-                    })}
-                </div>
-
                 {/* Filter Controls Row */}
                 <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
                     {/* Search Input */}
@@ -239,95 +246,52 @@ export default function AdminResidentIndex({
                         )}
                     </div>
 
-                    {/* Filter Dropdowns */}
+                    {/* Filter Actions */}
                     <div className="flex flex-wrap items-center gap-2">
-                        {/* Gender */}
-                        <div className="w-32">
-                            <Select
-                                value={filters.gender || 'all'}
-                                onValueChange={(val) =>
-                                    updateFilter({ gender: val })
-                                }
-                            >
-                                <SelectTrigger className="h-9 text-xs">
-                                    <SelectValue placeholder="All Sex" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">All Sex</SelectItem>
-                                    <SelectItem value="male">Male</SelectItem>
-                                    <SelectItem value="female">
-                                        Female
-                                    </SelectItem>
-                                    <SelectItem value="other">Other</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
+                        {/* Advance Filter Toggle Button */}
+                        <Button
+                            type="button"
+                            variant={isAdvancedOpen ? 'secondary' : 'outline'}
+                            size="sm"
+                            onClick={() => setIsAdvancedOpen((prev) => !prev)}
+                            className="h-9 gap-1.5 text-xs font-medium"
+                        >
+                            <SlidersHorizontal className="size-3.5" />
+                            <span>Advance Filter</span>
+                            {activeAdvancedCount > 0 && (
+                                <Badge
+                                    variant="default"
+                                    className="ml-0.5 rounded-full px-1.5 py-0 text-[10px] font-bold"
+                                >
+                                    {activeAdvancedCount}
+                                </Badge>
+                            )}
+                            {isAdvancedOpen ? (
+                                <ChevronUp className="size-3.5 text-muted-foreground" />
+                            ) : (
+                                <ChevronDown className="size-3.5 text-muted-foreground" />
+                            )}
+                        </Button>
 
-                        {/* Civil Status */}
-                        <div className="w-32">
-                            <Select
-                                value={filters.civil_status || 'all'}
-                                onValueChange={(val) =>
-                                    updateFilter({ civil_status: val })
-                                }
-                            >
-                                <SelectTrigger className="h-9 text-xs">
-                                    <SelectValue placeholder="Civil Status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">
-                                        All Status
-                                    </SelectItem>
-                                    <SelectItem value="single">
-                                        Single
-                                    </SelectItem>
-                                    <SelectItem value="married">
-                                        Married
-                                    </SelectItem>
-                                    <SelectItem value="widowed">
-                                        Widowed
-                                    </SelectItem>
-                                    <SelectItem value="separated">
-                                        Separated
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
+                        {/* Export PDF Button */}
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={handleExportPdf}
+                            className="h-9 gap-1.5 border-emerald-500/40 text-xs font-medium text-emerald-600 hover:bg-emerald-500/10 dark:text-emerald-400"
+                            title="Export filtered resident registry list as landscape PDF"
+                        >
+                            <FileDown className="size-3.5" />
+                            <span>Export PDF</span>
+                            {hasActiveFilters && (
+                                <span className="py-0.2 rounded bg-emerald-500/20 px-1 text-[10px] font-bold">
+                                    Filtered
+                                </span>
+                            )}
+                        </Button>
 
-                        {/* Residency */}
-                        <div className="w-36">
-                            <Select
-                                value={filters.residency_status || 'all'}
-                                onValueChange={(val) =>
-                                    updateFilter({ residency_status: val })
-                                }
-                            >
-                                <SelectTrigger className="h-9 text-xs">
-                                    <SelectValue placeholder="Residency" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">
-                                        All Residency
-                                    </SelectItem>
-                                    <SelectItem value="official">
-                                        Official Resident
-                                    </SelectItem>
-                                    <SelectItem value="resident">
-                                        Resident
-                                    </SelectItem>
-                                    <SelectItem value="new_resident">
-                                        New Resident
-                                    </SelectItem>
-                                    <SelectItem value="tenant">
-                                        Tenant
-                                    </SelectItem>
-                                    <SelectItem value="student">
-                                        Student
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
+                        {/* Reset All Filters Button */}
                         {hasActiveFilters && (
                             <Button
                                 type="button"
@@ -352,6 +316,419 @@ export default function AdminResidentIndex({
                         )}
                     </div>
                 </div>
+
+                {/* Collapsible Advance Filter Section */}
+                {isAdvancedOpen && (
+                    <div className="rounded-2xl border border-border/80 bg-card/60 p-4 shadow-xs backdrop-blur-xs transition-all">
+                        <div className="mb-3.5 flex items-center justify-between border-b border-border/50 pb-2.5">
+                            <div className="flex items-center gap-2">
+                                <SlidersHorizontal className="size-4 text-primary" />
+                                <span className="text-xs font-semibold text-foreground">
+                                    Advanced Candidate Filters for Registry
+                                    &amp; Export
+                                </span>
+                                <span className="hidden text-[11px] text-muted-foreground sm:inline">
+                                    — Combine multiple candidates to export
+                                    specific cohorts
+                                </span>
+                            </div>
+                            {activeAdvancedCount > 0 && (
+                                <button
+                                    type="button"
+                                    onClick={handleClearAdvancedFilters}
+                                    className="text-[11px] font-medium text-muted-foreground underline decoration-dotted hover:text-foreground"
+                                >
+                                    Clear advanced filters (
+                                    {activeAdvancedCount})
+                                </button>
+                            )}
+                        </div>
+
+                        {/* Grid of 12 Candidate Filters */}
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+                            {/* 1. Sex Status */}
+                            <div className="flex flex-col gap-1">
+                                <label className="text-[11px] font-medium text-muted-foreground">
+                                    Sex / Gender
+                                </label>
+                                <Select
+                                    value={filters.gender || 'all'}
+                                    onValueChange={(val) =>
+                                        updateFilter({ gender: val })
+                                    }
+                                >
+                                    <SelectTrigger className="h-8.5 text-xs">
+                                        <SelectValue placeholder="All Sex" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">
+                                            All Sex
+                                        </SelectItem>
+                                        <SelectItem value="male">
+                                            Male
+                                        </SelectItem>
+                                        <SelectItem value="female">
+                                            Female
+                                        </SelectItem>
+                                        <SelectItem value="other">
+                                            Other
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* 2. Civil / Relationship Status */}
+                            <div className="flex flex-col gap-1">
+                                <label className="text-[11px] font-medium text-muted-foreground">
+                                    Relationship / Civil Status
+                                </label>
+                                <Select
+                                    value={filters.civil_status || 'all'}
+                                    onValueChange={(val) =>
+                                        updateFilter({ civil_status: val })
+                                    }
+                                >
+                                    <SelectTrigger className="h-8.5 text-xs">
+                                        <SelectValue placeholder="All Status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">
+                                            All Status
+                                        </SelectItem>
+                                        <SelectItem value="single">
+                                            Single
+                                        </SelectItem>
+                                        <SelectItem value="married">
+                                            Married
+                                        </SelectItem>
+                                        <SelectItem value="widowed">
+                                            Widowed
+                                        </SelectItem>
+                                        <SelectItem value="separated">
+                                            Separated
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* 3. Resident Status */}
+                            <div className="flex flex-col gap-1">
+                                <label className="text-[11px] font-medium text-muted-foreground">
+                                    Resident Status
+                                </label>
+                                <Select
+                                    value={filters.residency_status || 'all'}
+                                    onValueChange={(val) =>
+                                        updateFilter({ residency_status: val })
+                                    }
+                                >
+                                    <SelectTrigger className="h-8.5 text-xs">
+                                        <SelectValue placeholder="All Residency" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">
+                                            All Residency
+                                        </SelectItem>
+                                        <SelectItem value="official">
+                                            Official Resident
+                                        </SelectItem>
+                                        <SelectItem value="resident">
+                                            Resident
+                                        </SelectItem>
+                                        <SelectItem value="new_resident">
+                                            New Resident
+                                        </SelectItem>
+                                        <SelectItem value="tenant">
+                                            Tenant
+                                        </SelectItem>
+                                        <SelectItem value="student">
+                                            Student
+                                        </SelectItem>
+                                        <SelectItem value="temporary">
+                                            Temporary
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* 4. Employment Status */}
+                            <div className="flex flex-col gap-1">
+                                <label className="text-[11px] font-medium text-muted-foreground">
+                                    Employment Status
+                                </label>
+                                <Select
+                                    value={filters.employment_status || 'all'}
+                                    onValueChange={(val) =>
+                                        updateFilter({ employment_status: val })
+                                    }
+                                >
+                                    <SelectTrigger className="h-8.5 text-xs">
+                                        <SelectValue placeholder="All Employment" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">
+                                            All Employment
+                                        </SelectItem>
+                                        <SelectItem value="employed">
+                                            Employed / Labor
+                                        </SelectItem>
+                                        <SelectItem value="unemployed">
+                                            Unemployed
+                                        </SelectItem>
+                                        <SelectItem value="self_employed">
+                                            Self-Employed
+                                        </SelectItem>
+                                        <SelectItem value="student">
+                                            Student
+                                        </SelectItem>
+                                        <SelectItem value="retired">
+                                            Retired
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* 5. Citizenship */}
+                            <div className="flex flex-col gap-1">
+                                <label className="text-[11px] font-medium text-muted-foreground">
+                                    Citizenship
+                                </label>
+                                <Select
+                                    value={filters.citizenship || 'all'}
+                                    onValueChange={(val) =>
+                                        updateFilter({ citizenship: val })
+                                    }
+                                >
+                                    <SelectTrigger className="h-8.5 text-xs">
+                                        <SelectValue placeholder="All Citizenship" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">
+                                            All Citizenship
+                                        </SelectItem>
+                                        <SelectItem value="filipino">
+                                            Filipino
+                                        </SelectItem>
+                                        <SelectItem value="foreigner">
+                                            Foreigner
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* 6. Registered Voters */}
+                            <div className="flex flex-col gap-1">
+                                <label className="text-[11px] font-medium text-muted-foreground">
+                                    Registered Voters
+                                </label>
+                                <Select
+                                    value={filters.is_voter || 'all'}
+                                    onValueChange={(val) =>
+                                        updateFilter({ is_voter: val })
+                                    }
+                                >
+                                    <SelectTrigger className="h-8.5 text-xs">
+                                        <SelectValue placeholder="All Voters" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All</SelectItem>
+                                        <SelectItem value="yes">
+                                            Voters Only
+                                        </SelectItem>
+                                        <SelectItem value="no">
+                                            Non-Voters
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* 7. Senior Citizens */}
+                            <div className="flex flex-col gap-1">
+                                <label className="text-[11px] font-medium text-muted-foreground">
+                                    Senior Citizens (60+)
+                                </label>
+                                <Select
+                                    value={
+                                        filters.senior_citizen_status || 'all'
+                                    }
+                                    onValueChange={(val) =>
+                                        updateFilter({
+                                            senior_citizen_status: val,
+                                        })
+                                    }
+                                >
+                                    <SelectTrigger className="h-8.5 text-xs">
+                                        <SelectValue placeholder="All" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All</SelectItem>
+                                        <SelectItem value="yes">
+                                            Senior Citizens Only
+                                        </SelectItem>
+                                        <SelectItem value="no">
+                                            Non-Seniors
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* 8. Persons with Disabilities (PWD) */}
+                            <div className="flex flex-col gap-1">
+                                <label className="text-[11px] font-medium text-muted-foreground">
+                                    Persons with Disability (PWD)
+                                </label>
+                                <Select
+                                    value={filters.pwd_status || 'all'}
+                                    onValueChange={(val) =>
+                                        updateFilter({ pwd_status: val })
+                                    }
+                                >
+                                    <SelectTrigger className="h-8.5 text-xs">
+                                        <SelectValue placeholder="All" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All</SelectItem>
+                                        <SelectItem value="yes">
+                                            PWD Only
+                                        </SelectItem>
+                                        <SelectItem value="no">
+                                            Non-PWD
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* 9. Solo Parents */}
+                            <div className="flex flex-col gap-1">
+                                <label className="text-[11px] font-medium text-muted-foreground">
+                                    Solo Parents
+                                </label>
+                                <Select
+                                    value={filters.solo_parent_status || 'all'}
+                                    onValueChange={(val) =>
+                                        updateFilter({
+                                            solo_parent_status: val,
+                                        })
+                                    }
+                                >
+                                    <SelectTrigger className="h-8.5 text-xs">
+                                        <SelectValue placeholder="All" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All</SelectItem>
+                                        <SelectItem value="yes">
+                                            Solo Parents Only
+                                        </SelectItem>
+                                        <SelectItem value="no">
+                                            Non-Solo Parents
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* 10. Overseas Filipino Worker (OFW) */}
+                            <div className="flex flex-col gap-1">
+                                <label className="text-[11px] font-medium text-muted-foreground">
+                                    OFW
+                                </label>
+                                <Select
+                                    value={filters.is_ofw || 'all'}
+                                    onValueChange={(val) =>
+                                        updateFilter({ is_ofw: val })
+                                    }
+                                >
+                                    <SelectTrigger className="h-8.5 text-xs">
+                                        <SelectValue placeholder="All" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All</SelectItem>
+                                        <SelectItem value="yes">
+                                            OFW Only
+                                        </SelectItem>
+                                        <SelectItem value="no">
+                                            Non-OFW
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* 11. Indigenous Peoples (IP) */}
+                            <div className="flex flex-col gap-1">
+                                <label className="text-[11px] font-medium text-muted-foreground">
+                                    Indigenous Peoples (IP)
+                                </label>
+                                <Select
+                                    value={filters.is_ip || 'all'}
+                                    onValueChange={(val) =>
+                                        updateFilter({ is_ip: val })
+                                    }
+                                >
+                                    <SelectTrigger className="h-8.5 text-xs">
+                                        <SelectValue placeholder="All" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All</SelectItem>
+                                        <SelectItem value="yes">
+                                            Indigenous Peoples Only
+                                        </SelectItem>
+                                        <SelectItem value="no">
+                                            Non-IP
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* 12. Out of School (OSC / OSY) */}
+                            <div className="flex flex-col gap-1">
+                                <label className="text-[11px] font-medium text-muted-foreground">
+                                    Out of School (OSC / OSY)
+                                </label>
+                                <Select
+                                    value={filters.is_out_of_school || 'all'}
+                                    onValueChange={(val) =>
+                                        updateFilter({ is_out_of_school: val })
+                                    }
+                                >
+                                    <SelectTrigger className="h-8.5 text-xs">
+                                        <SelectValue placeholder="All" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All</SelectItem>
+                                        <SelectItem value="yes">
+                                            Out of School Only
+                                        </SelectItem>
+                                        <SelectItem value="no">
+                                            In-School / N/A
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        {/* Advance Filter Footer with Landscape PDF Export Action */}
+                        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-border/50 pt-3">
+                            <p className="text-xs text-muted-foreground">
+                                Matching{' '}
+                                <strong className="text-foreground">
+                                    {residents.total}
+                                </strong>{' '}
+                                registered resident
+                                {residents.total === 1 ? '' : 's'}. The exported
+                                PDF report will reflect all selected filter
+                                candidates.
+                            </p>
+                            <Button
+                                type="button"
+                                size="sm"
+                                onClick={handleExportPdf}
+                                className="h-8.5 gap-1.5 bg-emerald-600 text-xs font-semibold text-white shadow-xs hover:bg-emerald-700"
+                            >
+                                <FileDown className="size-3.5" />
+                                Export Filtered Registry
+                            </Button>
+                        </div>
+                    </div>
+                )}
 
                 {/* Queue Data Table Card */}
                 <Card className="overflow-hidden rounded-2xl border-border/70 shadow-sm">

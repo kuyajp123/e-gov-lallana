@@ -121,11 +121,7 @@ export default function DocumentShow({
                             <p className="text-xs text-muted-foreground">
                                 {documentRequest.document_type.name} •{' '}
                                 {t('documents.submitted', 'Submitted')}{' '}
-                                {documentRequest.submitted_at
-                                    ? new Date(
-                                          documentRequest.submitted_at,
-                                      ).toLocaleDateString()
-                                    : '—'}
+                                {documentRequest.submitted_at_formatted || '—'}
                             </p>
                         </div>
                     </div>

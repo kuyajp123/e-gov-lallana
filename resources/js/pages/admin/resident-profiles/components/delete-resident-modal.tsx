@@ -120,7 +120,7 @@ export function DeleteResidentModal({
                                     <strong className="text-foreground">
                                         Civil Registry & Auth:
                                     </strong>{' '}
-                                    The user login account and civil dossier
+                                    The user login account and resident profile
                                     will be erased.
                                 </li>
                                 <li>

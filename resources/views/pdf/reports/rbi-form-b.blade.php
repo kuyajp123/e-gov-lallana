@@ -206,7 +206,13 @@
         <table class="grid-row">
             <tr>
                 <td style="width: 72%;">
-                    <div class="field-box">{{ $household->address ?? ($household->purok_sitio ? $household->purok_sitio . ', Barangay Lallana' : 'Barangay Lallana, Trece Martires City') }}</div>
+                    <div class="field-box">
+                        @if($household)
+                            {{ $household->address ?: ($household->purok_sitio ? $household->purok_sitio . ', Barangay Lallana' : 'Barangay Lallana, Trece Martires City') }}
+                        @else
+                            Barangay Lallana, Trece Martires City
+                        @endif
+                    </div>
                     <div class="field-sublabel">(Residence Address)</div>
                 </td>
                 <td style="width: 28%;">
@@ -224,11 +230,11 @@
                     <div class="field-sublabel">(Profession / Occupation)</div>
                 </td>
                 <td style="width: 31%;">
-                    <div class="field-box">{{ $user->phone_number ?? '—' }}</div>
+                    <div class="field-box">{{ $user?->phone_number ?? '—' }}</div>
                     <div class="field-sublabel">(Contact Number)</div>
                 </td>
                 <td style="width: 31%;">
-                    <div class="field-box">{{ $user->email ?? '—' }}</div>
+                    <div class="field-box">{{ $user?->email ?? '—' }}</div>
                     <div class="field-sublabel">(E-mail Address)</div>
                 </td>
             </tr>
@@ -284,7 +290,7 @@
                     <div style="margin-top: 20px;">
                         <div style="display: inline-block; vertical-align: middle; font-size: 8pt; font-weight: bold;">Household Number:</div>
                         <div style="display: inline-block; vertical-align: middle; border: 1px solid #000; padding: 3px 8px; min-width: 100px; font-weight: bold; font-family: monospace;">
-                            {{ $household->household_code ?? '—' }}
+                            {{ $household?->household_code ?? '—' }}
                         </div>
                         <div style="font-size: 6.5pt; font-style: italic; color: #444; margin-top: 3px;">
                             Note: The household number shall be filled up by the Barangay Secretary.
