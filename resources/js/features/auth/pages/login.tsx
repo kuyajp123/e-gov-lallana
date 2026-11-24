@@ -1,6 +1,3 @@
-import { Head, Link, useForm } from '@inertiajs/react';
-import { ArrowLeft } from 'lucide-react';
-import React, { useState } from 'react';
 import { home, register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
@@ -12,6 +9,9 @@ import { Checkbox } from '@/shared/components/ui/checkbox';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { useTranslation } from '@/shared/hooks/use-translation';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { ArrowLeft } from 'lucide-react';
+import React, { useState } from 'react';
 
 type Props = {
     status?: string;
@@ -88,8 +88,7 @@ export default function Login({ status, canResetPassword }: Props) {
                                     Cavite
                                 </span>
                                 <span className="block text-xs font-medium text-white/70">
-                                    Local Government Electronic Information
-                                    System
+                                    Electronic Government Services
                                 </span>
                             </div>
                         </div>

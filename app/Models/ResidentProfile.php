@@ -56,14 +56,20 @@ class ResidentProfile extends Model
         'date_of_residency',
         'occupation',
         'educational_attainment',
+        'educational_status',
         'employment_status',
         'is_voter',
         'voter_id_number',
+        'philsys_card_no',
+        'birth_place',
         'senior_citizen_status',
         'pwd_status',
         'pwd_id_number',
         'solo_parent_status',
         'solo_parent_id_number',
+        'is_ofw',
+        'is_ip',
+        'is_out_of_school',
         'avatar_file_id',
         'government_id_file_id',
     ];
@@ -75,6 +81,9 @@ class ResidentProfile extends Model
         'senior_citizen_status' => 'boolean',
         'pwd_status' => 'boolean',
         'solo_parent_status' => 'boolean',
+        'is_ofw' => 'boolean',
+        'is_ip' => 'boolean',
+        'is_out_of_school' => 'boolean',
     ];
 
     /**

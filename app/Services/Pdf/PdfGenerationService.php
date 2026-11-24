@@ -6,11 +6,14 @@ use App\Enums\DocumentRequestStatus;
 use App\Models\DocumentRequest;
 use App\Models\FileRecord;
 use App\Models\Household;
+use App\Models\HouseholdMember;
+use App\Models\ResidentProfile;
 use App\Models\User;
 use App\Services\Files\FileUploadService;
 use App\Services\QrCode\QrCodeService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use Spatie\LaravelPdf\Facades\Pdf;
 
@@ -215,6 +218,503 @@ class PdfGenerationService
             ->name('RBI-Summary-'.now()->format('Ymd').'.pdf');
 
         return $pdfBuilder->generatePdfContent();
+    }
+
+    /**
+     * Generate official DILG RBI Form A (Revised 2024) for a Household.
+     */
+    public function generateRbiFormA(Household $household, ?User $issuer = null): string
+    {
+        @ini_set('memory_limit', '512M');
+
+        $household->loadMissing([
+            'familyHead.residentProfile',
+            'members.user.residentProfile',
+        ]);
+
+        $members = [];
+
+        // 1. Family head if exists
+        $head = $household->familyHead;
+        $headProfile = $head?->residentProfile;
+        if ($headProfile) {
+            $age = $headProfile->birthdate ? Carbon::parse($headProfile->birthdate)->age : null;
+            $sectors = [];
+            if ($headProfile->employment_status === 'employed' || ! empty($headProfile->occupation)) {
+                $sectors[] = 'Labor/Employed';
+            } elseif ($headProfile->employment_status === 'unemployed') {
+                $sectors[] = 'Unemployed';
+            }
+            if ($headProfile->pwd_status) {
+                $sectors[] = 'PWD';
+            }
+            if ($headProfile->is_ofw) {
+                $sectors[] = 'OFW';
+            }
+            if ($headProfile->solo_parent_status) {
+                $sectors[] = 'Solo Parent';
+            }
+            if ($headProfile->is_out_of_school) {
+                if ($age !== null && $age >= 15 && $age <= 24) {
+                    $sectors[] = 'OSY';
+                } elseif ($age !== null && $age >= 6 && $age <= 14) {
+                    $sectors[] = 'OSC';
+                } else {
+                    $sectors[] = 'Out of School';
+                }
+            }
+            if ($headProfile->is_ip) {
+                $sectors[] = 'IP';
+            }
+
+            $members[] = [
+                'last_name' => $headProfile->last_name,
+                'first_name' => $headProfile->first_name,
+                'middle_name' => $headProfile->middle_name,
+                'suffix' => $headProfile->suffix,
+                'birth_place' => $headProfile->birth_place,
+                'birthdate_formatted' => $headProfile->birthdate ? Carbon::parse($headProfile->birthdate)->format('m/d/Y') : '—',
+                'age' => $age,
+                'gender' => ucfirst($headProfile->gender ?? '—'),
+                'civil_status' => ucfirst($headProfile->civil_status ?? '—'),
+                'citizenship' => $headProfile->citizenship ?: 'Filipino',
+                'occupation' => $headProfile->occupation,
+                'sectors_formatted' => implode(', ', $sectors),
+            ];
+        }
+
+        // 2. Household members
+        foreach ($household->members as $member) {
+            if ($head && $member->user_id === $head->id) {
+                continue; // Already included as head
+            }
+
+            $profile = $member->user?->residentProfile;
+            $birthdate = $profile->birthdate ?? $member->birthdate;
+            $age = $birthdate ? Carbon::parse($birthdate)->age : null;
+
+            $isOfw = (bool) ($profile->is_ofw ?? $member->is_ofw);
+            $isIp = (bool) ($profile->is_ip ?? $member->is_ip);
+            $isPwd = (bool) ($profile->pwd_status ?? $member->pwd_status);
+            $isSoloParent = (bool) ($profile->solo_parent_status ?? $member->solo_parent_status);
+            $isOutOfSchool = (bool) ($profile->is_out_of_school ?? $member->is_out_of_school);
+            $occupation = $profile->occupation ?? $member->occupation;
+            $employmentStatus = $profile?->employment_status;
+
+            $sectors = [];
+            if ($employmentStatus === 'employed' || (! empty($occupation) && $occupation !== 'None')) {
+                $sectors[] = 'Labor/Employed';
+            } elseif ($employmentStatus === 'unemployed') {
+                $sectors[] = 'Unemployed';
+            }
+            if ($isPwd) {
+                $sectors[] = 'PWD';
+            }
+            if ($isOfw) {
+                $sectors[] = 'OFW';
+            }
+            if ($isSoloParent) {
+                $sectors[] = 'Solo Parent';
+            }
+            if ($isOutOfSchool) {
+                if ($age !== null && $age >= 15 && $age <= 24) {
+                    $sectors[] = 'OSY';
+                } elseif ($age !== null && $age >= 6 && $age <= 14) {
+                    $sectors[] = 'OSC';
+                } else {
+                    $sectors[] = 'Out of School';
+                }
+            }
+            if ($isIp) {
+                $sectors[] = 'IP';
+            }
+
+            $members[] = [
+                'last_name' => $profile->last_name ?? $member->last_name,
+                'first_name' => $profile->first_name ?? $member->first_name,
+                'middle_name' => $profile->middle_name ?? $member->middle_name,
+                'suffix' => $profile->suffix ?? $member->suffix,
+                'birth_place' => $profile->birth_place ?? $member->birth_place,
+                'birthdate_formatted' => $birthdate ? Carbon::parse($birthdate)->format('m/d/Y') : '—',
+                'age' => $age,
+                'gender' => ucfirst($profile->gender ?? $member->gender ?? '—'),
+                'civil_status' => ucfirst($profile->civil_status ?? $member->civil_status ?? '—'),
+                'citizenship' => $profile->citizenship ?? $member->citizenship ?? 'Filipino',
+                'occupation' => $occupation,
+                'sectors_formatted' => implode(', ', $sectors),
+            ];
+        }
+
+        $viewData = [
+            'household' => $household,
+            'members' => $members,
+            'headName' => $headProfile->full_name ?? ($head->name ?? 'Head of Household'),
+            'officials' => $this->getDefaultOfficials(),
+            'region' => 'REGION IV-A (CALABARZON)',
+            'province' => 'CAVITE',
+            'city' => 'TRECE MARTIRES CITY',
+            'barangay' => 'BARANGAY LALLANA',
+        ];
+
+        return Pdf::view('pdf.reports.rbi-form-a', $viewData)
+            ->landscape()
+            ->format('A4')
+            ->name("RBI-Form-A-{$household->household_code}.pdf")
+            ->generatePdfContent();
+    }
+
+    /**
+     * Generate official DILG RBI Form B (Revised 2024) for an Individual Inhabitant.
+     */
+    public function generateRbiFormB(ResidentProfile $resident, ?User $issuer = null): string
+    {
+        @ini_set('memory_limit', '512M');
+
+        $resident->loadMissing('user');
+
+        $householdMembership = HouseholdMember::query()
+            ->where('user_id', $resident->user_id)
+            ->with('household')
+            ->first();
+
+        $household = $householdMembership->household
+            ?? Household::where('family_head_id', $resident->user_id)->first();
+
+        $viewData = [
+            'resident' => $resident,
+            'user' => $resident->user,
+            'household' => $household,
+            'officials' => $this->getDefaultOfficials(),
+            'region' => 'REGION IV-A (CALABARZON)',
+            'province' => 'CAVITE',
+            'city' => 'TRECE MARTIRES CITY',
+            'barangay' => 'BARANGAY LALLANA',
+        ];
+
+        return Pdf::view('pdf.reports.rbi-form-b', $viewData)
+            ->format('A4')
+            ->name("RBI-Form-B-{$resident->last_name}-{$resident->id}.pdf")
+            ->generatePdfContent();
+    }
+
+    /**
+     * Generate official DILG RBI Form C (Revised 2024) Semestral Monitoring Report.
+     */
+    public function generateRbiFormC(?int $year = null, ?string $semester = null, ?User $issuer = null): string
+    {
+        @ini_set('memory_limit', '512M');
+
+        $reportingYear = $year ?? (int) now()->year;
+        $sem = $semester === '2nd' ? '2nd' : '1st';
+
+        $cutoffDate = $sem === '2nd'
+            ? Carbon::create($reportingYear, 12, 31, 23, 59, 59)
+            : Carbon::create($reportingYear, 6, 30, 23, 59, 59);
+
+        // Fetch households created on or before cutoff
+        $households = Household::where('created_at', '<=', $cutoffDate)->get();
+        $totalHouseholds = $households->count();
+
+        // Collect all distinct inhabitants up to cutoff date
+        $allProfiles = ResidentProfile::where('created_at', '<=', $cutoffDate)->get();
+        $nonUserProfileMembers = HouseholdMember::whereNull('user_id')
+            ->where('created_at', '<=', $cutoffDate)
+            ->get();
+
+        $inhabitants = collect();
+
+        foreach ($allProfiles as $p) {
+            $birthdate = $p->birthdate;
+            $age = $birthdate ? Carbon::parse($birthdate)->age : null;
+            $inhabitants->push([
+                'age' => $age,
+                'gender' => strtolower((string) $p->gender),
+                'civil_status' => strtolower((string) $p->civil_status),
+                'citizenship' => strtolower((string) $p->citizenship),
+                'employment_status' => strtolower((string) $p->employment_status),
+                'occupation' => $p->occupation,
+                'is_pwd' => (bool) $p->pwd_status,
+                'is_ofw' => (bool) $p->is_ofw,
+                'is_solo_parent' => (bool) $p->solo_parent_status,
+                'is_ip' => (bool) $p->is_ip,
+                'is_out_of_school' => (bool) $p->is_out_of_school,
+            ]);
+        }
+
+        foreach ($nonUserProfileMembers as $m) {
+            $birthdate = $m->birthdate;
+            $age = $birthdate ? Carbon::parse($birthdate)->age : null;
+            $inhabitants->push([
+                'age' => $age,
+                'gender' => strtolower((string) $m->gender),
+                'civil_status' => strtolower((string) $m->civil_status),
+                'citizenship' => strtolower((string) $m->citizenship),
+                'employment_status' => ! empty($m->occupation) ? 'employed' : 'unemployed',
+                'occupation' => $m->occupation,
+                'is_pwd' => (bool) $m->pwd_status,
+                'is_ofw' => (bool) $m->is_ofw,
+                'is_solo_parent' => (bool) $m->solo_parent_status,
+                'is_ip' => (bool) $m->is_ip,
+                'is_out_of_school' => (bool) $m->is_out_of_school,
+            ]);
+        }
+
+        $totalInhabitants = $inhabitants->count();
+
+        // Define 17 age brackets
+        $bracketDefs = [
+            ['label' => 'Under 5 years old', 'min' => 0, 'max' => 4],
+            ['label' => '5-9 years old', 'min' => 5, 'max' => 9],
+            ['label' => '10-14 years old', 'min' => 10, 'max' => 14],
+            ['label' => '15-19 years old', 'min' => 15, 'max' => 19],
+            ['label' => '20-24 years old', 'min' => 20, 'max' => 24],
+            ['label' => '25-29 years old', 'min' => 25, 'max' => 29],
+            ['label' => '30-34 years old', 'min' => 30, 'max' => 34],
+            ['label' => '35-39 years old', 'min' => 35, 'max' => 39],
+            ['label' => '40-44 years old', 'min' => 40, 'max' => 44],
+            ['label' => '45-49 years old', 'min' => 45, 'max' => 49],
+            ['label' => '50-54 years old', 'min' => 50, 'max' => 54],
+            ['label' => '55-59 years old', 'min' => 55, 'max' => 59],
+            ['label' => '60-64 years old', 'min' => 60, 'max' => 64],
+            ['label' => '65-69 years old', 'min' => 65, 'max' => 69],
+            ['label' => '70-74 years old', 'min' => 70, 'max' => 74],
+            ['label' => '75-79 years old', 'min' => 75, 'max' => 79],
+            ['label' => '80 years old and over', 'min' => 80, 'max' => 150],
+        ];
+
+        $ageBrackets = [];
+        foreach ($bracketDefs as $def) {
+            $filtered = $inhabitants->filter(function ($i) use ($def) {
+                return $i['age'] !== null && $i['age'] >= $def['min'] && $i['age'] <= $def['max'];
+            });
+
+            $male = $filtered->where('gender', 'male')->count();
+            $female = $filtered->where('gender', 'female')->count();
+
+            $ageBrackets[] = [
+                'label' => $def['label'],
+                'male' => $male,
+                'female' => $female,
+                'total' => $filtered->count(),
+            ];
+        }
+
+        // Sector counts
+        $laborForce = $inhabitants->filter(fn ($i) => in_array($i['employment_status'], ['employed', 'self_employed']) || (! empty($i['occupation']) && $i['occupation'] !== 'None'));
+        $unemployed = $inhabitants->filter(fn ($i) => $i['employment_status'] === 'unemployed' || ($i['age'] !== null && $i['age'] >= 18 && empty($i['occupation'])));
+        $osc = $inhabitants->filter(fn ($i) => $i['is_out_of_school'] && $i['age'] !== null && $i['age'] >= 6 && $i['age'] <= 14);
+        $osy = $inhabitants->filter(fn ($i) => $i['is_out_of_school'] && $i['age'] !== null && $i['age'] >= 15 && $i['age'] <= 24);
+        $pwds = $inhabitants->filter(fn ($i) => $i['is_pwd']);
+        $ofws = $inhabitants->filter(fn ($i) => $i['is_ofw']);
+        $soloParents = $inhabitants->filter(fn ($i) => $i['is_solo_parent']);
+        $ips = $inhabitants->filter(fn ($i) => $i['is_ip']);
+        $single = $inhabitants->filter(fn ($i) => $i['civil_status'] === 'single');
+        $married = $inhabitants->filter(fn ($i) => $i['civil_status'] === 'married');
+        $filipino = $inhabitants->filter(fn ($i) => empty($i['citizenship']) || str_contains($i['citizenship'], 'filipino'));
+        $foreigner = $inhabitants->filter(fn ($i) => ! empty($i['citizenship']) && ! str_contains($i['citizenship'], 'filipino'));
+
+        $sectors = [
+            [
+                'label' => 'Labor Force',
+                'male' => $laborForce->where('gender', 'male')->count(),
+                'female' => $laborForce->where('gender', 'female')->count(),
+                'total' => $laborForce->count(),
+            ],
+            [
+                'label' => 'Unemployed',
+                'male' => $unemployed->where('gender', 'male')->count(),
+                'female' => $unemployed->where('gender', 'female')->count(),
+                'total' => $unemployed->count(),
+            ],
+            [
+                'label' => 'Out of School Children (OSC) (6-14 years old)',
+                'male' => $osc->where('gender', 'male')->count(),
+                'female' => $osc->where('gender', 'female')->count(),
+                'total' => $osc->count(),
+            ],
+            [
+                'label' => 'Out of School Youth (OSY) (15-24 years old)',
+                'male' => $osy->where('gender', 'male')->count(),
+                'female' => $osy->where('gender', 'female')->count(),
+                'total' => $osy->count(),
+            ],
+            [
+                'label' => 'Person with Disabilities (PWDs)',
+                'male' => $pwds->where('gender', 'male')->count(),
+                'female' => $pwds->where('gender', 'female')->count(),
+                'total' => $pwds->count(),
+            ],
+            [
+                'label' => 'Overseas Filipino Workers (OFWs)',
+                'male' => $ofws->where('gender', 'male')->count(),
+                'female' => $ofws->where('gender', 'female')->count(),
+                'total' => $ofws->count(),
+            ],
+            [
+                'label' => 'Solo Parents',
+                'male' => $soloParents->where('gender', 'male')->count(),
+                'female' => $soloParents->where('gender', 'female')->count(),
+                'total' => $soloParents->count(),
+            ],
+            [
+                'label' => 'Indigenous Peoples (IPs)',
+                'male' => $ips->where('gender', 'male')->count(),
+                'female' => $ips->where('gender', 'female')->count(),
+                'total' => $ips->count(),
+            ],
+            [
+                'label' => 'Civil Status : Single',
+                'male' => $single->where('gender', 'male')->count(),
+                'female' => $single->where('gender', 'female')->count(),
+                'total' => $single->count(),
+            ],
+            [
+                'label' => 'Civil Status : Married',
+                'male' => $married->where('gender', 'male')->count(),
+                'female' => $married->where('gender', 'female')->count(),
+                'total' => $married->count(),
+            ],
+            [
+                'label' => 'Citizenship : Filipino',
+                'male' => $filipino->where('gender', 'male')->count(),
+                'female' => $filipino->where('gender', 'female')->count(),
+                'total' => $filipino->count(),
+            ],
+            [
+                'label' => 'Citizenship : Foreigner',
+                'male' => $foreigner->where('gender', 'male')->count(),
+                'female' => $foreigner->where('gender', 'female')->count(),
+                'total' => $foreigner->count(),
+            ],
+        ];
+
+        $viewData = [
+            'year' => $reportingYear,
+            'semester' => $sem,
+            'stats' => [
+                'total_inhabitants' => $totalInhabitants,
+                'total_households' => $totalHouseholds,
+                'total_families' => $totalHouseholds,
+            ],
+            'ageBrackets' => $ageBrackets,
+            'sectors' => $sectors,
+            'officials' => $this->getDefaultOfficials(),
+            'region' => 'REGION IV-A (CALABARZON)',
+            'province' => 'CAVITE',
+            'city' => 'TRECE MARTIRES CITY',
+            'barangay' => 'BARANGAY LALLANA',
+        ];
+
+        return Pdf::view('pdf.reports.rbi-form-c', $viewData)
+            ->format('A4')
+            ->name("RBI-Form-C-{$reportingYear}-{$sem}-Semester.pdf")
+            ->generatePdfContent();
+    }
+
+    /**
+     * Generate an official landscape PDF masterlist report for resident profiles with active filter annotations.
+     *
+     * @param  Collection<int, ResidentProfile>|\Illuminate\Database\Eloquent\Collection<int, ResidentProfile>  $profiles
+     * @param  array<int, string>  $activeFilters
+     */
+    public function generateResidentRegistryReport($profiles, array $activeFilters = [], ?User $issuer = null): string
+    {
+        @ini_set('memory_limit', '512M');
+
+        $userIds = $profiles->pluck('user_id')->filter()->unique()->values()->all();
+
+        $householdMemberships = HouseholdMember::query()
+            ->with('household')
+            ->whereIn('user_id', $userIds)
+            ->get()
+            ->keyBy('user_id');
+
+        $headedHouseholds = Household::query()
+            ->whereIn('family_head_id', $userIds)
+            ->get()
+            ->keyBy('family_head_id');
+
+        $rows = [];
+        foreach ($profiles as $index => $profile) {
+            $age = $profile->birthdate ? Carbon::parse($profile->birthdate)->age : null;
+            $userId = $profile->user_id;
+
+            $household = $householdMemberships->get($userId)->household
+                ?? $headedHouseholds->get($userId);
+
+            $address = $household
+                ? ($household->purok_sitio ? $household->purok_sitio.', '.$household->address : $household->address)
+                : 'Barangay Lallana';
+
+            $specialStatuses = [];
+            if ($profile->senior_citizen_status || ($age !== null && $age >= 60)) {
+                $specialStatuses[] = 'Senior';
+            }
+            if ($profile->pwd_status) {
+                $specialStatuses[] = 'PWD';
+            }
+            if ($profile->solo_parent_status) {
+                $specialStatuses[] = 'Solo Parent';
+            }
+            if ($profile->is_ofw) {
+                $specialStatuses[] = 'OFW';
+            }
+            if ($profile->is_ip) {
+                $specialStatuses[] = 'IP';
+            }
+            if ($profile->is_out_of_school) {
+                if ($age !== null && $age >= 15 && $age <= 24) {
+                    $specialStatuses[] = 'OSY';
+                } elseif ($age !== null && $age >= 6 && $age <= 14) {
+                    $specialStatuses[] = 'OSC';
+                } else {
+                    $specialStatuses[] = 'OSC/OSY';
+                }
+            }
+
+            $rows[] = [
+                'index' => $index + 1,
+                'full_name' => $profile->last_name.', '.$profile->first_name.($profile->middle_name ? ' '.$profile->middle_name : '').($profile->suffix ? ' '.$profile->suffix : ''),
+                'birthdate_formatted' => $profile->birthdate ? Carbon::parse($profile->birthdate)->format('m/d/Y') : '—',
+                'age' => $age ?? '—',
+                'gender' => ucfirst($profile->gender ?? '—'),
+                'civil_status' => ucfirst($profile->civil_status ?? '—'),
+                'citizenship' => $profile->citizenship ?: 'Filipino',
+                'residency_status' => match ($profile->residency_status) {
+                    'official' => 'Official',
+                    'resident' => 'Resident',
+                    'new_resident' => 'New Resident',
+                    'tenant' => 'Tenant',
+                    'student' => 'Student',
+                    'temporary' => 'Temporary',
+                    default => ucfirst($profile->residency_status ?? 'Official'),
+                },
+                'address' => $address,
+                'occupation' => $profile->occupation ?: (ucfirst($profile->employment_status ?? '') ?: '—'),
+                'is_voter' => $profile->is_voter ? 'Yes' : 'No',
+                'special_statuses' => count($specialStatuses) > 0 ? implode(', ', $specialStatuses) : '—',
+                'phone' => $profile->user->phone_number ?: '—',
+            ];
+        }
+
+        $viewData = [
+            'rows' => $rows,
+            'totalCount' => count($rows),
+            'activeFilters' => $activeFilters,
+            'generatedAt' => now()->format('F d, Y h:i A'),
+            'issuerName' => $issuer ? ($issuer->name.($issuer->role ? ' ('.$issuer->role->name.')' : '')) : 'Barangay Administrator',
+            'officials' => $this->getDefaultOfficials(),
+            'region' => 'REGION IV-A (CALABARZON)',
+            'province' => 'CAVITE',
+            'city' => 'TRECE MARTIRES CITY',
+            'barangay' => 'BARANGAY LALLANA',
+        ];
+
+        return Pdf::view('pdf.reports.resident-registry-list', $viewData)
+            ->landscape()
+            ->format('A4')
+            ->name('Barangay-Lallana-Resident-Registry-'.now()->format('Ymd-His').'.pdf')
+            ->generatePdfContent();
     }
 
     /**

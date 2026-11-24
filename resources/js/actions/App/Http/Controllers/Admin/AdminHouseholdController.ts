@@ -156,6 +156,84 @@ exportRbiPdf.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     exportRbiPdf.form = exportRbiPdfForm
 /**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportFormCPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:498
+ * @route '/admin/households/export/form-c'
+ */
+export const exportFormCPdf = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: exportFormCPdf.url(options),
+    method: 'get',
+})
+
+exportFormCPdf.definition = {
+    methods: ["get","head"],
+    url: '/admin/households/export/form-c',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportFormCPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:498
+ * @route '/admin/households/export/form-c'
+ */
+exportFormCPdf.url = (options?: RouteQueryOptions) => {
+    return exportFormCPdf.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportFormCPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:498
+ * @route '/admin/households/export/form-c'
+ */
+exportFormCPdf.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: exportFormCPdf.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportFormCPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:498
+ * @route '/admin/households/export/form-c'
+ */
+exportFormCPdf.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: exportFormCPdf.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportFormCPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:498
+ * @route '/admin/households/export/form-c'
+ */
+    const exportFormCPdfForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: exportFormCPdf.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportFormCPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:498
+ * @route '/admin/households/export/form-c'
+ */
+        exportFormCPdfForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: exportFormCPdf.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportFormCPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:498
+ * @route '/admin/households/export/form-c'
+ */
+        exportFormCPdfForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: exportFormCPdf.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    exportFormCPdf.form = exportFormCPdfForm
+/**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::show
  * @see app/Http/Controllers/Admin/AdminHouseholdController.php:144
  * @route '/admin/households/{household}'
@@ -257,6 +335,108 @@ show.head = (args: { household: number | { id: number } } | [household: number |
         })
     
     show.form = showForm
+/**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportFormAPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:484
+ * @route '/admin/households/{household}/export/form-a'
+ */
+export const exportFormAPdf = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: exportFormAPdf.url(args, options),
+    method: 'get',
+})
+
+exportFormAPdf.definition = {
+    methods: ["get","head"],
+    url: '/admin/households/{household}/export/form-a',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportFormAPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:484
+ * @route '/admin/households/{household}/export/form-a'
+ */
+exportFormAPdf.url = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { household: args }
+    }
+
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { household: args.id }
+        }
+    
+    if (Array.isArray(args)) {
+        args = {
+                    household: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        household: typeof args.household === 'object'
+                ? args.household.id
+                : args.household,
+                }
+
+    return exportFormAPdf.definition.url
+            .replace('{household}', parsedArgs.household.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportFormAPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:484
+ * @route '/admin/households/{household}/export/form-a'
+ */
+exportFormAPdf.get = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: exportFormAPdf.url(args, options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportFormAPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:484
+ * @route '/admin/households/{household}/export/form-a'
+ */
+exportFormAPdf.head = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: exportFormAPdf.url(args, options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportFormAPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:484
+ * @route '/admin/households/{household}/export/form-a'
+ */
+    const exportFormAPdfForm = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: exportFormAPdf.url(args, options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportFormAPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:484
+ * @route '/admin/households/{household}/export/form-a'
+ */
+        exportFormAPdfForm.get = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: exportFormAPdf.url(args, options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\Admin\AdminHouseholdController::exportFormAPdf
+ * @see app/Http/Controllers/Admin/AdminHouseholdController.php:484
+ * @route '/admin/households/{household}/export/form-a'
+ */
+        exportFormAPdfForm.head = (args: { household: number | { id: number } } | [household: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: exportFormAPdf.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    exportFormAPdf.form = exportFormAPdfForm
 /**
 * @see \App\Http\Controllers\Admin\AdminHouseholdController::verify
  * @see app/Http/Controllers/Admin/AdminHouseholdController.php:261
@@ -573,6 +753,6 @@ transferHead.post = (args: { household: number | { id: number } } | [household: 
         })
     
     transferHead.form = transferHeadForm
-const AdminHouseholdController = { index, exportRbiPdf, show, verify, restrict, archive, transferHead }
+const AdminHouseholdController = { index, exportRbiPdf, exportFormCPdf, show, exportFormAPdf, verify, restrict, archive, transferHead }
 
 export default AdminHouseholdController

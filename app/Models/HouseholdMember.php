@@ -48,16 +48,28 @@ class HouseholdMember extends Model
         'relationship_to_head',
         'is_family_head',
         'birthdate',
+        'birth_place',
         'gender',
         'civil_status',
+        'citizenship',
         'occupation',
         'residency_status',
+        'is_ofw',
+        'is_ip',
+        'pwd_status',
+        'solo_parent_status',
+        'is_out_of_school',
     ];
 
     protected $casts = [
         'is_family_head' => 'boolean',
         'birthdate' => 'date',
         'invited_at' => 'datetime',
+        'is_ofw' => 'boolean',
+        'is_ip' => 'boolean',
+        'pwd_status' => 'boolean',
+        'solo_parent_status' => 'boolean',
+        'is_out_of_school' => 'boolean',
     ];
 
     protected static function booted(): void

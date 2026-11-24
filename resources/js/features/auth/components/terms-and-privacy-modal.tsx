@@ -429,7 +429,7 @@ export function TermsAndPrivacyModal({
                             {hasScrolledToBottom && (
                                 <Check className="size-4" />
                             )}
-                            <span>I Have Read & Agree to Terms</span>
+                            <span>I have read & agree to terms</span>
                         </Button>
                     </div>
                 </DialogFooter>

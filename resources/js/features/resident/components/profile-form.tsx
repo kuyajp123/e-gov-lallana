@@ -31,6 +31,7 @@ export interface ResidentProfileData {
     last_name: string;
     suffix?: string | null;
     birthdate: string;
+    birth_place?: string | null;
     gender: string;
     civil_status: string;
     citizenship: string;
@@ -39,14 +40,19 @@ export interface ResidentProfileData {
     date_of_residency?: string | null;
     occupation?: string | null;
     educational_attainment?: string | null;
+    educational_status?: string | null;
     employment_status?: string | null;
     is_voter: boolean;
     voter_id_number?: string | null;
+    philsys_card_no?: string | null;
     senior_citizen_status: boolean;
     pwd_status: boolean;
     pwd_id_number?: string | null;
     solo_parent_status: boolean;
     solo_parent_id_number?: string | null;
+    is_ofw?: boolean;
+    is_ip?: boolean;
+    is_out_of_school?: boolean;
     government_id_file_id?: number | null;
     government_id_url?: string | null;
     avatar_url?: string | null;
@@ -88,6 +94,7 @@ export function ProfileForm({
         email: user?.email ?? '',
         phone_number: user?.phone_number ?? '',
         birthdate: profile?.birthdate ? profile.birthdate.split('T')[0] : '',
+        birth_place: profile?.birth_place ?? '',
         gender: profile?.gender ?? 'male',
         civil_status: profile?.civil_status ?? 'single',
         citizenship: profile?.citizenship ?? 'Filipino',
@@ -98,14 +105,19 @@ export function ProfileForm({
             : '',
         occupation: profile?.occupation ?? '',
         educational_attainment: profile?.educational_attainment ?? 'college',
+        educational_status: profile?.educational_status ?? '',
         employment_status: profile?.employment_status ?? 'employed',
         is_voter: profile?.is_voter ?? false,
         voter_id_number: profile?.voter_id_number ?? '',
+        philsys_card_no: profile?.philsys_card_no ?? '',
         senior_citizen_status: profile?.senior_citizen_status ?? false,
         pwd_status: profile?.pwd_status ?? false,
         pwd_id_number: profile?.pwd_id_number ?? '',
         solo_parent_status: profile?.solo_parent_status ?? false,
         solo_parent_id_number: profile?.solo_parent_id_number ?? '',
+        is_ofw: profile?.is_ofw ?? false,
+        is_ip: profile?.is_ip ?? false,
+        is_out_of_school: profile?.is_out_of_school ?? false,
         government_id: null as File | null,
     });
 
@@ -272,6 +284,24 @@ export function ProfileForm({
                     </div>
 
                     <div className="space-y-2">
+                        <Label htmlFor="birth_place">Place of Birth</Label>
+                        <Input
+                            id="birth_place"
+                            name="birth_place"
+                            value={data.birth_place}
+                            onChange={(e) =>
+                                setData('birth_place', e.target.value)
+                            }
+                            placeholder="City/Municipality, Province"
+                        />
+                        {errors.birth_place && (
+                            <p className="text-xs text-destructive">
+                                {errors.birth_place}
+                            </p>
+                        )}
+                    </div>
+
+                    <div className="space-y-2">
                         <Label htmlFor="gender">
                             Sex / Gender{' '}
                             <span className="text-destructive">*</span>
@@ -350,7 +380,27 @@ export function ProfileForm({
                         )}
                     </div>
 
-                    <div className="space-y-2 sm:col-span-2">
+                    <div className="space-y-2">
+                        <Label htmlFor="philsys_card_no">
+                            PhilSys Card No. (National ID)
+                        </Label>
+                        <Input
+                            id="philsys_card_no"
+                            name="philsys_card_no"
+                            value={data.philsys_card_no}
+                            onChange={(e) =>
+                                setData('philsys_card_no', e.target.value)
+                            }
+                            placeholder="e.g. 1234-5678-9012-3456"
+                        />
+                        {errors.philsys_card_no && (
+                            <p className="text-xs text-destructive">
+                                {errors.philsys_card_no}
+                            </p>
+                        )}
+                    </div>
+
+                    <div className="space-y-2">
                         <Label htmlFor="religion">Religion</Label>
                         <Input
                             id="religion"
@@ -551,6 +601,35 @@ export function ProfileForm({
                         {errors.educational_attainment && (
                             <p className="text-xs text-destructive">
                                 {errors.educational_attainment}
+                            </p>
+                        )}
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="educational_status">
+                            Educational Status
+                        </Label>
+                        <Select
+                            value={data.educational_status}
+                            onValueChange={(val) =>
+                                setData('educational_status', val)
+                            }
+                        >
+                            <SelectTrigger id="educational_status">
+                                <SelectValue placeholder="Select status (Optional)" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="graduate">
+                                    Graduate
+                                </SelectItem>
+                                <SelectItem value="undergraduate">
+                                    Undergraduate
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        {errors.educational_status && (
+                            <p className="text-xs text-destructive">
+                                {errors.educational_status}
                             </p>
                         )}
                     </div>
@@ -812,6 +891,84 @@ export function ProfileForm({
                                 )}
                             </div>
                         )}
+                    </div>
+
+                    <div className="rounded-lg border border-border p-4">
+                        <div className="flex items-start space-x-3">
+                            <Checkbox
+                                id="is_ofw"
+                                checked={data.is_ofw}
+                                onCheckedChange={(checked) =>
+                                    setData('is_ofw', Boolean(checked))
+                                }
+                                className="mt-0.5"
+                            />
+                            <div className="space-y-1">
+                                <Label
+                                    htmlFor="is_ofw"
+                                    className="cursor-pointer font-medium"
+                                >
+                                    Overseas Filipino Worker (OFW)
+                                </Label>
+                                <p className="text-xs text-muted-foreground">
+                                    Currently working abroad or holding an
+                                    overseas employment contract.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="rounded-lg border border-border p-4">
+                        <div className="flex items-start space-x-3">
+                            <Checkbox
+                                id="is_ip"
+                                checked={data.is_ip}
+                                onCheckedChange={(checked) =>
+                                    setData('is_ip', Boolean(checked))
+                                }
+                                className="mt-0.5"
+                            />
+                            <div className="space-y-1">
+                                <Label
+                                    htmlFor="is_ip"
+                                    className="cursor-pointer font-medium"
+                                >
+                                    Indigenous Peoples (IP)
+                                </Label>
+                                <p className="text-xs text-muted-foreground">
+                                    Affiliated with an officially recognized
+                                    Indigenous Cultural Community.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="rounded-lg border border-border p-4">
+                        <div className="flex items-start space-x-3">
+                            <Checkbox
+                                id="is_out_of_school"
+                                checked={data.is_out_of_school}
+                                onCheckedChange={(checked) =>
+                                    setData(
+                                        'is_out_of_school',
+                                        Boolean(checked),
+                                    )
+                                }
+                                className="mt-0.5"
+                            />
+                            <div className="space-y-1">
+                                <Label
+                                    htmlFor="is_out_of_school"
+                                    className="cursor-pointer font-medium"
+                                >
+                                    Out of School (OSC / OSY)
+                                </Label>
+                                <p className="text-xs text-muted-foreground">
+                                    Indicate if currently an Out of School Child
+                                    (6–14 yrs) or Youth (15–24 yrs).
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
