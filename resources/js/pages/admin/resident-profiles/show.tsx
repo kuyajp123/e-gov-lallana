@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import {
     ArrowLeft,
     Eye,
+    FileDown,
     FileText,
     Home,
     Trash2,
@@ -36,6 +37,7 @@ interface ResidentProfileDetails {
     suffix?: string | null;
     birthdate?: string | null;
     birthdate_formatted?: string | null;
+    birth_place?: string | null;
     age?: number | null;
     gender: string;
     civil_status: string;
@@ -45,14 +47,19 @@ interface ResidentProfileDetails {
     date_of_residency?: string | null;
     occupation: string;
     educational_attainment: string;
+    educational_status?: string | null;
     employment_status: string;
     is_voter: boolean;
     voter_id_number?: string | null;
+    philsys_card_no?: string | null;
     senior_citizen_status: boolean;
     pwd_status: boolean;
     pwd_id_number?: string | null;
     solo_parent_status: boolean;
     solo_parent_id_number?: string | null;
+    is_ofw?: boolean;
+    is_ip?: boolean;
+    is_out_of_school?: boolean;
     avatar_url?: string | null;
     government_id: {
         file_name: string;
@@ -142,6 +149,21 @@ export default function AdminResidentShow({
                     </div>
 
                     <div className="flex items-center gap-2">
+                        <Button
+                            asChild
+                            variant="outline"
+                            size="sm"
+                            className="gap-1.5 border-emerald-500/40 text-xs text-emerald-600 hover:bg-emerald-500/10 dark:text-emerald-400"
+                        >
+                            <a
+                                href={`/admin/resident-profiles/${residentProfile.id}/export/form-b`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <FileDown className="size-3.5" />
+                                Export Form B (PDF)
+                            </a>
+                        </Button>
                         {residentProfile.household && (
                             <Button
                                 asChild
@@ -246,6 +268,23 @@ export default function AdminResidentShow({
                                         </span>
                                         <p className="mt-0.5 font-semibold text-foreground">
                                             {residentProfile.religion}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <span className="text-muted-foreground">
+                                            Place of Birth
+                                        </span>
+                                        <p className="mt-0.5 font-semibold text-foreground">
+                                            {residentProfile.birth_place || '—'}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <span className="text-muted-foreground">
+                                            PhilSys Card No. (National ID)
+                                        </span>
+                                        <p className="mt-0.5 font-mono font-semibold text-foreground">
+                                            {residentProfile.philsys_card_no ||
+                                                '—'}
                                         </p>
                                     </div>
                                 </div>
@@ -536,6 +575,51 @@ export default function AdminResidentShow({
                                             </span>
                                         </div>
                                     )}
+
+                                <div className="flex items-center justify-between border-t border-border/40 py-1.5">
+                                    <span className="text-muted-foreground">
+                                        Overseas Filipino Worker (OFW):
+                                    </span>
+                                    <span className="font-semibold text-foreground">
+                                        {residentProfile.is_ofw ? (
+                                            <span className="text-amber-600 dark:text-amber-400">
+                                                Yes
+                                            </span>
+                                        ) : (
+                                            'No'
+                                        )}
+                                    </span>
+                                </div>
+
+                                <div className="flex items-center justify-between border-t border-border/40 py-1.5">
+                                    <span className="text-muted-foreground">
+                                        Indigenous Peoples (IP):
+                                    </span>
+                                    <span className="font-semibold text-foreground">
+                                        {residentProfile.is_ip ? (
+                                            <span className="text-teal-600 dark:text-teal-400">
+                                                Yes
+                                            </span>
+                                        ) : (
+                                            'No'
+                                        )}
+                                    </span>
+                                </div>
+
+                                <div className="flex items-center justify-between border-t border-border/40 py-1.5">
+                                    <span className="text-muted-foreground">
+                                        Out of School (OSC / OSY):
+                                    </span>
+                                    <span className="font-semibold text-foreground">
+                                        {residentProfile.is_out_of_school ? (
+                                            <span className="text-orange-600 dark:text-orange-400">
+                                                Yes
+                                            </span>
+                                        ) : (
+                                            'No'
+                                        )}
+                                    </span>
+                                </div>
                             </CardContent>
                         </Card>
 

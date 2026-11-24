@@ -15,6 +15,7 @@ import {
     AdminRoleBadge,
     ResidentProfileDrawer,
 } from '@/features/admin/resident-profiles/components/resident-profile-drawer';
+import { RbiExportModal } from '@/shared/components/rbi-export-modal';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import {
@@ -88,6 +89,7 @@ export default function AdminResidentIndex({
     const [selectedResident, setSelectedResident] =
         useState<AdminResidentProfileItem | null>(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
     const updateFilter = (newParams: Record<string, any>) => {
         router.get(
@@ -153,19 +155,13 @@ export default function AdminResidentIndex({
 
                     <div className="flex items-center gap-2">
                         <Button
-                            asChild
                             variant="outline"
                             size="sm"
+                            onClick={() => setIsExportModalOpen(true)}
                             className="h-8 gap-1.5 border-emerald-500/40 text-xs text-emerald-600 hover:bg-emerald-500/10 dark:text-emerald-400"
                         >
-                            <a
-                                href="/admin/households/export/rbi-pdf"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <FileDown className="size-3.5" />
-                                Export RBI Report (PDF)
-                            </a>
+                            <FileDown className="size-3.5" />
+                            Export RBI Reports (PDF)
                         </Button>
                         <Button
                             asChild
@@ -549,6 +545,22 @@ export default function AdminResidentIndex({
                                                             asChild
                                                             size="sm"
                                                             variant="ghost"
+                                                            className="h-7 w-7 p-0 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-950/50"
+                                                            title="Export RBI Form B (PDF)"
+                                                        >
+                                                            <a
+                                                                href={`/admin/resident-profiles/${res.id}/export/form-b`}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                            >
+                                                                <FileDown className="size-3.5" />
+                                                            </a>
+                                                        </Button>
+
+                                                        <Button
+                                                            asChild
+                                                            size="sm"
+                                                            variant="ghost"
                                                             className="h-7 w-7 p-0"
                                                         >
                                                             <Link
@@ -626,6 +638,12 @@ export default function AdminResidentIndex({
                 isOpen={isDrawerOpen}
                 onClose={() => setIsDrawerOpen(false)}
                 resident={selectedResident}
+            />
+
+            {/* RBI Official Reports Export Modal */}
+            <RbiExportModal
+                isOpen={isExportModalOpen}
+                onClose={() => setIsExportModalOpen(false)}
             />
         </>
     );

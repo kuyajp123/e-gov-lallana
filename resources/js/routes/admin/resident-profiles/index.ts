@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Admin\AdminResidentProfileController::index
- * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:24
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:26
  * @route '/admin/resident-profiles'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\AdminResidentProfileController::index
- * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:24
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:26
  * @route '/admin/resident-profiles'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\AdminResidentProfileController::index
- * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:24
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:26
  * @route '/admin/resident-profiles'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Admin\AdminResidentProfileController::index
- * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:24
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:26
  * @route '/admin/resident-profiles'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Admin\AdminResidentProfileController::index
- * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:24
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:26
  * @route '/admin/resident-profiles'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Admin\AdminResidentProfileController::index
- * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:24
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:26
  * @route '/admin/resident-profiles'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Admin\AdminResidentProfileController::index
- * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:24
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:26
  * @route '/admin/resident-profiles'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Admin\AdminResidentProfileController::show
- * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:138
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:140
  * @route '/admin/resident-profiles/{residentProfile}'
  */
 export const show = (args: { residentProfile: number | { id: number } } | [residentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\AdminResidentProfileController::show
- * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:138
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:140
  * @route '/admin/resident-profiles/{residentProfile}'
  */
 show.url = (args: { residentProfile: number | { id: number } } | [residentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -127,7 +127,7 @@ show.url = (args: { residentProfile: number | { id: number } } | [residentProfil
 
 /**
 * @see \App\Http\Controllers\Admin\AdminResidentProfileController::show
- * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:138
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:140
  * @route '/admin/resident-profiles/{residentProfile}'
  */
 show.get = (args: { residentProfile: number | { id: number } } | [residentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -136,7 +136,7 @@ show.get = (args: { residentProfile: number | { id: number } } | [residentProfil
 })
 /**
 * @see \App\Http\Controllers\Admin\AdminResidentProfileController::show
- * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:138
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:140
  * @route '/admin/resident-profiles/{residentProfile}'
  */
 show.head = (args: { residentProfile: number | { id: number } } | [residentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -146,7 +146,7 @@ show.head = (args: { residentProfile: number | { id: number } } | [residentProfi
 
     /**
 * @see \App\Http\Controllers\Admin\AdminResidentProfileController::show
- * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:138
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:140
  * @route '/admin/resident-profiles/{residentProfile}'
  */
     const showForm = (args: { residentProfile: number | { id: number } } | [residentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -156,7 +156,7 @@ show.head = (args: { residentProfile: number | { id: number } } | [residentProfi
 
             /**
 * @see \App\Http\Controllers\Admin\AdminResidentProfileController::show
- * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:138
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:140
  * @route '/admin/resident-profiles/{residentProfile}'
  */
         showForm.get = (args: { residentProfile: number | { id: number } } | [residentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -165,7 +165,7 @@ show.head = (args: { residentProfile: number | { id: number } } | [residentProfi
         })
             /**
 * @see \App\Http\Controllers\Admin\AdminResidentProfileController::show
- * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:138
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:140
  * @route '/admin/resident-profiles/{residentProfile}'
  */
         showForm.head = (args: { residentProfile: number | { id: number } } | [residentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -180,8 +180,110 @@ show.head = (args: { residentProfile: number | { id: number } } | [residentProfi
     
     show.form = showForm
 /**
+* @see \App\Http\Controllers\Admin\AdminResidentProfileController::exportFormB
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:266
+ * @route '/admin/resident-profiles/{residentProfile}/export/form-b'
+ */
+export const exportFormB = (args: { residentProfile: number | { id: number } } | [residentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: exportFormB.url(args, options),
+    method: 'get',
+})
+
+exportFormB.definition = {
+    methods: ["get","head"],
+    url: '/admin/resident-profiles/{residentProfile}/export/form-b',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\Admin\AdminResidentProfileController::exportFormB
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:266
+ * @route '/admin/resident-profiles/{residentProfile}/export/form-b'
+ */
+exportFormB.url = (args: { residentProfile: number | { id: number } } | [residentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { residentProfile: args }
+    }
+
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { residentProfile: args.id }
+        }
+    
+    if (Array.isArray(args)) {
+        args = {
+                    residentProfile: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        residentProfile: typeof args.residentProfile === 'object'
+                ? args.residentProfile.id
+                : args.residentProfile,
+                }
+
+    return exportFormB.definition.url
+            .replace('{residentProfile}', parsedArgs.residentProfile.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Admin\AdminResidentProfileController::exportFormB
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:266
+ * @route '/admin/resident-profiles/{residentProfile}/export/form-b'
+ */
+exportFormB.get = (args: { residentProfile: number | { id: number } } | [residentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: exportFormB.url(args, options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\Admin\AdminResidentProfileController::exportFormB
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:266
+ * @route '/admin/resident-profiles/{residentProfile}/export/form-b'
+ */
+exportFormB.head = (args: { residentProfile: number | { id: number } } | [residentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: exportFormB.url(args, options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\Admin\AdminResidentProfileController::exportFormB
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:266
+ * @route '/admin/resident-profiles/{residentProfile}/export/form-b'
+ */
+    const exportFormBForm = (args: { residentProfile: number | { id: number } } | [residentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: exportFormB.url(args, options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\Admin\AdminResidentProfileController::exportFormB
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:266
+ * @route '/admin/resident-profiles/{residentProfile}/export/form-b'
+ */
+        exportFormBForm.get = (args: { residentProfile: number | { id: number } } | [residentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: exportFormB.url(args, options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\Admin\AdminResidentProfileController::exportFormB
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:266
+ * @route '/admin/resident-profiles/{residentProfile}/export/form-b'
+ */
+        exportFormBForm.head = (args: { residentProfile: number | { id: number } } | [residentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: exportFormB.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    exportFormB.form = exportFormBForm
+/**
 * @see \App\Http\Controllers\Admin\AdminResidentProfileController::destroy
- * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:233
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:241
  * @route '/admin/resident-profiles/{residentProfile}'
  */
 export const destroy = (args: { residentProfile: number | { id: number } } | [residentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -196,7 +298,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\AdminResidentProfileController::destroy
- * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:233
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:241
  * @route '/admin/resident-profiles/{residentProfile}'
  */
 destroy.url = (args: { residentProfile: number | { id: number } } | [residentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -229,7 +331,7 @@ destroy.url = (args: { residentProfile: number | { id: number } } | [residentPro
 
 /**
 * @see \App\Http\Controllers\Admin\AdminResidentProfileController::destroy
- * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:233
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:241
  * @route '/admin/resident-profiles/{residentProfile}'
  */
 destroy.delete = (args: { residentProfile: number | { id: number } } | [residentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -239,7 +341,7 @@ destroy.delete = (args: { residentProfile: number | { id: number } } | [resident
 
     /**
 * @see \App\Http\Controllers\Admin\AdminResidentProfileController::destroy
- * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:233
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:241
  * @route '/admin/resident-profiles/{residentProfile}'
  */
     const destroyForm = (args: { residentProfile: number | { id: number } } | [residentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -254,7 +356,7 @@ destroy.delete = (args: { residentProfile: number | { id: number } } | [resident
 
             /**
 * @see \App\Http\Controllers\Admin\AdminResidentProfileController::destroy
- * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:233
+ * @see app/Http/Controllers/Admin/AdminResidentProfileController.php:241
  * @route '/admin/resident-profiles/{residentProfile}'
  */
         destroyForm.delete = (args: { residentProfile: number | { id: number } } | [residentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -271,6 +373,7 @@ destroy.delete = (args: { residentProfile: number | { id: number } } | [resident
 const residentProfiles = {
     index: Object.assign(index, index),
 show: Object.assign(show, show),
+exportFormB: Object.assign(exportFormB, exportFormB),
 destroy: Object.assign(destroy, destroy),
 }
 

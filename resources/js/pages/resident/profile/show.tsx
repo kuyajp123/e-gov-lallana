@@ -326,9 +326,27 @@ export default function ProfileShow({ profile }: ProfileShowProps) {
                                             )
                                         </Badge>
                                     )}
+                                    {profile.is_ofw && (
+                                        <Badge className="rounded-none border-amber-300 bg-amber-100 text-amber-800 shadow-none dark:bg-amber-950 dark:text-amber-300">
+                                            OFW (Overseas Filipino Worker)
+                                        </Badge>
+                                    )}
+                                    {profile.is_ip && (
+                                        <Badge className="rounded-none border-teal-300 bg-teal-100 text-teal-800 shadow-none dark:bg-teal-950 dark:text-teal-300">
+                                            Indigenous Peoples (IP)
+                                        </Badge>
+                                    )}
+                                    {profile.is_out_of_school && (
+                                        <Badge className="rounded-none border-orange-300 bg-orange-100 text-orange-800 shadow-none dark:bg-orange-950 dark:text-orange-300">
+                                            Out of School (OSC / OSY)
+                                        </Badge>
+                                    )}
                                     {!profile.senior_citizen_status &&
                                         !profile.pwd_status &&
-                                        !profile.solo_parent_status && (
+                                        !profile.solo_parent_status &&
+                                        !profile.is_ofw &&
+                                        !profile.is_ip &&
+                                        !profile.is_out_of_school && (
                                             <span className="text-xs text-muted-foreground">
                                                 No special classifications
                                                 indicated.

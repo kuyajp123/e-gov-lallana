@@ -22,6 +22,7 @@ import type { AdminHouseholdItem } from '@/features/admin/households/components/
 import { HouseholdDrawer } from '@/features/admin/households/components/household-drawer';
 import type { HouseholdActionType } from '@/features/admin/households/components/household-verification-modal';
 import { HouseholdVerificationModal } from '@/features/admin/households/components/household-verification-modal';
+import { RbiExportModal } from '@/shared/components/rbi-export-modal';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import {
@@ -123,6 +124,7 @@ export default function AdminHouseholdIndex({
     );
     const [modalHouseholdCode, setModalHouseholdCode] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
     const updateFilter = (newParams: Record<string, any>) => {
         router.get(
@@ -196,24 +198,13 @@ export default function AdminHouseholdIndex({
 
                     <div className="flex items-center gap-2">
                         <Button
-                            asChild
                             variant="outline"
                             size="sm"
+                            onClick={() => setIsExportModalOpen(true)}
                             className="h-8 gap-1.5 border-emerald-500/40 text-xs text-emerald-600 hover:bg-emerald-500/10 dark:text-emerald-400"
                         >
-                            <a
-                                href={
-                                    filters.purok_sitio &&
-                                    filters.purok_sitio !== 'all'
-                                        ? `/admin/households/export/rbi-pdf?purok=${encodeURIComponent(filters.purok_sitio)}`
-                                        : '/admin/households/export/rbi-pdf'
-                                }
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <FileDown className="size-3.5" />
-                                Export RBI Report (PDF)
-                            </a>
+                            <FileDown className="size-3.5" />
+                            Export RBI Reports (PDF)
                         </Button>
                         <Button
                             asChild
@@ -618,6 +609,21 @@ export default function AdminHouseholdIndex({
                                                                         Dossier
                                                                     </Link>
                                                                 </DropdownMenuItem>
+                                                                <DropdownMenuItem
+                                                                    asChild
+                                                                >
+                                                                    <a
+                                                                        href={`/admin/households/${hh.id}/export/form-a`}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className="flex items-center"
+                                                                    >
+                                                                        <FileDown className="mr-2 size-3.5 text-emerald-600 dark:text-emerald-400" />
+                                                                        Export
+                                                                        Form A
+                                                                        (PDF)
+                                                                    </a>
+                                                                </DropdownMenuItem>
                                                                 <DropdownMenuSeparator />
 
                                                                 {(hh.status ===
@@ -801,6 +807,13 @@ export default function AdminHouseholdIndex({
                 householdId={modalHouseholdId}
                 householdCode={modalHouseholdCode}
                 actionType={modalAction}
+            />
+
+            {/* RBI Official Reports Export Modal */}
+            <RbiExportModal
+                isOpen={isExportModalOpen}
+                onClose={() => setIsExportModalOpen(false)}
+                activePurok={filters.purok_sitio}
             />
         </>
     );

@@ -24,10 +24,17 @@ class UpdateHouseholdMemberRequest extends FormRequest
             'suffix' => ['nullable', 'string', 'max:20'],
             'relationship_to_head' => ['required', 'string', 'in:head,spouse,son,daughter,parent,relative,other'],
             'birthdate' => ['nullable', 'date', 'before:today'],
+            'birth_place' => ['nullable', 'string', 'max:255'],
             'gender' => ['nullable', 'string', 'in:male,female,other'],
             'civil_status' => ['nullable', 'string', 'in:single,married,widowed,separated,divorced'],
+            'citizenship' => ['nullable', 'string', 'max:100'],
             'occupation' => ['nullable', 'string', 'max:150'],
             'residency_status' => ['nullable', 'string', 'in:resident,non_resident,temporary'],
+            'is_ofw' => ['boolean'],
+            'is_ip' => ['boolean'],
+            'pwd_status' => ['boolean'],
+            'solo_parent_status' => ['boolean'],
+            'is_out_of_school' => ['boolean'],
         ];
     }
 }

@@ -5,6 +5,7 @@ import {
     ArrowRightLeft,
     CheckCircle2,
     Clock,
+    FileDown,
     ShieldAlert,
     ShieldCheck,
     Undo2,
@@ -157,6 +158,21 @@ export default function AdminHouseholdShow({
 
                     {/* Action Buttons Bar */}
                     <div className="flex flex-wrap items-center gap-2">
+                        <Button
+                            asChild
+                            variant="outline"
+                            size="sm"
+                            className="gap-1.5 border-emerald-500/40 text-xs text-emerald-600 hover:bg-emerald-500/10 dark:text-emerald-400"
+                        >
+                            <a
+                                href={`/admin/households/${household.id}/export/form-a`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <FileDown className="size-3.5" />
+                                Export Form A (PDF)
+                            </a>
+                        </Button>
                         {isPending && (
                             <>
                                 <Button

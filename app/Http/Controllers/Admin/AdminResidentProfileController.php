@@ -7,6 +7,7 @@ use App\Models\DocumentRequest;
 use App\Models\HouseholdMember;
 use App\Models\ResidentProfile;
 use App\Models\User;
+use App\Services\Pdf\PdfGenerationService;
 use App\Services\Resident\ResidentDeletionService;
 use DomainException;
 use Illuminate\Http\RedirectResponse;
@@ -15,6 +16,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class AdminResidentProfileController extends Controller
 {
@@ -164,6 +166,7 @@ class AdminResidentProfileController extends Controller
             'suffix' => $residentProfile->suffix,
             'birthdate' => $residentProfile->birthdate?->format('Y-m-d'),
             'birthdate_formatted' => $residentProfile->birthdate?->format('F d, Y'),
+            'birth_place' => $residentProfile->birth_place ?: '—',
             'age' => $age,
             'gender' => ucfirst($residentProfile->gender ?? '—'),
             'civil_status' => ucfirst($residentProfile->civil_status ?? '—'),
@@ -181,14 +184,19 @@ class AdminResidentProfileController extends Controller
             'date_of_residency' => $residentProfile->date_of_residency?->format('F Y'),
             'occupation' => $residentProfile->occupation ?: '—',
             'educational_attainment' => ucfirst($residentProfile->educational_attainment ?? '—'),
+            'educational_status' => ucfirst($residentProfile->educational_status ?? '—'),
             'employment_status' => ucfirst($residentProfile->employment_status ?? '—'),
             'is_voter' => (bool) $residentProfile->is_voter,
             'voter_id_number' => $residentProfile->voter_id_number,
+            'philsys_card_no' => $residentProfile->philsys_card_no,
             'senior_citizen_status' => (bool) ($residentProfile->senior_citizen_status || ($age !== null && $age >= 60)),
             'pwd_status' => (bool) $residentProfile->pwd_status,
             'pwd_id_number' => $residentProfile->pwd_id_number,
             'solo_parent_status' => (bool) $residentProfile->solo_parent_status,
             'solo_parent_id_number' => $residentProfile->solo_parent_id_number,
+            'is_ofw' => (bool) $residentProfile->is_ofw,
+            'is_ip' => (bool) $residentProfile->is_ip,
+            'is_out_of_school' => (bool) $residentProfile->is_out_of_school,
             'avatar_url' => $residentProfile->avatar?->getUrl(),
             'government_id' => $residentProfile->governmentId ? [
                 'file_name' => $residentProfile->governmentId->file_name,
@@ -250,5 +258,19 @@ class AdminResidentProfileController extends Controller
         return redirect()
             ->route('admin.resident-profiles.index')
             ->with('success', "Resident profile for {$fullName} has been permanently deleted.");
+    }
+
+    /**
+     * Export official DILG RBI Form B (Revised 2024) for an individual resident profile.
+     */
+    public function exportFormBPdf(ResidentProfile $residentProfile, PdfGenerationService $pdfService): SymfonyResponse
+    {
+        $pdfContent = $pdfService->generateRbiFormB($residentProfile, Auth::user());
+        $filename = "RBI-Form-B-{$residentProfile->last_name}-{$residentProfile->id}-".now()->format('Ymd-His').'.pdf';
+
+        return response($pdfContent, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => "inline; filename=\"{$filename}\"",
+        ]);
     }
 }

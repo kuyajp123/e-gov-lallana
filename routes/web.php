@@ -123,7 +123,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::prefix('admin/households')->name('admin.households.')->group(function () {
             Route::get('/', [AdminHouseholdController::class, 'index'])->name('index');
             Route::get('/export/rbi-pdf', [AdminHouseholdController::class, 'exportRbiPdf'])->name('export-rbi-pdf');
+            Route::get('/export/form-c', [AdminHouseholdController::class, 'exportFormCPdf'])->name('export-form-c');
             Route::get('/{household}', [AdminHouseholdController::class, 'show'])->name('show')->whereNumber('household');
+            Route::get('/{household}/export/form-a', [AdminHouseholdController::class, 'exportFormAPdf'])->name('export-form-a')->whereNumber('household');
             Route::post('/{household}/verify', [AdminHouseholdController::class, 'verify'])->name('verify')->whereNumber('household');
             Route::post('/{household}/restrict', [AdminHouseholdController::class, 'restrict'])->name('restrict')->whereNumber('household');
             Route::post('/{household}/archive', [AdminHouseholdController::class, 'archive'])->name('archive')->whereNumber('household');
@@ -134,6 +136,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::prefix('admin/resident-profiles')->name('admin.resident-profiles.')->group(function () {
             Route::get('/', [AdminResidentProfileController::class, 'index'])->name('index');
             Route::get('/{residentProfile}', [AdminResidentProfileController::class, 'show'])->name('show')->whereNumber('residentProfile');
+            Route::get('/{residentProfile}/export/form-b', [AdminResidentProfileController::class, 'exportFormBPdf'])->name('export-form-b')->whereNumber('residentProfile');
             Route::delete('/{residentProfile}', [AdminResidentProfileController::class, 'destroy'])->name('destroy')->whereNumber('residentProfile');
         });
 

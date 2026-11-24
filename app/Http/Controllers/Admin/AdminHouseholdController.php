@@ -477,4 +477,35 @@ class AdminHouseholdController extends Controller
             'Content-Disposition' => "inline; filename=\"{$filename}\"",
         ]);
     }
+
+    /**
+     * Export official DILG RBI Form A (Revised 2024) for a specific household.
+     */
+    public function exportFormAPdf(Household $household, PdfGenerationService $pdfService): SymfonyResponse
+    {
+        $pdfContent = $pdfService->generateRbiFormA($household, Auth::user());
+        $filename = "RBI-Form-A-{$household->household_code}-".now()->format('Ymd-His').'.pdf';
+
+        return response($pdfContent, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => "inline; filename=\"{$filename}\"",
+        ]);
+    }
+
+    /**
+     * Export official DILG RBI Form C (Revised 2024) semestral monitoring report.
+     */
+    public function exportFormCPdf(Request $request, PdfGenerationService $pdfService): SymfonyResponse
+    {
+        $year = $request->integer('year') ?: (int) now()->year;
+        $semester = $request->string('semester')->trim()->toString() ?: '1st';
+
+        $pdfContent = $pdfService->generateRbiFormC($year, $semester, Auth::user());
+        $filename = "RBI-Form-C-{$year}-{$semester}-Semester-".now()->format('Ymd-His').'.pdf';
+
+        return response($pdfContent, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => "inline; filename=\"{$filename}\"",
+        ]);
+    }
 }
